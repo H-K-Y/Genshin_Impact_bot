@@ -114,7 +114,13 @@ def is_5_star(name):
         return True
     return False
 
-
+def is_star(name):
+    # 检查角色或物品是几星的
+    if name in ROLE_ARMS_LIST["5_role"]:
+        return "★★★★★"
+    if name in ROLE_ARMS_LIST["4_role_arms"]:
+        return "★★★★"
+    return "★★★"
 
 
 def gacha_10():
@@ -127,6 +133,7 @@ def gacha_10():
     for i in range(10):
         new_gacha = gacha(i+1,last_4,last_5)
         gacha_txt += new_gacha
+        gacha_txt += is_star(new_gacha)
         gacha_txt += '\n'
 
         if is_4_star(new_gacha):
