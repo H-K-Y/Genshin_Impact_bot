@@ -127,7 +127,7 @@ def gacha_10():
 
     last_4 = ""
     last_5 = ""
-    gacha_txt = "本次祈愿得到以下物品：\n"
+    gacha_txt = "本次祈愿得到以下物品：\n\n"
 
 
     for i in range(10):
