@@ -317,7 +317,7 @@ def gacha_90(frequency = 90):
             if new_gacha in ROLE_ARMS_LIST['5_up']:
                 last_5_up = i+1
 
-    gacha_txt +=f"★★★★★*{gacha_statistics['5_star']}    ★★★★*{gacha_statistics['4_star']}    ★★★*{gacha_statistics['3_star']}\n"
+    gacha_txt +=f"★★★★★×{gacha_statistics['5_star']}    ★★★★×{gacha_statistics['4_star']}    ★★★×{gacha_statistics['3_star']}\n"
 
     mes = '本次祈愿得到以下角色装备：\n'
     res = concat_pic(gacha_list)
