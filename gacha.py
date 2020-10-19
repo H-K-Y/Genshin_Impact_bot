@@ -159,7 +159,7 @@ def is_5_star(name):
 
 def is_star(name):
     # 检查角色或物品是几星的
-    # 返回对应就星星数
+    # 返回对应的星星数
     if name in ROLE_ARMS_LIST["5_role"]:
         return "★★★★★"
     if name in ROLE_ARMS_LIST["4_role_arms"]:
@@ -168,7 +168,7 @@ def is_star(name):
 
 
 def concat_pic(name_list, border=5):
-    # pics是一个列表，这个函数找到列表中名字的图片，然后拼接成一张大图返回
+    # name_list是一个列表，这个函数找到列表中名字的图片，然后拼接成一张大图返回
     num = len(name_list)
     # w, h = pics[0].size
     w, h = [125,130]
