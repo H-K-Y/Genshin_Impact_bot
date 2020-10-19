@@ -57,12 +57,17 @@ def gacha_info():
     info_txt = '当前UP池如下：\n'
 
     for _5_star in ROLE_ARMS_LIST["5_up"]:
-        info_txt += f"[CQ:image,file=file://{get_png(_5_star)}]"
+        im = Image.open(get_png(_5_star))
+        im = pic2b64(im)
+        info_txt += str(MessageSegment.image(im))
         info_txt += "\n"
         info_txt += f"{_5_star} ★★★★★"
 
     for _4_star in ROLE_ARMS_LIST["4_up"]:
-        info_txt += f"[CQ:image,file=file://{get_png(_4_star)}]"
+        # info_txt += f"[CQ:image,file=file://{get_png(_4_star)}]"
+        im = Image.open(get_png(_4_star))
+        im = pic2b64(im)
+        info_txt += str(MessageSegment.image(im))
         info_txt += "\n"
         info_txt += f"{_4_star} ★★★★"
 
