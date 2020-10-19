@@ -26,6 +26,7 @@ ROLE_ARMS_LIST = {
 
 
 def init_role_arms_list():
+    # 初始化卡池数据
     with open(os.path.join(FILE_PATH,'config.json'),'r', encoding='UTF-8') as f:
         data = json.load(f)
         for key in data.keys():
@@ -39,6 +40,7 @@ init_role_arms_list()
 
 
 def get_png(name):
+    # 获取png文件路径，传入的参数是角色或武器名字，会自动在角色和武器文件夹搜索，找不到抛出异常
 
     role_name_path = os.path.join(ICON_PATH,"角色",str(name) + ".png")
     arms_name_path = os.path.join(ICON_PATH,"武器",str(name) + ".png")
@@ -53,6 +55,7 @@ def get_png(name):
 
 
 def gacha_info():
+    # 重载卡池数据，然后返回UP角色信息
     init_role_arms_list() # 重新载入config.json的卡池数据
     info_txt = '当前UP池如下：\n'
 
@@ -122,35 +125,41 @@ def gacha(count,last_time_4 = "",last_time_5 = ""):
 
     r = random.random()
 
+    # 先检查是不是保底5星
     if count%90 == 0:
         return get_5_star(last_time_5)
 
+    # 检查是不是概率5星
     if r<0.006:
         return get_5_star(last_time_5)
 
-
+    # 检查是不是保底4星
     if count%10 == 0:
         return get_4_star(last_time_4)
 
-
+    # 检查是不是概率4星
     if r<0.057:
         return get_4_star(last_time_4)
 
+    # 以上都不是返回3星
     return random.choice(ROLE_ARMS_LIST["3_arms"])
 
 
 def is_4_star(name):
+    # 判断角色是不是4星
     if name in ROLE_ARMS_LIST["4_role_arms"] :
         return True
     return False
 
 def is_5_star(name):
+    # 判断角色是不是5星
     if name in ROLE_ARMS_LIST["5_role"] :
         return True
     return False
 
 def is_star(name):
     # 检查角色或物品是几星的
+    # 返回对应就星星数
     if name in ROLE_ARMS_LIST["5_role"]:
         return "★★★★★"
     if name in ROLE_ARMS_LIST["4_role_arms"]:
@@ -159,7 +168,7 @@ def is_star(name):
 
 
 def concat_pic(name_list, border=5):
-    # pics是一个列表，这个函数找到列表中名称的图片，然后拼接成一张大图返回
+    # pics是一个列表，这个函数找到列表中名字的图片，然后拼接成一张大图返回
     num = len(name_list)
     # w, h = pics[0].size
     w, h = [125,130]
