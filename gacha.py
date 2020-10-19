@@ -2,6 +2,7 @@
 import os
 import json
 import random
+from hoshino import R
 
 
 FILE_PATH = os.path.dirname(__file__)
@@ -43,6 +44,17 @@ def get_png(name):
         return arms_name_path
 
     raise IOError(f"找不到 {name} 的图标，请检查图标是否存在")
+
+
+
+def gacha_info():
+    init_role_arms_list() # 重新载入config.json的卡池数据
+    info_txt = ''
+
+
+
+
+
 
 
 def is_up(name):
