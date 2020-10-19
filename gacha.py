@@ -49,9 +49,19 @@ def get_png(name):
 
 def gacha_info():
     init_role_arms_list() # 重新载入config.json的卡池数据
-    info_txt = ''
+    info_txt = '当前UP池如下：\n'
 
+    for _5_star in ROLE_ARMS_LIST["5_up"]:
+        info_txt += R.img(get_png(_5_star)).cqcode
+        info_txt += "\n"
+        info_txt += f"{_5_star} ★★★★★"
 
+    for _4_star in ROLE_ARMS_LIST["4_up"]:
+        info_txt += R.img(get_png(_4_star)).cqcode
+        info_txt += "\n"
+        info_txt += f"{_4_star} ★★★★"
+
+    return info_txt
 
 
 
@@ -59,6 +69,9 @@ def gacha_info():
 
 def is_up(name):
     # 检查角色是否在UP里
+    # 如果name是一个空字符串表示是第一次抽到4星或5星
+    if name == "":
+        return True
     if name in ROLE_ARMS_LIST["5_up"] :
         return True
     if name in ROLE_ARMS_LIST["4_up"] :
