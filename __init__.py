@@ -8,6 +8,6 @@ sv = Service('原神抽卡')
 async def gacha_(bot, ev):
     await bot.send(ev, gacha_10() , at_sender=True)
 
-@sv.on_prefix(["原神卡池","原神up","原神UP"], only_to_me=True)
+@sv.on_prefix(["原神卡池","原神up","原神UP"])
 async def gacha_(bot, ev):
     await bot.send(ev, gacha_info() , at_sender=True)
