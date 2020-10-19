@@ -1,6 +1,6 @@
 from PIL import Image
 from io import BytesIO
-from hoshino.typing import *
+from nonebot import MessageSegment
 
 import os
 import json
@@ -227,7 +227,7 @@ def gacha_10():
     mes = '本次祈愿得到以下角色装备：\n'
     res = concat_pic(gacha_list)
     res = pic2b64(res)
-    mes += MessageSegment.image(res)
+    mes += str(MessageSegment.image(res))
     mes += '\n'
     mes += gacha_txt
     mes += '\n'
