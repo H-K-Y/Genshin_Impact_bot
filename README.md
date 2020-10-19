@@ -1,7 +1,7 @@
 # Genshin_Impact_gacha
 原神抽卡
 
-这个一个HoshinoBot V2原神抽卡插件
+这是一个HoshinoBot V2原神抽卡插件
 
 
 # 安装方法
