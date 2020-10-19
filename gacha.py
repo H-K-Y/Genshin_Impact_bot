@@ -119,10 +119,11 @@ def get_4_star(last_time_4 = ""):
 
 
 def gacha(count,last_time_4 = "",last_time_5 = "",distance_4_star = 1,distance_5_star = 1):
-    # count表示，现在抽到多少个了，现在这个参数已经没用了
+    # count表示，现在抽到多少个了，现在这个参数已经没用了，保底看distance_4_star和distance_5_star了
     # last_4表示上一个4星角色
     # last_5表示上一个5星角色
     # distance_4_star距离上一个四星之后是多少抽了
+    # distance_5_star距离上一个五星之后是多少抽了
 
     r = random.random()
 
