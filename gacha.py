@@ -230,16 +230,79 @@ def gacha_10():
     mes += str(MessageSegment.image(res))
     mes += '\n'
     mes += gacha_txt
-    mes += '\n'
 
     if last_4_up:
         mes += f'第 {last_4_up} 抽首次出现4★UP!'
+        mes += '\n'
     if last_5_up:
         mes += f'第 {last_5_up} 抽首次出现5★UP!'
 
     return mes
 
 
+def gacha_90(frequency = 90):
+    # 抽一井
 
+    last_time_4 = ""
+    last_time_5 = ""
+    gacha_txt = ""
+    gacha_list = []
+
+
+    last_4_up = 0
+    last_5_up = 0 # 记录多少抽出现UP
+
+    gacha_statistics = {
+        '3_star' : 0,
+        '4_star' : 0,
+        '5_star' : 0
+    }
+
+
+    for i in range(frequency):
+        new_gacha = gacha(i+1,last_time_4,last_time_5)
+
+        if new_gacha in ROLE_ARMS_LIST['3_arms']:
+            gacha_statistics['3_star'] += 1
+
+        if new_gacha in ROLE_ARMS_LIST["4_role_arms"]:
+            gacha_statistics['4_star'] += 1
+            gacha_list.append(new_gacha)
+
+        if new_gacha in ROLE_ARMS_LIST["5_role"]:
+            gacha_statistics['5_star'] += 1
+            gacha_list.append(new_gacha)
+
+
+        if is_4_star(new_gacha):
+            last_time_4 = new_gacha
+
+        if is_5_star(new_gacha):
+            last_time_5 = new_gacha
+
+        if not last_4_up:
+            if new_gacha in ROLE_ARMS_LIST['4_up']:
+                last_4_up = i+1
+
+        if not last_5_up:
+            if new_gacha in ROLE_ARMS_LIST['5_up']:
+                last_5_up = i+1
+
+    gacha_txt +=f"★★★★★*{gacha_statistics['5_star']}    ★★★★*{gacha_statistics['4_star']}    ★★★*{gacha_statistics['3_star']}\n"
+
+    mes = '本次祈愿得到以下角色装备：\n'
+    res = concat_pic(gacha_list)
+    res = pic2b64(res)
+    mes += str(MessageSegment.image(res))
+    mes += '\n'
+    mes += gacha_txt
+
+    if last_4_up:
+        mes += f'第 {last_4_up} 抽首次出现4★UP!'
+        mes += '\n'
+    if last_5_up:
+        mes += f'第 {last_5_up} 抽首次出现5★UP!'
+
+    return mes
 
 
