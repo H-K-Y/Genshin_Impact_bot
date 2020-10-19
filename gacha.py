@@ -118,15 +118,16 @@ def get_4_star(last_time_4 = ""):
 
 
 
-def gacha(count,last_time_4 = "",last_time_5 = ""):
+def gacha(count,last_time_4 = "",last_time_5 = "",distance_4_star = 1,distance_5_star = 1):
     # count表示，现在抽到多少个了
     # last_4表示上一个4星角色
     # last_5表示上一个5星角色
+    # distance_4_star距离上一个四星之后是多少抽了
 
     r = random.random()
 
     # 先检查是不是保底5星
-    if count%90 == 0:
+    if distance_5_star%90 == 0:
         return get_5_star(last_time_5)
 
     # 检查是不是概率5星
@@ -134,7 +135,7 @@ def gacha(count,last_time_4 = "",last_time_5 = ""):
         return get_5_star(last_time_5)
 
     # 检查是不是保底4星
-    if count%10 == 0:
+    if distance_4_star%10 == 0:
         return get_4_star(last_time_4)
 
     # 检查是不是概率4星
@@ -212,12 +213,17 @@ def gacha_10():
 
 
     last_4_up = 0
-    last_5_up = 0 # 记录多少抽出现UP
+    last_5_up = 0 # 记录多少抽第一次出现UP
 
-
+    distance_4_star = 0
+    distance_5_star = 0
 
     for i in range(10):
-        new_gacha = gacha(i+1,last_time_4,last_time_5)
+
+        distance_4_star += 1
+        distance_5_star += 1
+
+        new_gacha = gacha(i+1,last_time_4,last_time_5,distance_4_star,distance_5_star)
         gacha_list.append(new_gacha)
         gacha_txt += new_gacha
         gacha_txt += is_star(new_gacha)
@@ -226,9 +232,11 @@ def gacha_10():
 
         if is_4_star(new_gacha):
             last_time_4 = new_gacha
+            distance_4_star = 0
 
         if is_5_star(new_gacha):
             last_time_5 = new_gacha
+            distance_5_star = 0
 
         if not last_4_up:
             if new_gacha in ROLE_ARMS_LIST['4_up']:
@@ -266,6 +274,11 @@ def gacha_90(frequency = 90):
     last_4_up = 0
     last_5_up = 0 # 记录多少抽出现UP
 
+
+    distance_4_star = 0
+    distance_5_star = 0
+
+
     gacha_statistics = {
         '3_star' : 0,
         '4_star' : 0,
@@ -274,25 +287,26 @@ def gacha_90(frequency = 90):
 
 
     for i in range(frequency):
-        new_gacha = gacha(i+1,last_time_4,last_time_5)
+
+        distance_4_star += 1
+        distance_5_star += 1
+
+        new_gacha = gacha(i+1,last_time_4,last_time_5,distance_4_star,distance_5_star)
 
         if new_gacha in ROLE_ARMS_LIST['3_arms']:
             gacha_statistics['3_star'] += 1
 
-        if new_gacha in ROLE_ARMS_LIST["4_role_arms"]:
-            gacha_statistics['4_star'] += 1
-            gacha_list.append(new_gacha)
-
-        if new_gacha in ROLE_ARMS_LIST["5_role"]:
-            gacha_statistics['5_star'] += 1
-            gacha_list.append(new_gacha)
-
-
         if is_4_star(new_gacha):
             last_time_4 = new_gacha
+            gacha_statistics['4_star'] += 1
+            gacha_list.append(new_gacha)
+            distance_4_star = 0
 
         if is_5_star(new_gacha):
             last_time_5 = new_gacha
+            gacha_statistics['5_star'] += 1
+            gacha_list.append(new_gacha)
+            distance_5_star = 0
 
         if not last_4_up:
             if new_gacha in ROLE_ARMS_LIST['4_up']:
