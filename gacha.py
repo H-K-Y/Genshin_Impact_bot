@@ -1,6 +1,6 @@
 from PIL import Image
 from io import BytesIO
-from nonebot import MessageSegment
+from hoshino.typing import *
 
 import os
 import json
