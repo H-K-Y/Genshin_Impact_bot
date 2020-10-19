@@ -106,7 +106,7 @@ def get_5_star(last_time_5 = ""):
 
 def get_4_star(last_time_4 = ""):
     # 先检查上次4星是否是UP，不是UP本次抽取必定是UP，
-    # 如果上次是UP，本次有50%的概率还是UP，50%概率所有5星角色装备随机
+    # 如果上次是UP，本次有50%的概率还是UP，50%概率所有4星角色装备随机
     if is_up(last_time_4):
         if random.random() > 0.5:
             return random.choice(ROLE_ARMS_LIST["4_up"])
