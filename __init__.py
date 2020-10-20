@@ -7,7 +7,7 @@ from hoshino.util import DailyNumberLimiter
 Gacha10Limit = 10 # 10连每天可以抽的次数
 Gacha90Limit = 3 # 90连每天可以抽的次数
 Gacha180Limit = 1  # 180连每天可以抽的次数
-daily_limiter = DailyNumberLimiter()
+daily_limiter = DailyNumberLimiter(10)
 
 sv = Service('原神抽卡')
 
