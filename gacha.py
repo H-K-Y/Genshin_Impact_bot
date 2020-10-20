@@ -370,10 +370,11 @@ class Gacha(object):
         mes += gacha_txt
 
         if self.last_4_up:
-            mes += f'第 {self.last_4_up} 抽首次出现4★UP!'
-            mes += '\n'
+            mes += f'第 {self.last_4_up} 抽首次出现4★UP!\n'
         if self.last_5_up:
-            mes += f'第 {self.last_5_up} 抽首次出现5★UP!'
+            mes += f'第 {self.last_5_up} 抽首次出现5★UP!\n'
+
+        mes += f"* 本次抽取卡池为{self.pool}\n* 发送[原神卡池切换]可切换卡池"
 
         return mes
 
@@ -410,11 +411,11 @@ class Gacha(object):
         mes += gacha_txt
 
         if self.last_4_up:
-            mes += f'第 {self.last_4_up} 抽首次出现4★UP!'
-            mes += '\n'
+            mes += f'第 {self.last_4_up} 抽首次出现4★UP!\n'
         if self.last_5_up:
-            mes += f'第 {self.last_5_up} 抽首次出现5★UP!'
+            mes += f'第 {self.last_5_up} 抽首次出现5★UP!\n'
 
+        mes += f"* 本次抽取卡池为{self.pool}\n* 发送[原神卡池切换]可切换卡池"
         return mes
 
 
