@@ -79,7 +79,7 @@ async def gacha_(bot, ev):
 
     await bot.send(ev, info , at_sender=True)
 
-@sv.on_prefix(('原神卡池切换'))
+@sv.on_prefix(('原神卡池切换','原神切换卡池'))
 async def set_pool(bot, ev):
 
     pool_name = ev.message.extract_plain_text()
