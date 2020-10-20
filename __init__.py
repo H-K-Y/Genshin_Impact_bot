@@ -7,7 +7,9 @@ from hoshino.util import DailyNumberLimiter
 Gacha10Limit = 10 # 10连每天可以抽的次数
 Gacha90Limit = 3 # 90连每天可以抽的次数
 Gacha180Limit = 1  # 180连每天可以抽的次数
-daily_limiter = DailyNumberLimiter(10)
+daily_limiter_10 = DailyNumberLimiter(Gacha10Limit)
+daily_limiter_90 = DailyNumberLimiter(Gacha90Limit)
+daily_limiter_180 = DailyNumberLimiter(Gacha180Limit)
 
 sv = Service('原神抽卡')
 
@@ -38,30 +40,28 @@ with open(os.path.join(FILE_PATH,'gid_pool.json'),'r',encoding='UTF-8') as f:
 async def gacha_(bot, ev):
     gid = str(ev.group_id)
     userid = ev['user_id']
-    daily_limiter = DailyNumberLimiter(Gacha10Limit)
-    if not daily_limiter.check(userid):
+    if not daily_limiter_10.check(userid):
         await bot.send(ev, '今天已经抽了很多次啦，明天再来吧~')
         return
     if gid in group_pool:
         G = Gacha(group_pool[gid])
     else:
         G = Gacha()
-    daily_limiter.increase(userid)
+    daily_limiter_10.increase(userid)
     await bot.send(ev, G.gacha_10() , at_sender=True)
 
 @sv.on_prefix(["纠缠之缘"], only_to_me=True)
 async def gacha_(bot, ev):
     gid = str(ev.group_id)
     userid = ev['user_id']
-    daily_limiter = DailyNumberLimiter(Gacha90Limit)
-    if not daily_limiter.check(userid):
+    if not daily_limiter_90.check(userid):
         await bot.send(ev, '今天已经抽了很多次啦，明天再来吧~')
         return
     if gid in group_pool:
         G = Gacha(group_pool[gid])
     else:
         G = Gacha()
-    daily_limiter.increase(userid)
+    daily_limiter_90.increase(userid)
     await bot.send(ev, G.gacha_90(90) , at_sender=True)
 
 
@@ -70,15 +70,14 @@ async def gacha_(bot, ev):
 async def gacha_(bot, ev):
     gid = str(ev.group_id)
     userid = ev['user_id']
-    daily_limiter = DailyNumberLimiter(Gacha180Limit)
-    if not daily_limiter.check(userid):
+    if not daily_limiter_180.check(userid):
         await bot.send(ev, '今天已经抽了很多次啦，明天再来吧~')
         return
+    daily_limiter_180.increase(userid)
     if gid in group_pool:
         G = Gacha(group_pool[gid])
     else:
         G = Gacha()
-    daily_limiter.increase(userid)
     await bot.send(ev, G.gacha_90(180) , at_sender=True)
 
 
