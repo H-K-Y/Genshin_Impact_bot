@@ -17,8 +17,7 @@ group_pool = {
 
 def save_group_pool():
     with open(os.path.join(FILE_PATH,'gid_pool.json'),'w',encoding='UTF-8') as f:
-        data = {}
-        json.dump(data,f)
+        json.dump(group_pool,f)
 
 
 
@@ -95,15 +94,18 @@ async def gacha_(bot, ev):
 
     await bot.send(ev, info , at_sender=True)
 
-@sv.on_prefix(('原神卡池切换'))
+@sv.on_prefix(('原神卡池切换','原神切换卡池'))
 async def set_pool(bot, ev):
 
     pool_name = ev.message.extract_plain_text()
     gid = str(ev.group_id).strip()
 
     if pool_name in POOL.keys():
-        group_pool[gid] == pool_name
-
+        if gid in group_pool:
+            group_pool[gid] == pool_name
+        else:
+            group_pool.setdefault(gid,pool_name)
+        save_group_pool()
         await bot.send(ev, f"卡池已切换为 {pool_name} ")
         return
 
