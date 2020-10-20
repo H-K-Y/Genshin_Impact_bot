@@ -127,9 +127,9 @@ init_role_arms_list()
 
 class Gacha(object):
 
-    def __init__(self,pool = DEFAULT_POOL):
+    def __init__(self,_pool = DEFAULT_POOL):
         # 实例化的时候就要传进来字符串表明要抽哪个卡池
-        self.pool = pool
+        self.pool = _pool
 
         self.last_time_5 = "" # 记录上一次抽卡的5星是什么
         self.last_time_4 = "" # 记录上一次抽卡的4星是什么
@@ -374,7 +374,7 @@ class Gacha(object):
         if self.last_5_up:
             mes += f'第 {self.last_5_up} 抽首次出现5★UP!\n'
 
-        mes += f"* 本次抽取卡池为{self.pool}\n* 发送[原神卡池切换]可切换卡池"
+        mes += f"* 本次抽取卡池为 {self.pool} \n* 发送[原神卡池切换]可切换卡池"
 
         return mes
 
@@ -415,7 +415,7 @@ class Gacha(object):
         if self.last_5_up:
             mes += f'第 {self.last_5_up} 抽首次出现5★UP!\n'
 
-        mes += f"* 本次抽取卡池为{self.pool}\n* 发送[原神卡池切换]可切换卡池"
+        mes += f"* 本次抽取卡池为 {self.pool} \n* 发送[原神卡池切换]可切换卡池"
         return mes
 
 
