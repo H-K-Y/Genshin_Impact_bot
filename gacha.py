@@ -386,7 +386,9 @@ class Gacha(object):
         for i in range(frequency):
 
             new_gacha = self.gacha_one()
-            self.gacha_list.append(new_gacha)
+
+            if not (new_gacha in ROLE_ARMS_LIST["3星武器"]):
+                self.gacha_list.append(new_gacha)
 
             if not self.last_4_up:
                 up_4_star = POOL[self.pool]['4星up']
