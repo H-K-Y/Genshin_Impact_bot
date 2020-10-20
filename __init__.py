@@ -86,8 +86,11 @@ async def set_pool(bot, ev):
     gid = str(ev.group_id).strip()
 
     if pool_name in POOL.keys():
-        group_pool[gid] == pool_name
-
+        if gid in group_pool:
+            group_pool[gid] == pool_name
+        else:
+            group_pool.setdefault(gid,pool_name)
+        save_group_pool()
         await bot.send(ev, f"卡池已切换为 {pool_name} ")
         return
 
