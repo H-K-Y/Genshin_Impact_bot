@@ -101,7 +101,7 @@ async def set_pool(bot, ev):
 
     if pool_name in POOL.keys():
         if gid in group_pool:
-            group_pool[gid] == pool_name
+            group_pool[gid] = pool_name
         else:
             group_pool.setdefault(gid,pool_name)
         save_group_pool()
