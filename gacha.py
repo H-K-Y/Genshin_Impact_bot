@@ -167,35 +167,22 @@ class Gacha(object):
 
         raise FileNotFoundError(f"找不到 {name} 的图标，请检查图标是否存在")
 
-    @staticmethod
-    def is_up(name):
+    def is_up(self,name):
         # 检查角色是否在UP里
         # 如果name是一个空字符串表示是第一次抽到4星或5星
         if name == "":
             return True
-        if name in ROLE_ARMS_LIST["5星up角色"]:
+        if self.pool == "常驻池":
+            return False
+
+        _5_star_up_list = POOL[self.pool]["5星up"]
+        _4_star_up_list = POOL[self.pool]["4星up"]
+
+        if (name in ROLE_ARMS_LIST[_4_star_up_list]) or (name in ROLE_ARMS_LIST[_5_star_up_list]):
             return True
-        if name in ROLE_ARMS_LIST["4星up角色"]:
-            return True
-        if name in ROLE_ARMS_LIST["5星up武器"]:
-            return True
-        if name in ROLE_ARMS_LIST["4星up武器"]:
-            return True
+
         return False
 
-    @staticmethod
-    def is_4_star(name):
-        # 判断角色是不是4星
-        if name in ROLE_ARMS_LIST['4星常驻池']:
-            return True
-        return False
-
-    @staticmethod
-    def is_5_star(name):
-        # 判断角色是不是5星
-        if name in ROLE_ARMS_LIST['5星全角色武器']:
-            return True
-        return False
 
     @staticmethod
     def is_star(name):
