@@ -75,7 +75,7 @@ CORRESPONDENCE = {
 
 POOL = {
     # 这个字典记录的是3个不同的卡池，每个卡池的抽取列表的value是ROLE_ARMS_LIST的哪个列表的key
-
+    # 比如角色UP池的5星UP列表，是保存在ROLE_ARMS_LIST["5星up角色"]这个列表里的
     '角色up池':{
         '5星up':"5星up角色",
         '随机全5星':'5星角色up池全角色',
@@ -195,14 +195,15 @@ class Gacha(object):
         return "★★★"
 
     @staticmethod
-    def pic2b64(pic):
-        buf = BytesIO()
-        pic.save(buf, format='PNG')
-        base64_str = base64.b64encode(buf.getvalue()).decode()
+    def pic2b64(im):
+        # im是Image对象，把Image图片转成base64
+        bio = BytesIO()
+        im.save(bio, format='PNG')
+        base64_str = base64.b64encode(bio.getvalue()).decode()
         return 'base64://' + base64_str
 
     def concat_pic(self, border=5):
-        # name_list是一个列表，这个函数找到列表中名字的图片，然后拼接成一张大图返回
+        # self.gacha_list是一个列表，这个函数找到列表中名字对应的图片，然后拼接成一张大图返回
         num = len(self.gacha_list)
         # w, h = pics[0].size
         w, h = [125, 130]
@@ -225,6 +226,7 @@ class Gacha(object):
         return des
 
     def is_guaranteed(self,frequency):
+        # 检查本轮抽卡是不是全保底
         if frequency == 90 :
             if self.gacha_statistics['5星'] == 1  and self.gacha_statistics['4星'] == 8:
                 return True
@@ -244,7 +246,7 @@ class Gacha(object):
             return random.choice(ROLE_ARMS_LIST[key])
 
         # 下边是角色或武器的UP
-        # 先获取5星UP和全5星保存在ROLE_ARMS_LIST的哪个列表
+        # 先获取5星UP和全5星角色武器保存在ROLE_ARMS_LIST的哪个列表
         # up_5_star和all_5_star是ROLE_ARMS_LIST的key
         # UP武器和UP角色对应的列表是不一样的，详情看POOL
         up_5_star = POOL[self.pool]['5星up']
@@ -271,7 +273,7 @@ class Gacha(object):
             return random.choice(ROLE_ARMS_LIST[key])
 
         # 下边是角色或武器的UP
-        # 先获取4星UP和全4星保存在ROLE_ARMS_LIST的哪个列表
+        # 先获取4星UP和全4星角色武器保存在ROLE_ARMS_LIST的哪个列表
         # up_4_star和all_4_star是ROLE_ARMS_LIST的key
         # UP武器和UP角色对应的列表是不一样的，详情看POOL
         up_4_star = POOL[self.pool]['4星up']
@@ -287,10 +289,10 @@ class Gacha(object):
 
 
     def gacha_one(self):
-        # last_4表示上一个4星角色
-        # last_5表示上一个5星角色
-        # distance_4_star是4星保底计数
-        # distance_5_star是5星保底计数
+        # self.last_time_4表示上一个4星角色
+        # self.last_time_5表示上一个5星角色
+        # self.distance_4_star是4星保底计数
+        # self.distance_5_star是5星保底计数
         self.distance_4_star += 1
         self.distance_5_star += 1
 
@@ -382,7 +384,7 @@ class Gacha(object):
 
             new_gacha = self.gacha_one()
 
-            if not (new_gacha in ROLE_ARMS_LIST["3星武器"]):
+            if not (new_gacha in ROLE_ARMS_LIST["3星武器"]): # 抽一井时不保留3星的武器
                 self.gacha_list.append(new_gacha)
 
             if not self.last_4_up:
