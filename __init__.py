@@ -19,7 +19,7 @@ group_pool = {
 
 def save_group_pool():
     with open(os.path.join(FILE_PATH,'gid_pool.json'),'w',encoding='UTF-8') as f:
-        json.dump(group_pool,f)
+        json.dump(group_pool,f,ensure_ascii=False)
 
 
 
