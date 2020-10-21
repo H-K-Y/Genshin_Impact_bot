@@ -430,9 +430,6 @@ class Gacha(object):
 
 
 
-
-
-
 def gacha_info(pool = DEFAULT_POOL):
     # 重载卡池数据，然后返回UP角色信息
     init_role_arms_list() # 重新载入config.json的卡池数据
@@ -462,8 +459,5 @@ def gacha_info(pool = DEFAULT_POOL):
 
     info_txt += up_info
     return info_txt
-
-
-
 
 
