@@ -4,9 +4,9 @@ import os
 import json
 from hoshino.util import DailyNumberLimiter
 
-Gacha10Limit = 10 # 10连每天可以抽的次数
-Gacha90Limit = 3 # 90连每天可以抽的次数
-Gacha180Limit = 1  # 180连每天可以抽的次数
+Gacha10Limit = 100 # 10连每天可以抽的次数
+Gacha90Limit = 100 # 90连每天可以抽的次数
+Gacha180Limit = 100  # 180连每天可以抽的次数
 daily_limiter_10 = DailyNumberLimiter(Gacha10Limit)
 daily_limiter_90 = DailyNumberLimiter(Gacha90Limit)
 daily_limiter_180 = DailyNumberLimiter(Gacha180Limit)
@@ -96,8 +96,8 @@ async def gacha_(bot, ev):
 @sv.on_prefix(('原神卡池切换','原神切换卡池'))
 async def set_pool(bot, ev):
 
-    pool_name = ev.message.extract_plain_text()
-    gid = str(ev.group_id).strip()
+    pool_name = ev.message.extract_plain_text().strip()
+    gid = str(ev.group_id)
 
     if pool_name in POOL.keys():
         if gid in group_pool:

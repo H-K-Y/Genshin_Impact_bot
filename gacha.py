@@ -432,14 +432,14 @@ def gacha_info(pool = DEFAULT_POOL):
     _4_star_up_info = POOL[pool]["4星up"]
     up_info = ""
 
-    for _5_star in ROLE_ARMS_LIST["5_up"]:
+    for _5_star in ROLE_ARMS_LIST[_5_star_up_info]:
         im = Image.open(Gacha.get_png_path(_5_star))
         im = Gacha.pic2b64(im)
         up_info += str(MessageSegment.image(im))
         up_info += "\n"
         up_info += f"{_5_star} ★★★★★"
 
-    for _4_star in ROLE_ARMS_LIST["4_up"]:
+    for _4_star in ROLE_ARMS_LIST[_4_star_up_info]:
         im = Image.open(Gacha.get_png_path(_4_star))
         im = Gacha.pic2b64(im)
         up_info += str(MessageSegment.image(im))
