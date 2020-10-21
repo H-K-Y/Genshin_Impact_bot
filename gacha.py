@@ -237,7 +237,14 @@ class Gacha(object):
 
         return des
 
-
+    def is_guaranteed(self,frequency):
+        if frequency == 90 :
+            if self.gacha_statistics['5星'] == 1  and self.gacha_statistics['4星'] == 8:
+                return True
+        if frequency == 180 :
+            if self.gacha_statistics['5星'] == 2  and self.gacha_statistics['4星'] == 16:
+                return True
+        return False
 
     def get_5_star(self):
         # 先检查上次5星是否是UP，不是UP本次抽取必定是UP，
@@ -374,7 +381,7 @@ class Gacha(object):
         if self.last_5_up:
             mes += f'第 {self.last_5_up} 抽首次出现5★UP!\n'
 
-        mes += f"* 本次抽取卡池为 {self.pool} \n* 发送[原神卡池切换]可切换卡池"
+        mes += f"\n* 本次抽取卡池为 {self.pool} \n* 发送 原神卡池切换 可切换卡池"
 
         return mes
 
@@ -415,7 +422,10 @@ class Gacha(object):
         if self.last_5_up:
             mes += f'第 {self.last_5_up} 抽首次出现5★UP!\n'
 
-        mes += f"* 本次抽取卡池为 {self.pool} \n* 发送[原神卡池切换]可切换卡池"
+        if self.is_guaranteed(frequency):
+            mes += "居然全是保底，你脸也太黑了\n"
+
+        mes += f"\n* 本次抽取卡池为 {self.pool} \n* 发送 原神卡池切换 可切换卡池"
         return mes
 
 
@@ -426,7 +436,7 @@ class Gacha(object):
 def gacha_info(pool = DEFAULT_POOL):
     # 重载卡池数据，然后返回UP角色信息
     init_role_arms_list() # 重新载入config.json的卡池数据
-    info_txt = '当前UP池如下：\n'
+    info_txt = f'当前卡池为 {pool} ，UP信息如下：\n'
 
     _5_star_up_info = POOL[pool]["5星up"]
     _4_star_up_info = POOL[pool]["4星up"]
@@ -447,7 +457,7 @@ def gacha_info(pool = DEFAULT_POOL):
         up_info += f"{_4_star} ★★★★"
 
     if up_info == "":
-        # 如果是空的，表示当前是常驻池没有UP
+        # 如果up_info是空的，表示当前是常驻池没有UP
         up_info += "常驻池没有UP"
 
     info_txt += up_info
