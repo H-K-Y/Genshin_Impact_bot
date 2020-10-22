@@ -453,7 +453,7 @@ class Gacha(object):
             mes += f'第 {self.last_5_up} 抽首次出现5★UP!\n'
 
         most_arms = self.get_most_arms()
-        mes += f"本次抽取最多的装备是 {most_arms['name']} {self.is_star(most_arms['name'])} ,共抽取到 {most_arms['most']} 次"
+        mes += f"本次抽取最多的装备是 {most_arms['name']} {self.is_star(most_arms['name'])} ,共抽取到 {most_arms['most']} 次\n"
 
 
         if self.is_guaranteed(frequency):
