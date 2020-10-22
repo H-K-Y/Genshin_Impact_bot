@@ -16,10 +16,10 @@ ICON_PATH = os.path.join(FILE_PATH,'icon')
 DEFAULT_POOL = "角色up池" # 默认卡池
 
 POOL_PROBABILITY  = {
-    # 所有卡池的4星和5星概率,由于判断出货的时候是先判断5星，所以4星概率是4星原概率加上5星的概率，这里的4星概率已经加上5星概率了
-    "角色up池":{"5" : 0.006 , "4" : 0.057 },
-    "武器up池":{"5" : 0.007 , "4" : 0.067 },
-    "常驻池" : {"5" : 0.006 , "4" : 0.057 }
+    # 所有卡池的4星和5星概率,这里直接填写官方给出的概率，程序会自动对4星概率进行累计
+    "角色up池":{"5" : 0.006 , "4" : 0.051 },
+    "武器up池":{"5" : 0.007 , "4" : 0.060 },
+    "常驻池" : {"5" : 0.006 , "4" : 0.051 }
 }
 
 UP_PROBABILITY = {
@@ -367,7 +367,8 @@ class Gacha(object):
             return self.last_time_4
 
         # 检查是不是概率4星
-        if r < POOL_PROBABILITY[self.pool]["5"]:
+        # 由于是先判断5星的概率出货，所以4星的实际概率是4星原概率加上5星的概率
+        if r < (POOL_PROBABILITY[self.pool]["5"] + POOL_PROBABILITY[self.pool]["4"]):
             self.gacha_rarity_statistics["4星"] += 1
             self.distance_4_star = 0
             self.last_time_4 = self.get_4_star()
