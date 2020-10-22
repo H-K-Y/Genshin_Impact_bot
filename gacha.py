@@ -145,12 +145,22 @@ class Gacha(object):
         self.last_4_up = 0
         self.last_5_up = 0
 
-        self.gacha_statistics = {
+        # 记录多少抽第一次出现4星或5星
+        self.last_4 = 0
+        self.last_5 = 0
+
+        self.gacha_rarity_statistics = {
             # 这个列表记录的是本轮抽卡，每种稀有度各抽到了多少
             '3星': 0,
             '4星': 0,
             '5星': 0
         }
+
+        # 当前是多少抽
+        self.current_times = 0
+
+        # 记录抽卡每个角色或装备各抽到多少
+        self.gacha_all_statistics = {}
 
 
     @staticmethod
@@ -190,7 +200,7 @@ class Gacha(object):
         # 返回对应的星星数
         if name in ROLE_ARMS_LIST['5星全角色武器']:
             return "★★★★★"
-        if name in ROLE_ARMS_LIST['4星常驻池']:
+        if name in ROLE_ARMS_LIST['4星常驻池']: # 4星常驻池就包含所有4星角色装备了
             return "★★★★"
         return "★★★"
 
@@ -225,15 +235,52 @@ class Gacha(object):
 
         return des
 
+    def add_gacha_all_statistics(self,name):
+        # 把每一次抽卡结果添加到gacha_all_statistics
+        if name in self.gacha_all_statistics.keys():
+            self.gacha_all_statistics[name] += 1
+        else:
+            self.gacha_all_statistics[name] = 1
+
+    def update_last(self,name):
+        # 这个方法用来更新第一次抽到4星或5星或UP的计数
+        if not self.last_4_up:
+            up_4_star = POOL[self.pool]['4星up']
+            if name in ROLE_ARMS_LIST[up_4_star]:
+                self.last_4_up = self.current_times + 1
+
+        if not self.last_5_up:
+            up_5_star = POOL[self.pool]['5星up']
+            if name in ROLE_ARMS_LIST[up_5_star]:
+                self.last_5_up = self.current_times + 1
+
+        if not self.last_4:
+            if name in ROLE_ARMS_LIST["4星常驻池"]:
+                self.last_4 = self.current_times + 1
+
+        if not self.last_5:
+            if name in ROLE_ARMS_LIST["5星全角色武器"]:
+                self.last_5 = self.current_times + 1
+
     def is_guaranteed(self,frequency):
         # 检查本轮抽卡是不是全保底
         if frequency == 90 :
-            if self.gacha_statistics['5星'] == 1  and self.gacha_statistics['4星'] == 8:
+            if self.gacha_rarity_statistics['5星'] == 1  and self.gacha_rarity_statistics['4星'] == 8:
                 return True
         if frequency == 180 :
-            if self.gacha_statistics['5星'] == 2  and self.gacha_statistics['4星'] == 16:
+            if self.gacha_rarity_statistics['5星'] == 2  and self.gacha_rarity_statistics['4星'] == 16:
                 return True
         return False
+
+    def get_most_arms(self):
+        # 返回抽出的武器抽出最多的是哪个，抽出了多少次
+        if not self.gacha_all_statistics:
+            raise KeyError(f"字典 self.gacha_all_statistics 是空的")
+        most_value = max(self.gacha_all_statistics.values())
+        for key,value in self.gacha_all_statistics.items():
+            if most_value == value :
+                return {"name":key,"most":value}
+
 
     def get_5_star(self):
         # 先检查上次5星是否是UP，不是UP本次抽取必定是UP，
@@ -300,34 +347,34 @@ class Gacha(object):
 
         # 先检查是不是保底5星
         if self.distance_5_star % 90 == 0:
-            self.gacha_statistics["5星"] += 1
+            self.gacha_rarity_statistics["5星"] += 1
             self.distance_5_star = 0 # 重置保底计数
             self.last_time_5 = self.get_5_star() # 抽一次卡，把结果赋值留给下一次抽卡判断
             return self.last_time_5 # 返回刚抽出的卡
 
         # 检查是不是概率5星
         if r < POOL_PROBABILITY[self.pool]["5"]:
-            self.gacha_statistics["5星"] += 1
+            self.gacha_rarity_statistics["5星"] += 1
             self.distance_5_star = 0
             self.last_time_5 = self.get_5_star()  # 抽一次卡，把结果赋值留给下一次抽卡判断
             return self.last_time_5  # 返回刚抽出的卡
 
         # 检查是不是保底4星
         if self.distance_4_star % 10 == 0:
-            self.gacha_statistics["4星"] += 1
+            self.gacha_rarity_statistics["4星"] += 1
             self.distance_4_star = 0
             self.last_time_4 = self.get_4_star()
             return self.last_time_4
 
         # 检查是不是概率4星
         if r < POOL_PROBABILITY[self.pool]["5"]:
-            self.gacha_statistics["4星"] += 1
+            self.gacha_rarity_statistics["4星"] += 1
             self.distance_4_star = 0
             self.last_time_4 = self.get_4_star()
             return self.last_time_4
 
         # 以上都不是返回3星
-        self.gacha_statistics["3星"] += 1
+        self.gacha_rarity_statistics["3星"] += 1
         return random.choice(ROLE_ARMS_LIST["3星武器"])
 
 
@@ -338,25 +385,19 @@ class Gacha(object):
 
         gacha_txt = ""
 
-        for i in range(10):
+        for self.current_times in range(10):
 
             new_gacha = self.gacha_one()
             self.gacha_list.append(new_gacha)
             gacha_txt += new_gacha
             gacha_txt += self.is_star(new_gacha)
 
-            if (i + 1) % 5 == 0:
+            if (self.current_times + 1) % 5 == 0:
                 gacha_txt += '\n'
 
-            if not self.last_4_up:
-                up_4_star = POOL[self.pool]['4星up']
-                if new_gacha in ROLE_ARMS_LIST[up_4_star]:
-                    self.last_4_up = i + 1
+            self.add_gacha_all_statistics(new_gacha)  # 把所有抽卡结果添加到gacha_all_statistics用于最后统计
 
-            if not self.last_5_up:
-                up_5_star = POOL[self.pool]['5星up']
-                if new_gacha in ROLE_ARMS_LIST[up_5_star]:
-                    self.last_5_up = i + 1
+            self.update_last(new_gacha) # 更新第一次抽到的计数
 
         mes = '本次祈愿得到以下角色装备：\n'
         res = self.concat_pic()
@@ -365,8 +406,12 @@ class Gacha(object):
         mes += '\n'
         mes += gacha_txt
 
+        if self.last_4: # 如果self.last_4为0表示没有抽到，这句话就不写了，下边3个判断标准一样
+            mes += f'第 {self.last_4} 抽首次出现4★!\n'
         if self.last_4_up:
             mes += f'第 {self.last_4_up} 抽首次出现4★UP!\n'
+        if self.last_5:
+            mes += f'第 {self.last_5} 抽首次出现5★!\n'
         if self.last_5_up:
             mes += f'第 {self.last_5_up} 抽首次出现5★UP!\n'
 
@@ -376,28 +421,20 @@ class Gacha(object):
 
     def gacha_90(self,frequency=90):
         # 抽一井
-
         gacha_txt = ""
 
-
-        for i in range(frequency):
+        for self.current_times in range(frequency):
 
             new_gacha = self.gacha_one()
 
-            if not (new_gacha in ROLE_ARMS_LIST["3星武器"]): # 抽一井时不保留3星的武器
+            if not (new_gacha in ROLE_ARMS_LIST["3星武器"]): # 抽一井时图片上不保留3星的武器
                 self.gacha_list.append(new_gacha)
 
-            if not self.last_4_up:
-                up_4_star = POOL[self.pool]['4星up']
-                if new_gacha in ROLE_ARMS_LIST[up_4_star]:
-                    self.last_4_up = i + 1
+            self.add_gacha_all_statistics(new_gacha) # 把所有抽卡结果添加到gacha_all_statistics用于最后统计
 
-            if not self.last_5_up:
-                up_5_star = POOL[self.pool]['5星up']
-                if new_gacha in ROLE_ARMS_LIST[up_5_star]:
-                    self.last_5_up = i + 1
+            self.update_last(new_gacha)  # 更新第一次抽到的计数
 
-        gacha_txt += f"★★★★★×{self.gacha_statistics['5星']}    ★★★★×{self.gacha_statistics['4星']}    ★★★×{self.gacha_statistics['3星']}\n"
+        gacha_txt += f"★★★★★×{self.gacha_rarity_statistics['5星']}    ★★★★×{self.gacha_rarity_statistics['4星']}    ★★★×{self.gacha_rarity_statistics['3星']}\n"
 
         mes = '本次祈愿得到以下角色装备：\n'
         res = self.concat_pic()
@@ -406,10 +443,18 @@ class Gacha(object):
         mes += '\n'
         mes += gacha_txt
 
+        if self.last_4: # 如果self.last_4为0表示没有抽到，这句话就不写了
+            mes += f'第 {self.last_4} 抽首次出现4★!\n'
         if self.last_4_up:
             mes += f'第 {self.last_4_up} 抽首次出现4★UP!\n'
+        if self.last_5:
+            mes += f'第 {self.last_5} 抽首次出现5★!\n'
         if self.last_5_up:
             mes += f'第 {self.last_5_up} 抽首次出现5★UP!\n'
+
+        most_arms = self.get_most_arms()
+        mes += f"本次抽取最多的装备是 {most_arms['name']} {self.is_star(most_arms['name'])} ,共抽取到 {most_arms['most']} 次"
+
 
         if self.is_guaranteed(frequency):
             mes += "居然全是保底，你脸也太黑了\n"
