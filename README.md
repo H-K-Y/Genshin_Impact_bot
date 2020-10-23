@@ -1,16 +1,18 @@
-# Genshin_Impact_gacha
-原神抽卡
+# Genshin_Impact_bot
 
-这是一个HoshinoBot V2原神抽卡插件
+### This is a Genshin Impact plugin for [HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)
+### 这是一个[HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)原神~~抽卡~~插件
+### 这个项目目前正在扩展，加入更多原神相关娱乐和信息查询功能，敬请期待
 
+### 如果你是在项目名称为Genshin_Impact_gacha时安装的，请删除Genshin_Impact_gacha重新Git clone
 
 # 安装方法
 
-在 HoshinoBot\hoshino\modules 目录下新建 Genshin_Impact_gacha 文件夹 
+在 HoshinoBot\hoshino\modules 目录下新建 Genshin_Impact_bot 文件夹 
 
-cd 到 Genshin_Impact_gacha 目录下使用git拉取本项目
+cd 到 Genshin_Impact_bot 目录下使用git拉取本项目
 
-然后在 HoshinoBot\\hoshino\\config\\\__bot__.py 文件的 MODULES_ON 加入 Genshin_Impact_gacha
+然后在 HoshinoBot\\hoshino\\config\\\__bot__.py 文件的 MODULES_ON 加入 Genshin_Impact_bot
 
 重启 HoshinoBot
 

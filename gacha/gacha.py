@@ -1,6 +1,6 @@
 from PIL import Image
 from io import BytesIO
-from nonebot import MessageSegment
+
 
 import os
 import json
@@ -212,6 +212,10 @@ class Gacha(object):
         base64_str = base64.b64encode(bio.getvalue()).decode()
         return 'base64://' + base64_str
 
+    @staticmethod
+    def ba64_to_cq(base64_str):
+        return f"[CQ:image,file={base64_str}]"
+
     def concat_pic(self, border=5):
         # self.gacha_list是一个列表，这个函数找到列表中名字对应的图片，然后拼接成一张大图返回
         num = len(self.gacha_list)
@@ -403,7 +407,7 @@ class Gacha(object):
         mes = '本次祈愿得到以下角色装备：\n'
         res = self.concat_pic()
         res = self.pic2b64(res)
-        mes += str(MessageSegment.image(res))
+        mes += self.ba64_to_cq(res)
         mes += '\n'
         mes += gacha_txt
 
@@ -440,7 +444,7 @@ class Gacha(object):
         mes = '本次祈愿得到以下角色装备：\n'
         res = self.concat_pic()
         res = self.pic2b64(res)
-        mes += str(MessageSegment.image(res))
+        mes += self.ba64_to_cq(res)
         mes += '\n'
         mes += gacha_txt
 
@@ -477,14 +481,14 @@ def gacha_info(pool = DEFAULT_POOL):
     for _5_star in ROLE_ARMS_LIST[_5_star_up_info]:
         im = Image.open(Gacha.get_png_path(_5_star))
         im = Gacha.pic2b64(im)
-        up_info += str(MessageSegment.image(im))
+        up_info += Gacha.ba64_to_cq(im)
         up_info += "\n"
         up_info += f"{_5_star} ★★★★★"
 
     for _4_star in ROLE_ARMS_LIST[_4_star_up_info]:
         im = Image.open(Gacha.get_png_path(_4_star))
         im = Gacha.pic2b64(im)
-        up_info += str(MessageSegment.image(im))
+        up_info += Gacha.ba64_to_cq(im)
         up_info += "\n"
         up_info += f"{_4_star} ★★★★"
 
