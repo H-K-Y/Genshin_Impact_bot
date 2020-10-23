@@ -4,6 +4,8 @@
 ### 这是一个[HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)原神~~抽卡~~插件
 ### 这个项目目前正在扩展，加入更多原神相关娱乐和信息查询功能，敬请期待
 
+### 如果你是在项目名称为Genshin_Impact_gacha时安装的，请删除Genshin_Impact_gacha重新Git clone
+
 # 安装方法
 
 在 HoshinoBot\hoshino\modules 目录下新建 Genshin_Impact_bot 文件夹 
