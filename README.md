@@ -12,10 +12,14 @@
 
 然后在 HoshinoBot\\hoshino\\config\\\__bot__.py 文件的 MODULES_ON 加入 Genshin_Impact_bot
 
+config.py文件有插件的常用配置，你可以根据自己的情况修改
+
 重启 HoshinoBot
 
 
 # 指令
+
+### 原神抽卡
 
 @bot相遇之缘：10连抽卡
 
