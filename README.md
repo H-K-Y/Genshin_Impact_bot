@@ -8,9 +8,7 @@
 
 # 安装方法
 
-在 HoshinoBot\hoshino\modules 目录下新建 Genshin_Impact_bot 文件夹 
-
-cd 到 Genshin_Impact_bot 目录下使用git拉取本项目
+在 HoshinoBot\hoshino\modules 目录下使用git拉取本项目
 
 然后在 HoshinoBot\\hoshino\\config\\\__bot__.py 文件的 MODULES_ON 加入 Genshin_Impact_bot
 
@@ -38,7 +36,7 @@ cd 到 Genshin_Impact_bot 目录下使用git拉取本项目
 * 加入了更多抽卡的统计结果，比如抽出最多的武器是啥，第一个4星和5星事多少抽出的
 
 ### 2020-10-21
-* 在__init__.py开头加入了抽卡限制功能，限制每个人一天最多抽多少次，感谢[corvo007](https://github.com/corvo007)提出的粪pr (粪pr是他自己说的
+* 在config.py加入了抽卡限制功能，限制每个人一天最多抽多少次，感谢[corvo007](https://github.com/corvo007)提出的粪pr (粪pr是他自己说的
 * 修复了第一次切换卡池后不能再切换卡池的问题
 * 修复了查看UP信息时报错的问题
 
