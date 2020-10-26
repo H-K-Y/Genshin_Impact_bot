@@ -11,6 +11,8 @@ suffix = "\n\n※ 发送词语时请注意空格位置是否正确，词语不�
 @sv.on_prefix("丘丘一下")
 async def qiu_qiu(bot, ev):
     txt = ev.message.extract_plain_text().strip().lower()
+    if txt == "":
+        return
     mes = qiu_qiu_word_translation(txt)
     mes += suffix
     await bot.send(ev, mes,at_sender=True)
@@ -20,6 +22,8 @@ async def qiu_qiu(bot, ev):
 @sv.on_prefix("丘丘词典")
 async def qiu_qiu(bot, ev):
     txt = ev.message.extract_plain_text().strip().lower()
+    if txt == "":
+        return
     mes = qiu_qiu_phrase_translation(txt)
     mes += suffix
     await bot.send(ev, mes,at_sender=True)

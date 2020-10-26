@@ -16,6 +16,11 @@ config.py文件有插件的常用配置，你可以根据自己的情况修改
 
 重启 HoshinoBot
 
+# 效果演示
+### 原神抽卡
+![原神抽卡](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/%E5%8E%9F%E7%A5%9E%E6%8A%BD%E5%8D%A1.png) 
+### 丘丘语翻译
+![丘丘语翻译](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/%E5%8E%9F%E7%A5%9E%E6%8A%BD%E5%8D%A1.png) 
 
 # 指令
 
@@ -31,6 +36,11 @@ config.py文件有插件的常用配置，你可以根据自己的情况修改
 
 原神卡池切换：切换其他原神卡池
 
+
+### 丘丘语翻译
+丘丘一下 丘丘语句 ：翻译丘丘语
+
+丘丘词典 丘丘语句 ：查询丘丘语句的单词含义
 
 
 # 更新记录
