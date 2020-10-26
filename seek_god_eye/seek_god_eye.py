@@ -160,42 +160,60 @@ def get_eye_gif_cq_code(eye_id):
     cq_code = f'[CQ:image,file={gif_path}]'
     return cq_code
 
+def get_eye_remarks(eye_id):
+    # 获取神瞳的备注，注意有的神瞳备注是空字符串
+    return GOD_EYE_INFO[eye_id]["备注"]
+
 def add_god_eye_info(uid,eye_id):
     eye_type = GOD_EYE_INFO[eye_id]["属性"]
-    if not (uid in uid_info):
-        uid_info.setdefault(uid,{})
-    if not (eye_type in uid_info[uid]):
-        uid_info[uid].setdefault(eye_type,[])
-
     uid_info[uid][eye_type].append(eye_id)
+    save_uid_info()
+
+def init_uid_info(uid):
+    # 初始化用户的信息
+    if not (uid in uid_info):
+        uid_info.setdefault(uid, {})
+    for eye_type in JSON_LIST:
+        if not (eye_type in uid_info[uid]):
+            uid_info[uid].setdefault(eye_type, [])
+
+def get_random_god_eye_id(uid,eye_type):
+    # 获取一个随机没找到过的神瞳ID，返回随机到的神瞳ID，如果返回空字符串表示这种神瞳已经全部找到了
+    if len(uid_info[uid][eye_type]) == GOD_EYE_TOTAL[eye_type]:
+        return ""
+    # 求差集找出没找到过的神瞳列表
+    eyes_never_found = set(GOD_EYE_CLASS_LIST[eye_type]).difference(set(uid_info[uid][eye_type].keys()))
+    r = random.choice(eyes_never_found)
+    return str(r)
 
 def delete_god_eye_info(uid,eye_id):
-    mes = "你还没有找到这个神瞳！"
     eye_type = GOD_EYE_INFO[eye_id]["属性"]
-    if not (uid in uid_info):
-        return mes
-    if not (eye_type in uid_info[uid]):
-        return mes
     if not (eye_id in uid_info[uid][eye_type]):
-        return mes
+        return "你还没有找到这个神瞳！"
 
     uid_info[uid][eye_type].remove(eye_id)
+    save_uid_info()
     return f"已经在你的记录列表删除编号为 {eye_id} 的神瞳"
+
+def reset_god_eye_info(uid,eye_type):
+    # 重置某一种神瞳的已找到列表
+    uid_info[uid][eye_type] = []
+    save_uid_info()
+    return "已重置已找到这种神瞳的列表"
 
 def get_god_eye_message(eye_id):
     message = f"当前神瞳编号 {eye_id} \n"
     message += God_eye_position_image(eye_id).get_cq_code()
     message += get_eye_gif_cq_code(eye_id)
+    message += get_eye_remarks(eye_id)
     message += "\n"
     message += "※ 如果你找到了神瞳或者你确定这个神瞳已经找过了，可以发送 找到神瞳了 神瞳编号\n"
     message += "※ 机器人将不再给你发送这个神瞳位置"
     message += "※ 图片及数据来源于原神官方wiki"
 
-
-
 def found_god_eye(uid,eye_id):
     add_god_eye_info(uid,eye_id)
-    return f""
-
+    save_uid_info()
+    return f"已添加编号为 {eye_id} 的神瞳找到记录！"
 
 
