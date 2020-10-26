@@ -8,16 +8,23 @@
 
 # 安装方法
 
-在 HoshinoBot\hoshino\modules 目录下新建 Genshin_Impact_bot 文件夹 
-
-cd 到 Genshin_Impact_bot 目录下使用git拉取本项目
+在 HoshinoBot\hoshino\modules 目录下使用git拉取本项目
 
 然后在 HoshinoBot\\hoshino\\config\\\__bot__.py 文件的 MODULES_ON 加入 Genshin_Impact_bot
 
+config.py文件有插件的常用配置，你可以根据自己的情况修改
+
 重启 HoshinoBot
 
+# 效果演示
+### 原神抽卡
+![原神抽卡](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/genshin_impact_gacha.png) 
+### 丘丘语翻译
+![丘丘语翻译](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/qiu_qiu_translation.png) 
 
 # 指令
+
+### 原神抽卡
 
 @bot相遇之缘：10连抽卡
 
@@ -30,15 +37,23 @@ cd 到 Genshin_Impact_bot 目录下使用git拉取本项目
 原神卡池切换：切换其他原神卡池
 
 
+### 丘丘语翻译
+丘丘一下 丘丘语句 ：翻译丘丘语
+
+丘丘词典 丘丘语句 ：查询丘丘语句的单词含义
+
 
 # 更新记录
+
+### 2020-10-26
+* 加入了丘丘语翻译功能
 
 ### 2020-10-22
 * 修复了4星概率写错了导致4星只能保底抽出的问题.............
 * 加入了更多抽卡的统计结果，比如抽出最多的武器是啥，第一个4星和5星事多少抽出的
 
 ### 2020-10-21
-* 在__init__.py开头加入了抽卡限制功能，限制每个人一天最多抽多少次，感谢[corvo007](https://github.com/corvo007)提出的粪pr (粪pr是他自己说的
+* 在config.py加入了抽卡限制功能，限制每个人一天最多抽多少次，感谢[corvo007](https://github.com/corvo007)提出的粪pr (粪pr是他自己说的
 * 修复了第一次切换卡池后不能再切换卡池的问题
 * 修复了查看UP信息时报错的问题
 

@@ -3,10 +3,9 @@ from .gacha import gacha_info , FILE_PATH , Gacha , POOL
 import os
 import json
 from hoshino.util import DailyNumberLimiter
+from ..config import Gacha10Limit,Gacha90Limit,Gacha180Limit
 
-Gacha10Limit = 100 # 10连每天可以抽的次数
-Gacha90Limit = 100 # 90连每天可以抽的次数
-Gacha180Limit = 100  # 180连每天可以抽的次数
+
 daily_limiter_10 = DailyNumberLimiter(Gacha10Limit)
 daily_limiter_90 = DailyNumberLimiter(Gacha90Limit)
 daily_limiter_180 = DailyNumberLimiter(Gacha180Limit)
