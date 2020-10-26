@@ -18,9 +18,9 @@ config.py文件有插件的常用配置，你可以根据自己的情况修改
 
 # 效果演示
 ### 原神抽卡
-![原神抽卡](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/qiu_qiu_translation.png) 
+![原神抽卡](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/genshin_impact_gacha.png) 
 ### 丘丘语翻译
-![丘丘语翻译](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/genshin_impact_gacha.png) 
+![丘丘语翻译](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/qiu_qiu_translation.png) 
 
 # 指令
 
