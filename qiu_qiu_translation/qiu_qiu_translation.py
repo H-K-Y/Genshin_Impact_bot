@@ -65,6 +65,8 @@ def qiu_qiu_phrase_translation(phrase):
     txt_list = phrase.split(" ")
     mes = "没有查到这句丘丘语,以下是单词的翻译\n"
     for word in txt_list:
+        if word == " ":
+            continue
         tra_word = compare_phrase(word)
         if tra_word == word:
             mes += f"{word} : 没有这个词的翻译\n"
