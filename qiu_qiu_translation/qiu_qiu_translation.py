@@ -50,7 +50,7 @@ def qiu_qiu_word_translation(txt:str):
             mes += " "
         else:
             mes += tra_word
-
+    mes += "\n"
     return mes
 
 
@@ -60,7 +60,7 @@ def qiu_qiu_phrase_translation(phrase):
     # 没有的话把单词拆开返回单词的意思
     tra_phrase = compare_phrase(phrase)
     if tra_phrase != phrase:
-        return f"你查询的的丘丘语意思为:\n{tra_phrase}"
+        return f"你查询的的丘丘语意思为:\n{tra_phrase}\n"
 
     txt_list = phrase.split(" ")
     mes = "没有查到这句丘丘语,以下是单词的翻译\n"
@@ -69,9 +69,9 @@ def qiu_qiu_phrase_translation(phrase):
             continue
         tra_word = compare_phrase(word)
         if tra_word == word:
-            mes += f"{word} : 没有这个词的翻译"
+            mes += f"{word} : 没有这个词的翻译\n"
         else:
-            mes += f"{word} : {tra_word}"
+            mes += f"{word} : {tra_word}\n"
 
     return mes
 
