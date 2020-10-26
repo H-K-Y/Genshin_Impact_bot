@@ -61,7 +61,7 @@ uid_info = {
 
 for json_name in JSON_LIST:
     # 导入神瞳的.json文件
-    with open(os.path.join(FILE_PATH, json_name), 'r', encoding='UTF-8') as f:
+    with open(os.path.join(FILE_PATH, f"{json_name}.json"), 'r', encoding='UTF-8') as f:
         data = json.load(f)
         GOD_EYE_TOTAL[json_name] = len(data)
         GOD_EYE_INFO.update(data)
