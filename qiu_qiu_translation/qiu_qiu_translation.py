@@ -69,9 +69,9 @@ def qiu_qiu_phrase_translation(phrase):
             continue
         tra_word = compare_phrase(word)
         if tra_word == word:
-            mes += f"{word} : 没有这个词的翻译\n"
+            mes += f"{word} : 没有这个词的翻译"
         else:
-            mes += f"{word} : {tra_word}\n"
+            mes += f"{word} : {tra_word}"
 
     return mes
 
