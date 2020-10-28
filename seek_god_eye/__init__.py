@@ -34,9 +34,11 @@ verification_code_list = {
 
 @sv.on_prefix(search_god_eye_command)
 async def search_god_eye(bot, ev):
+
     command_txt = ev['prefix']
     god_eye_id = ev.message.extract_plain_text().strip()
     userid = ev['user_id']
+    init_uid_info(userid)
 
     if not (god_eye_id in GOD_EYE_INFO):
         if god_eye_id != "":
@@ -64,6 +66,7 @@ async def search_god_eye(bot, ev):
 async def found_it(bot, ev):
     god_eye_id = ev.message.extract_plain_text().strip()
     userid = ev['user_id']
+    init_uid_info(userid)
 
     if god_eye_id == "":
         await bot.send(ev, f"你需要发送一个神瞳编号" , at_sender=True)
@@ -84,6 +87,7 @@ async def delete_god_eye_id(bot, ev):
 
     god_eye_id = ev.message.extract_plain_text().strip()
     userid = ev['user_id']
+    init_uid_info(userid)
 
     if god_eye_id == "":
         await bot.send(ev, f"你需要发送一个神瞳编号" , at_sender=True)
@@ -103,6 +107,7 @@ async def reset_god_eye_(bot, ev):
 
     verification_code = ev.message.extract_plain_text().strip()
     userid = ev['user_id']
+    init_uid_info(userid)
     command_txt = ev['prefix'].strip()
     god_eye_type = command_txt[2:-4]
 
