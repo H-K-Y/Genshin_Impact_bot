@@ -39,8 +39,9 @@ async def search_god_eye(bot, ev):
     userid = ev['user_id']
 
     if not (god_eye_id in GOD_EYE_INFO):
-        await bot.send(ev, f"找不到编号为 {god_eye_id} 的神瞳" , at_sender=True)
-        return
+        if god_eye_id != "":
+            await bot.send(ev, f"找不到编号为 {god_eye_id} 的神瞳" , at_sender=True)
+            return
 
     god_eye_type = command_txt[1:] # 把指令前边的 找 字去掉
 
