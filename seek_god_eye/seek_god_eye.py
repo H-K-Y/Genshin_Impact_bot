@@ -183,7 +183,7 @@ def get_random_god_eye_id(uid,eye_type):
         return ""
     # 求差集找出没找到过的神瞳列表
     eyes_never_found = set(GOD_EYE_CLASS_LIST[eye_type]).difference(set(uid_info[uid][eye_type]))
-    r = random.choice(eyes_never_found)
+    r = random.choice(list(eyes_never_found))
     return str(r)
 
 def delete_god_eye_info(uid,eye_id):
