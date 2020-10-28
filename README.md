@@ -1,15 +1,17 @@
 # Genshin_Impact_bot
 
 ### This is a Genshin Impact plugin for [HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)
-### 这是一个[HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)原神~~抽卡~~插件
+### 这是一个[HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)的原神相关插件
 ### 这个项目目前正在扩展，加入更多原神相关娱乐和信息查询功能，敬请期待
 
 ### 如果你是在项目名称为Genshin_Impact_gacha时安装的，请删除Genshin_Impact_gacha重新Git clone
 
 # 安装方法
 
-在 HoshinoBot\hoshino\modules 目录下使用git拉取本项目
-
+在 HoshinoBot\hoshino\modules 目录下使用以下命令拉取本项目
+```
+git clone https://github.com/H-K-Y/Genshin_Impact_bot.git
+```
 然后在 HoshinoBot\\hoshino\\config\\\__bot__.py 文件的 MODULES_ON 加入 Genshin_Impact_bot
 
 config.py文件有插件的常用配置，你可以根据自己的情况修改
