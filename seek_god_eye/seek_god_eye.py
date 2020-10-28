@@ -204,11 +204,20 @@ def reset_god_eye_info(uid,eye_type):
 def get_god_eye_message(eye_id):
     message = f"当前神瞳编号 {eye_id} \n"
     message += God_eye_position_image(eye_id).get_cq_code() # 获取神瞳位置图
-    message += get_eye_gif_cq_code(eye_id) # 获取找神瞳的动图，没有找到这就是个空字符串
-    message += get_eye_remarks(eye_id) # 获取神瞳的备注信息
     message += "\n"
-    message += "※ 如果你找到了神瞳或者你确定这个神瞳已经找过了，可以发送 找到神瞳了 神瞳编号\n"
-    message += "※ 机器人将不再给你发送这个神瞳位置"
+
+    gif_cq_code = get_eye_gif_cq_code(eye_id) # 获取找神瞳的动图，没有找到这就是个空字符串
+    if gif_cq_code:
+        message += gif_cq_code
+        message += "\n"
+
+    remarks_txt = get_eye_remarks(eye_id) # 获取神瞳的备注信息
+    if remarks_txt:
+        message += remarks_txt
+        message += "\n"
+
+    message += "\n※ 如果你找到了神瞳或者你确定这个神瞳已经找过了，可以发送 找到神瞳了 神瞳编号\n"
+    message += "※ 机器人将不再给你发送这个神瞳位置\n"
     message += "※ 图片及数据来源于原神官方wiki"
 
     return message
