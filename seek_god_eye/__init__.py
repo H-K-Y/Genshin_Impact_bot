@@ -7,6 +7,7 @@ from .seek_god_eye import (JSON_LIST,
                            init_uid_info,
                            get_random_god_eye_id,
                            get_god_eye_message,
+                           get_uid_number_found,
                            found_god_eye,
                            delete_god_eye_info,
                            reset_god_eye_info)
@@ -32,7 +33,7 @@ verification_code_list = {
 }
 
 
-@sv.on_prefix(search_god_eye_command)
+@sv.on_prefix(search_god_eye_command,only_to_me=True)
 async def search_god_eye(bot, ev):
 
     command_txt = ev['prefix']
@@ -62,7 +63,7 @@ async def search_god_eye(bot, ev):
 
 
 
-@sv.on_prefix("找到神瞳了")
+@sv.on_prefix("找到神瞳了",only_to_me=True)
 async def found_it(bot, ev):
     god_eye_id = ev.message.extract_plain_text().strip()
     userid = ev['user_id']
@@ -82,7 +83,7 @@ async def found_it(bot, ev):
 
 
 
-@sv.on_prefix("删除找到神瞳")
+@sv.on_prefix("删除找到神瞳",only_to_me=True)
 async def delete_god_eye_id(bot, ev):
 
     god_eye_id = ev.message.extract_plain_text().strip()
@@ -102,7 +103,7 @@ async def delete_god_eye_id(bot, ev):
     await bot.send(ev, mes, at_sender=True)
 
 
-@sv.on_prefix(reset_god_eye_command)
+@sv.on_prefix(reset_god_eye_command,only_to_me=True)
 async def reset_god_eye_(bot, ev):
 
     verification_code = ev.message.extract_plain_text().strip()
@@ -136,6 +137,15 @@ async def reset_god_eye_(bot, ev):
     await bot.send(ev, f"验证码错误，请检查验证码是否正确或重新生成验证码。", at_sender=True)
 
 
+
+@sv.on_prefix("找到多少神瞳了",only_to_me=True)
+async def found_god_eye_info(bot, ev):
+    userid = ev['user_id']
+    init_uid_info(userid)
+
+    mes = get_uid_number_found(userid)
+
+    await bot.send(ev, mes, at_sender=True)
 
 
 

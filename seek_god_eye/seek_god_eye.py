@@ -101,7 +101,7 @@ class God_eye_position_image(object):
         self.x,self.y = self.transform_position()
 
         # 神瞳图片在paste时的偏移量
-        self.offset = [25,60]
+        self.offset = [50,120]
 
     def transform_position(self):
         # 风神瞳.json里记录的坐标是相对坐标,需要转换一下
@@ -133,11 +133,12 @@ class God_eye_position_image(object):
 
 
 
-def get_uid_number_found(uid:str,eye_type:str):
-    number = 0
-    if uid in uid_info:
+def get_uid_number_found(uid:str):
+    mes = "你找到的神瞳信息如下：\n"
+    for eye_type in JSON_LIST:
         number = len(uid_info[uid][eye_type])
-    return f"你已经找到了 {number} 个 {eye_type} ,该神瞳一共有 {GOD_EYE_TOTAL[eye_type]} 个!"
+        mes += f"你已经找到了 {number} 个 {eye_type} ,该神瞳一共有 {GOD_EYE_TOTAL[eye_type]} 个!\n"
+    return mes
 
 
 def get_eye_gif_path(eye_id):
