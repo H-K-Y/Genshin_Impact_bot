@@ -158,8 +158,7 @@ def get_eye_gif_cq_code(eye_id):
         return ""
 
     gif_path = gif_path.replace("\\","/")
-    cq_code = f'[CQ:image,file={gif_path}]'
-    print(cq_code)
+    cq_code = f'[CQ:gift,file={gif_path}]'
     return cq_code
 
 def get_eye_remarks(eye_id):
