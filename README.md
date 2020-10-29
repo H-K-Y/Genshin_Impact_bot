@@ -23,7 +23,7 @@ config.py文件有插件的常用配置，你可以根据自己的情况修改
 
 gif图包解压后放在icon路径下，安装完的路径应该是
 ```
-HoshinoBot\hoshino\modules\Genshin_Impact_bot\seek_god_eye\icon\gif\风神瞳\56.gif
+HoshinoBot\hoshino\modules\Genshin_Impact_bot\seek_god_eye\icon\风神瞳\56.gif
 ```
 
 
