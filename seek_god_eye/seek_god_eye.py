@@ -161,10 +161,6 @@ def get_eye_gif_cq_code(eye_id):
 
     gif_path = gif_path.replace("\\","/")
     cq_code = f'[CQ:image,file=file://{gif_path}]'
-    # cq_code = MessageSegment.image(f"file://{gif_path}")
-    # cq_code = R.img()
-
-    print(cq_code)
     return cq_code
 
 def get_eye_remarks(eye_id):
