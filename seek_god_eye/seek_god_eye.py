@@ -1,4 +1,5 @@
 
+from nonebot import MessageSegment
 from PIL import Image
 from io import BytesIO
 
@@ -158,7 +159,9 @@ def get_eye_gif_cq_code(eye_id):
         return ""
 
     gif_path = gif_path.replace("\\","/")
-    cq_code = f'[CQ:gift,file={gif_path}]'
+    # cq_code = f'[CQ:gift,file={gif_path}]'
+    cq_code = MessageSegment.image(gif_path)
+    print(cq_code)
     return cq_code
 
 def get_eye_remarks(eye_id):
