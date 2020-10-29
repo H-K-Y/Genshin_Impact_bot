@@ -25,7 +25,7 @@ for eye_type in JSON_LIST:
 
 reset_god_eye_command = []
 for eye_type in JSON_LIST:
-    reset_god_eye_command.append(f"重置{eye_type}找到列表")
+    reset_god_eye_command.append(f"重置{eye_type}找到记录")
 
 verification_code_list = {
     # 重置已找到神瞳列表时需要二次确认，这个字典用来存验证码
@@ -33,7 +33,7 @@ verification_code_list = {
 }
 
 
-@sv.on_prefix(search_god_eye_command,only_to_me=True)
+@sv.on_prefix(search_god_eye_command)
 async def search_god_eye(bot, ev):
 
     command_txt = ev['prefix']
@@ -63,7 +63,7 @@ async def search_god_eye(bot, ev):
 
 
 
-@sv.on_prefix("找到神瞳了",only_to_me=True)
+@sv.on_prefix("找到神瞳了")
 async def found_it(bot, ev):
     god_eye_id = ev.message.extract_plain_text().strip()
     userid = ev['user_id']
@@ -124,14 +124,14 @@ async def reset_god_eye_(bot, ev):
             new_verification_code += str(chr(random.randint(65,90)))
 
         verification_code_list[userid] = new_verification_code
-        await bot.send(ev, f"你确定要重置已经找到的神瞳列表吗？如果确定请发送：\n{command_txt}{new_verification_code}" , at_sender=True)
+        await bot.send(ev, f"你确定要重置已经找到的神瞳记录吗？如果确定请发送：\n{command_txt}{new_verification_code}" , at_sender=True)
         return
 
 
     if verification_code_list[userid] == verification_code:
         reset_god_eye_info(userid,god_eye_type)
         verification_code_list.pop(userid)
-        await bot.send(ev, f"已重置已经找到的{god_eye_type}列表" , at_sender=True)
+        await bot.send(ev, f"已重置已经找到的{god_eye_type}记录" , at_sender=True)
         return
 
     await bot.send(ev, f"验证码错误，请检查验证码是否正确或重新生成验证码。", at_sender=True)

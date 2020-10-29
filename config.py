@@ -19,3 +19,16 @@ Gacha180Limit = 100  # 180连每天可以抽的次数
 # ALLOW_PRIVATE_CHAT = False
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -214,12 +214,14 @@ def get_god_eye_message(eye_id):
 
     remarks_txt = get_eye_remarks(eye_id) # 获取神瞳的备注信息
     if remarks_txt:
+        message += "备注："
         message += remarks_txt
         message += "\n"
 
     message += "\n※ 如果你找到了神瞳或者你确定这个神瞳已经找过了，可以发送 找到神瞳了 神瞳编号\n"
     message += "※ 机器人将不再给你发送这个神瞳位置\n"
-    message += "※ 图片及数据来源于原神官方wiki"
+    message += "※ 图片及数据来源于原神观测枢wiki\n"
+    message += "※ 神瞳位置有可能有细微误差，具体以游戏里为准"
 
     return message
 

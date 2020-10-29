@@ -18,13 +18,27 @@ config.py文件有插件的常用配置，你可以根据自己的情况修改
 
 重启 HoshinoBot
 
+### (可选)放置找神瞳的gif动态图
+原神观测枢wiki上还有如何拿到神瞳的gif动态图，如果你想让机器人发送动态图可以在Releases下载
+
+gif图包解压后放在icon路径下，安装完的路径应该是
+```
+HoshinoBot\hoshino\modules\Genshin_Impact_bot\seek_god_eye\icon\gif\风神瞳\56.gif
+```
+
+
+
 # 效果演示
 ### 原神抽卡
 ![原神抽卡](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/genshin_impact_gacha.png) 
 ### 丘丘语翻译
 ![丘丘语翻译](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/qiu_qiu_translation.png) 
+### 找神瞳
+![找神瞳](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/search_god_eye.png) 
 
 # 指令
+
+原神帮助 ： 查看插件的帮助
 
 ### 原神抽卡
 
@@ -38,14 +52,28 @@ config.py文件有插件的常用配置，你可以根据自己的情况修改
 
 原神卡池切换：切换其他原神卡池
 
-
 ### 丘丘语翻译
 丘丘一下 丘丘语句 ：翻译丘丘语
 
 丘丘词典 丘丘语句 ：查询丘丘语句的单词含义
 
+### 找神瞳 
+找风神瞳 <神瞳编号>：让机器人发送风神瞳的位置，神瞳编号为可选参数，不写编号机器人会随机一个编号，风可以换成岩来找岩神瞳
+
+找到神瞳了 <神瞳编号>：让机器人记录这个神瞳编号，以后机器人不会给你发送这个编号
+
+@bot删除找到神瞳 <神瞳编号>：在你已经找到的神瞳记录里删除这个编号
+
+@bot重置风神瞳找到记录 ： 删除所有风神瞳的找到记录，这个指令会有二次确认，风可以换成岩来重置岩神瞳的记录
+
+@bot找到多少神瞳了 ： 查看当前你找到多少神瞳了
+
+
 
 # 更新记录
+
+### 2020-10-29
+* 加入了找神瞳的功能
 
 ### 2020-10-26
 * 加入了丘丘语翻译功能
