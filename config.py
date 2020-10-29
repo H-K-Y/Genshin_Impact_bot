@@ -16,6 +16,19 @@ Gacha180Limit = 100  # 180连每天可以抽的次数
 # 这个参数设置是否允许私聊获取神瞳信息，默认为False,表示不允许私聊，你可以改为True，来设置允许私聊
 # 注意，机器人短时间内大量私聊有可能会被腾讯风控
 # 这个效果还没实现，先不要管
-ALLOW_PRIVATE_CHAT = False
+# ALLOW_PRIVATE_CHAT = False
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

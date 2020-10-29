@@ -1,11 +1,33 @@
-# import sys
-# import os
-# sys.path.append(os.path.dirname(__file__))
-#
-# import gacha
-# 已经不需要上边的导入语句了
+from hoshino import Service
 
 
+sv = Service("原神帮助")
 
+
+help_txt = '''这是一个HoshinoBot的原神相关插件，包含原神抽卡，丘丘语翻译，找神瞳等功能
+插件仓库在 https://github.com/H-K-Y/Genshin_Impact_bot.git
+
+指令：
+
+@bot相遇之缘：10连抽卡
+@bot纠缠之缘：90连抽卡
+@bot原之井：180连抽卡
+原神卡池：查看当前UP池，这个指令也可以用来重载卡池配置文件，config.json保存的是当前卡池信息
+原神卡池切换：切换其他原神卡池
+
+丘丘一下 丘丘语句 ：翻译丘丘语,注意这个翻译只能把丘丘语翻译成中文，不能反向
+丘丘词典 丘丘语句 ：查询丘丘语句的单词含义
+ 
+找风神瞳 <神瞳编号>：让机器人发送风神瞳的位置，神瞳编号为可选参数，不写编号机器人会随机一个编号，风可以换成岩来找岩神瞳
+找到神瞳了 <神瞳编号>：让机器人记录这个神瞳编号，以后机器人不会给你发送这个编号
+@bot删除找到神瞳 <神瞳编号>：在你已经找到的神瞳记录里删除这个编号
+@bot重置风神瞳找到记录 ： 删除所有风神瞳的找到记录，这个指令会有二次确认，风可以换成岩来重置岩神瞳的记录
+@bot找到多少神瞳了 ： 查看当前你找到多少神瞳了
+'''
+
+
+@sv.on_fullmatch("原神帮助")
+async def help(bot, ev):
+    await bot.send(ev, help_txt)
 
 
