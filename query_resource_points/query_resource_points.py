@@ -87,7 +87,7 @@ def load_resource_type_id():
         for id in json_data.keys():
             data["all_resource_type"][id] = json_data[id]
             if json_data[id]["depth"] != 1:
-                data["can_query_type_list"][id][json_data[id]["name"]] = id
+                data["can_query_type_list"][json_data[id]["name"]] = id
 
 
 # 初始化
