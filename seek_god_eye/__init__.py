@@ -1,6 +1,7 @@
 from hoshino import Service
 from nonebot import on_command
 # from ..config import ALLOW_PRIVATE_CHAT
+import random
 from .seek_god_eye import (JSON_LIST,
                            GOD_EYE_INFO,
                            GOD_EYE_CLASS_LIST,
@@ -13,7 +14,7 @@ from .seek_god_eye import (JSON_LIST,
                            reset_god_eye_info)
 
 
-import random
+
 
 
 
