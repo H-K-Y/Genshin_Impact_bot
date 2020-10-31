@@ -215,7 +215,7 @@ def get_resource_list_mes():
     for id in data["all_resource_type"].keys():
         # 再找2级目录
         if data["all_resource_type"][id]["depth"] == 2:
-            temp[str(id["parent_id"])].append(id)
+            temp[str(data["all_resource_type"][id]["parent_id"])].append(id)
 
     mes = "当前资源列表如下：\n"
 
