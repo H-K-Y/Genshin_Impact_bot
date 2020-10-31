@@ -27,7 +27,7 @@ CENTER = (3505,1907)
 
 zoom = 0.5
 #
-resource_icon_offset = (-(150*0.5*zoom),-(150*zoom))
+resource_icon_offset = (-int(150*0.5*zoom),-int(150*zoom))
 
 
 data = {
@@ -114,7 +114,7 @@ class Resource_map(object):
         self.map_image = MAP_IMAGE.copy()
 
         self.resource_icon = Image.open(os.path.join(FILE_PATH,"icon",f"{self.resource_id}.png"))
-        self.resource_icon = self.resource_icon.resize((150*zoom,150*zoom))
+        self.resource_icon = self.resource_icon.resize((int(150*zoom),int(150*zoom)))
 
 
         self.resource_xy_list = self.get_resource_point_list()
