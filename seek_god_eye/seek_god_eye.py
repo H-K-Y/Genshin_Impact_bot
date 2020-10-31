@@ -221,7 +221,7 @@ def get_god_eye_message(eye_id):
         message += "\n"
 
     message += "\n※ 如果你找到了神瞳或者你确定这个神瞳已经找过了，可以发送 找到神瞳了 神瞳编号\n"
-    message += "※ 机器人将不再给你发送这个神瞳位置\n"
+    message += "※ 机器人记录你找到这个神瞳之后将不再给你发送这个神瞳位置\n"
     message += "※ 图片及数据来源于原神观测枢wiki\n"
     message += "※ 神瞳位置有可能有细微误差，具体以游戏里为准"
 
