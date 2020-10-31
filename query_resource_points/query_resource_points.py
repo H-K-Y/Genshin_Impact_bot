@@ -186,18 +186,18 @@ def get_resource_map_mes(name):
         up_all_point_list()
 
     if not (name in data["can_query_type_list"]):
-        return "没有这种资源。\n发送 原神资源列表 查看所有资源名称"
+        return f"没有 {name} 这种资源。\n发送 原神资源列表 查看所有资源名称"
 
     map = Resource_map(name)
     count = map.get_resource_count()
 
     if not count:
-        return "没有找到这个资源的位置，可能米游社wiki还没更新。"
+        return f"没有找到 {name} 资源的位置，可能米游社wiki还没更新。"
 
     mes = f"资源 {name} 的位置如下\n"
     mes += map.get_cq_cod()
 
-    mes += f"\n※ {name} 一共找到 {count} 个位置点\n※ 数据来源于米游社wiki"
+    mes += f"\n\n※ {name} 一共找到 {count} 个位置点\n※ 数据来源于米游社wiki"
 
     return mes
 
@@ -220,9 +220,9 @@ def get_resource_list_mes():
     mes = "当前资源列表如下：\n"
 
     for resource_type_id in temp.keys():
-        mes += f"{data['all_resource_type'][resource_type_id]['name']} : "
+        mes += f"{data['all_resource_type'][resource_type_id]['name']} :  "
         for resource_id in temp[resource_type_id]:
-            mes += f"{data['all_resource_type'][resource_id]['name']},"
+            mes += f"{data['all_resource_type'][resource_id]['name']}  "
         mes += "\n"
 
     return mes

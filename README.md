@@ -35,6 +35,9 @@ HoshinoBot\hoshino\modules\Genshin_Impact_bot\seek_god_eye\icon\风神瞳\56.gif
 ![丘丘语翻译](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/qiu_qiu_translation.png) 
 ### 找神瞳
 ![找神瞳](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/search_god_eye.png) 
+### 资源位置查询
+![资源位置查询](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/query_resource_points.png) 
+
 
 # 指令
 
@@ -68,9 +71,16 @@ HoshinoBot\hoshino\modules\Genshin_Impact_bot\seek_god_eye\icon\风神瞳\56.gif
 
 @bot找到多少神瞳了 ： 查看当前你找到多少神瞳了
 
+### 资源位置查询
 
+XXX哪里有：查询XXX的位置图，XXX是资源的名字
+
+原神资源列表：查询所有的资源名称
 
 # 更新记录
+
+### 2020-10-31
+* 加入了查询资源位置的功能
 
 ### 2020-10-29
 * 加入了找神瞳的功能
