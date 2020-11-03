@@ -80,6 +80,7 @@ if not os.path.exists(os.path.join(FILE_PATH,'uid_info.json')):
 # 读取uid_info.json的信息
 with open(os.path.join(FILE_PATH,'uid_info.json'),'r',encoding='UTF-8') as f:
     uid_info = json.load(f)
+    print(uid_info)
 
 
 
