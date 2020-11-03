@@ -71,6 +71,8 @@ HoshinoBot\hoshino\modules\Genshin_Impact_bot\seek_god_eye\icon\风神瞳\56.gif
 
 @bot找到多少神瞳了 ： 查看当前你找到多少神瞳了
 
+@bot没找到的风神瞳 ： 查看没有找到的风神瞳地图位置和编号
+
 ### 资源位置查询
 
 XXX哪里有：查询XXX的位置图，XXX是资源的名字

@@ -40,7 +40,7 @@ async def search_god_eye(bot, ev):
 
     command_txt = ev['prefix']
     god_eye_id = ev.message.extract_plain_text().strip()
-    userid = ev['user_id']
+    userid = str(ev['user_id'])
     init_uid_info(userid)
 
     if not (god_eye_id in GOD_EYE_INFO):
@@ -68,7 +68,7 @@ async def search_god_eye(bot, ev):
 @sv.on_prefix("找到神瞳了")
 async def found_it(bot, ev):
     god_eye_id = ev.message.extract_plain_text().strip()
-    userid = ev['user_id']
+    userid = str(ev['user_id'])
     init_uid_info(userid)
 
     if god_eye_id == "":
@@ -89,7 +89,7 @@ async def found_it(bot, ev):
 async def delete_god_eye_id(bot, ev):
 
     god_eye_id = ev.message.extract_plain_text().strip()
-    userid = ev['user_id']
+    userid = str(ev['user_id'])
     init_uid_info(userid)
 
     if god_eye_id == "":
@@ -109,7 +109,7 @@ async def delete_god_eye_id(bot, ev):
 async def reset_god_eye_(bot, ev):
 
     verification_code = ev.message.extract_plain_text().strip()
-    userid = ev['user_id']
+    userid = (ev['user_id'])
     init_uid_info(userid)
     command_txt = ev['prefix'].strip()
     god_eye_type = command_txt[2:-4]
@@ -142,7 +142,7 @@ async def reset_god_eye_(bot, ev):
 
 @sv.on_prefix("找到多少神瞳了",only_to_me=True)
 async def found_god_eye_info(bot, ev):
-    userid = ev['user_id']
+    userid = str(ev['user_id'])
     init_uid_info(userid)
 
     mes = get_uid_number_found(userid)
@@ -153,7 +153,7 @@ async def found_god_eye_info(bot, ev):
 
 @sv.on_prefix("没找到的",only_to_me=True)
 async def not_found_god_eye_info(bot, ev):
-    userid = ev['user_id']
+    userid = str(ev['user_id'])
     init_uid_info(userid)
     god_eye_type = ev.message.extract_plain_text().strip()
 
@@ -167,7 +167,7 @@ async def not_found_god_eye_info(bot, ev):
 
 @sv.on_prefix("所有的",only_to_me=True)
 async def not_found_god_eye_info(bot, ev):
-    userid = ev['user_id']
+    userid = str(ev['user_id'])
     init_uid_info(userid)
     god_eye_type = ev.message.extract_plain_text().strip()
 

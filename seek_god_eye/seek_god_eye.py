@@ -80,7 +80,6 @@ if not os.path.exists(os.path.join(FILE_PATH,'uid_info.json')):
 # 读取uid_info.json的信息
 with open(os.path.join(FILE_PATH,'uid_info.json'),'r',encoding='UTF-8') as f:
     uid_info = json.load(f)
-    print(uid_info)
 
 
 
@@ -160,8 +159,6 @@ class God_eye_map(object):
     def get_resource_point_list(self):
 
         temp_list = GOD_EYE_CLASS_LIST[self.resource_name].copy()
-        print(temp_list)
-        print(uid_info)
 
         if self.mode == "all":
             return temp_list
