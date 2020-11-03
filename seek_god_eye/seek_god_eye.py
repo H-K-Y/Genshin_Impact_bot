@@ -163,7 +163,7 @@ class God_eye_map(object):
         if self.mode == "all":
             return temp_list
 
-        for id in uid_info[self.uid][self.resource_name]:
+        for id in set(uid_info[self.uid][self.resource_name]):
             temp_list.remove(id)
 
         return temp_list
@@ -266,6 +266,7 @@ def get_eye_remarks(eye_id):
 def add_god_eye_info(uid,eye_id):
     eye_type = GOD_EYE_INFO[eye_id]["属性"]
     uid_info[uid][eye_type].append(eye_id)
+    uid_info[uid][eye_type] = list(set(uid_info[uid][eye_type]))
     save_uid_info()
 
 def init_uid_info(uid):
