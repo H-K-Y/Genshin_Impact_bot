@@ -160,7 +160,7 @@ class God_eye_map(object):
 
         temp_list = GOD_EYE_CLASS_LIST[self.resource_name].copy()
         print(temp_list)
-        print(uid_info[self.uid][self.resource_name])
+        print(uid_info)
 
         if self.mode == "all":
             return temp_list
