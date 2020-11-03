@@ -159,12 +159,14 @@ class God_eye_map(object):
     def get_resource_point_list(self):
 
         temp_list = GOD_EYE_CLASS_LIST[self.resource_name].copy()
+        print(temp_list)
+        print(uid_info[self.uid][self.resource_name])
 
         if self.mode == "all":
             return temp_list
 
         for id in uid_info[self.uid][self.resource_name]:
-            temp_list.pop(id)
+            temp_list.remove(id)
 
         return temp_list
 
@@ -181,7 +183,8 @@ class God_eye_map(object):
 
             draw = ImageDraw.Draw(self.map_image)
             setfont = ImageFont.truetype(FILE_PATH + '/Minimal.ttf', size=50)
-            draw.text((x + 50, y - 60), str(id), fill="#000000", font=setfont)
+
+            draw.text((x + 40, y - 60), str(id), fill="#000000", font=setfont)
 
             # 找出4个方向最远的坐标，用于后边裁切
             self.x_start = min(x,self.x_start)
@@ -283,7 +286,7 @@ def get_random_god_eye_id(uid,eye_type):
     temp_list = GOD_EYE_CLASS_LIST[eye_type].copy()
 
     for id in uid_info[uid][eye_type]:
-        temp_list.pop(id)
+        temp_list.remove(id)
 
     # eyes_never_found = set(GOD_EYE_CLASS_LIST[eye_type]).difference(set(uid_info[uid][eye_type]))
     # r = random.choice(list(eyes_never_found))
