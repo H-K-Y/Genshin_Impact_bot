@@ -63,7 +63,7 @@ for json_name in JSON_LIST:
         data = json.load(f)
         GOD_EYE_TOTAL[json_name] = len(data)
         GOD_EYE_INFO.update(data)
-        GOD_EYE_CLASS_LIST.setdefault(json_name,data.keys())
+        GOD_EYE_CLASS_LIST.setdefault(json_name,list(data.keys()))
 
 
 
@@ -158,6 +158,7 @@ class God_eye_map(object):
 
     def get_resource_point_list(self):
 
+        print(GOD_EYE_CLASS_LIST[self.resource_name])
         temp_list = GOD_EYE_CLASS_LIST[self.resource_name].copy()
 
         if self.mode == "all":
