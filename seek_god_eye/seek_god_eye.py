@@ -1,7 +1,5 @@
 
-from nonebot import MessageSegment
-from hoshino import R
-from PIL import Image
+from PIL import Image,ImageDraw,ImageFont
 from io import BytesIO
 
 import os
@@ -135,6 +133,103 @@ class God_eye_position_image(object):
 
 
 
+class God_eye_map(object):
+
+    def __init__(self,_resource_name,_uid,_mode = ""):
+        self.resource_name = _resource_name
+        self.uid = _uid
+        self.mode = _mode
+
+        # 地图要要裁切的左上角和右下角坐标
+        # 这里初始化为地图的大小
+        self.x_start = MAP_SIZE[0]
+        self.y_start = MAP_SIZE[1]
+        self.x_end = 0
+        self.y_end = 0
+
+        self.map_image = MAP_IMAGE.copy()
+
+        self.resource_icon = Image.open(os.path.join(FILE_PATH,"icon",f"{self.resource_name}.png"))
+        #self.resource_icon = self.resource_icon.resize((int(150*zoom),int(150*zoom)))
+
+
+        self.resource_id_list = self.get_resource_point_list()
+
+
+    def get_resource_point_list(self):
+
+        temp_list = GOD_EYE_CLASS_LIST[self.resource_name].copy()
+
+        if self.mode == "all":
+            return temp_list
+
+        for id in uid_info[self.uid][self.resource_name]:
+            temp_list.pop(id)
+
+        return temp_list
+
+
+    def paste(self):
+        for id in self.resource_id_list:
+            # 把资源图片贴到地图上
+            x = int(GOD_EYE_INFO[id]["x_pos"] + CENTER[0])
+            y = int(GOD_EYE_INFO[id]["y_pos"] + CENTER[1])
+
+
+
+            self.map_image.paste(self.resource_icon,(x - 50 , y - 120),self.resource_icon)
+
+            draw = ImageDraw.Draw(self.map_image)
+            setfont = ImageFont.truetype('simhei.ttf', size=50)
+            draw.text((x + 50, y - 60), str(id), fill="#000000", font=setfont)
+
+            # 找出4个方向最远的坐标，用于后边裁切
+            self.x_start = min(x,self.x_start)
+            self.y_start = min(y,self.y_start)
+            self.x_end = max(x,self.x_end)
+            self.y_end = max(y,self.y_end)
+
+
+    def crop(self):
+
+        # 先把4个方向扩展150像素防止把资源图标裁掉
+        self.x_start -= 150
+        self.y_start -= 150
+        self.x_end += 150
+        self.y_end += 150
+
+        # 如果图片裁切的太小会看不出资源的位置在哪，检查图片裁切的长和宽看够不够1000，不到1000的按1000裁切
+        if (self.x_end - self.x_start)<1000:
+            center = int((self.x_end + self.x_start) / 2)
+            self.x_start = center - 500
+            self.x_end  = center +500
+        if (self.y_end - self.y_start)<1000:
+            center = int((self.y_end + self.y_start) / 2)
+            self.y_start = center - 500
+            self.y_end  = center +500
+
+        self.map_image = self.map_image.crop((self.x_start,self.y_start,self.x_end,self.y_end))
+
+    def get_cq_cod(self):
+
+        if not self.resource_id_list:
+            return "没有这个资源的信息"
+
+        self.paste()
+
+        self.crop()
+
+        bio = BytesIO()
+        self.map_image.save(bio, format='PNG')
+        base64_str = 'base64://' + base64.b64encode(bio.getvalue()).decode()
+
+        return f"[CQ:image,file={base64_str}]"
+
+    def get_resource_count(self):
+        return len(self.resource_id_list)
+
+
+
 def get_uid_number_found(uid:str):
     mes = "你找到的神瞳信息如下：\n"
     for eye_type in JSON_LIST:
@@ -184,9 +279,15 @@ def get_random_god_eye_id(uid,eye_type):
     # 获取一个随机没找到过的神瞳ID，返回随机到的神瞳ID，如果返回空字符串表示这种神瞳已经全部找到了
     if len(uid_info[uid][eye_type]) == GOD_EYE_TOTAL[eye_type]:
         return ""
-    # 求差集找出没找到过的神瞳列表
-    eyes_never_found = set(GOD_EYE_CLASS_LIST[eye_type]).difference(set(uid_info[uid][eye_type]))
-    r = random.choice(list(eyes_never_found))
+    # 找出没找到过的神瞳列表
+    temp_list = GOD_EYE_CLASS_LIST[eye_type].copy()
+
+    for id in uid_info[uid][eye_type]:
+        temp_list.pop(id)
+
+    # eyes_never_found = set(GOD_EYE_CLASS_LIST[eye_type]).difference(set(uid_info[uid][eye_type]))
+    # r = random.choice(list(eyes_never_found))
+    r = random.choice(temp_list)
     return str(r)
 
 def delete_god_eye_info(uid,eye_id):
@@ -232,4 +333,12 @@ def found_god_eye(uid,eye_id):
     save_uid_info()
     return f"已添加编号为 {eye_id} 的神瞳找到记录！"
 
+
+
+def all_god_eye_map(uid,eye_type,mode = ""):
+    mes = "神之眼信息如下：\n"
+
+    mes += God_eye_map(eye_type,uid,mode).get_cq_cod()
+
+    return mes
 

@@ -10,6 +10,7 @@ from .seek_god_eye import (JSON_LIST,
                            get_god_eye_message,
                            get_uid_number_found,
                            found_god_eye,
+                           all_god_eye_map,
                            delete_god_eye_info,
                            reset_god_eye_info)
 
@@ -150,4 +151,28 @@ async def found_god_eye_info(bot, ev):
 
 
 
+@sv.on_prefix("没找到的",only_to_me=True)
+async def not_found_god_eye_info(bot, ev):
+    userid = ev['user_id']
+    init_uid_info(userid)
+    god_eye_type = ev.message.extract_plain_text().strip()
 
+    if not (god_eye_type in JSON_LIST):
+        await bot.send(ev, f"没有这种神瞳" , at_sender=True)
+        return
+
+    await bot.send(ev, all_god_eye_map(userid,god_eye_type,""), at_sender=True)
+
+
+
+@sv.on_prefix("所有的",only_to_me=True)
+async def not_found_god_eye_info(bot, ev):
+    userid = ev['user_id']
+    init_uid_info(userid)
+    god_eye_type = ev.message.extract_plain_text().strip()
+
+    if not (god_eye_type in JSON_LIST):
+        await bot.send(ev, f"没有这种神瞳" , at_sender=True)
+        return
+
+    await bot.send(ev, all_god_eye_map(userid,god_eye_type,"all"), at_sender=True)
