@@ -158,7 +158,6 @@ class God_eye_map(object):
 
     def get_resource_point_list(self):
 
-        print(GOD_EYE_CLASS_LIST[self.resource_name])
         temp_list = GOD_EYE_CLASS_LIST[self.resource_name].copy()
 
         if self.mode == "all":
@@ -181,7 +180,7 @@ class God_eye_map(object):
             self.map_image.paste(self.resource_icon,(x - 50 , y - 120),self.resource_icon)
 
             draw = ImageDraw.Draw(self.map_image)
-            setfont = ImageFont.truetype('simhei.ttf', size=50)
+            setfont = ImageFont.truetype(FILE_PATH + '/Minimal.ttf', size=50)
             draw.text((x + 50, y - 60), str(id), fill="#000000", font=setfont)
 
             # 找出4个方向最远的坐标，用于后边裁切
