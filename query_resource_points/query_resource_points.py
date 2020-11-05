@@ -24,9 +24,10 @@ MAP_SIZE = MAP_IMAGE.size
 # resource_point里记录的坐标是相对坐标，是以蒙德城的大雕像为中心的，所以图片合成时需要转换坐标
 CENTER = (3505,1907)
 
-#
-resource_icon_offset = (-75,-150)
 
+zoom = 0.5
+#
+resource_icon_offset = (-int(150*0.5*zoom),-int(150*zoom))
 
 
 data = {
@@ -113,6 +114,8 @@ class Resource_map(object):
         self.map_image = MAP_IMAGE.copy()
 
         self.resource_icon = Image.open(os.path.join(FILE_PATH,"icon",f"{self.resource_id}.png"))
+        self.resource_icon = self.resource_icon.resize((int(150*zoom),int(150*zoom)))
+
 
         self.resource_xy_list = self.get_resource_point_list()
 
