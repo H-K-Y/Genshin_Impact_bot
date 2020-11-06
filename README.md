@@ -55,7 +55,7 @@ HoshinoBot\hoshino\modules\Genshin_Impact_bot\seek_god_eye\icon\风神瞳\56.gif
 指令|说明
 :--|:--  
 原神帮助|查看插件的帮助  
-### 原神抽卡|  
+原神抽卡|  
 @bot相遇之缘|10连抽卡  
 @bot纠缠之缘|90连抽卡  
 @bot原之井|180连抽卡  
