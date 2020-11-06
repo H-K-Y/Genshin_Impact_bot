@@ -37,7 +37,7 @@ GOD_EYE_CLASS_LIST = {
 }
 
 
-MAP_IMAGE = Image.open(os.path.join(FILE_PATH,"icon","map_icon.png"))
+MAP_IMAGE = Image.open(os.path.join(FILE_PATH,"icon","map_icon.jpg"))
 MAP_SIZE = MAP_IMAGE.size
 
 

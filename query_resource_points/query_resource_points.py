@@ -16,7 +16,7 @@ header = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, l
 
 FILE_PATH = os.path.dirname(__file__)
 
-MAP_PATH = os.path.join(os.path.dirname(FILE_PATH),"seek_god_eye","icon","map_icon.png")
+MAP_PATH = os.path.join(os.path.dirname(FILE_PATH),"seek_god_eye","icon","map_icon.jpg")
 MAP_IMAGE = Image.open(MAP_PATH)
 MAP_SIZE = MAP_IMAGE.size
 
