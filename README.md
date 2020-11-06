@@ -26,7 +26,18 @@ gif图包解压后放在icon路径下，安装完的路径应该是
 HoshinoBot\hoshino\modules\Genshin_Impact_bot\seek_god_eye\icon\风神瞳\56.gif
 ```
 
+### 如何修改卡池
+卡池的信息是保存在gacha\config.json里的，修改时注意json文件的格式
 
+4星和5星的武器角色up分别对照角色up池和武器up池来填
+
+常驻角色和武器在常驻池里找，去掉当前up池的的up填写剩下的
+
+如果出了新的角色或武器你还要加入新角色武器的图标，角色图标放在 gacha\icon\角色 文件夹，武器图标放在 gacha\icon\武器 文件夹
+
+图标为png格式，大小最好为125*130，小了可以，大了会被裁切
+
+改完后在群里发送 原神卡池 可以重载config.json文件
 
 # 效果演示
 ### 原神抽卡
