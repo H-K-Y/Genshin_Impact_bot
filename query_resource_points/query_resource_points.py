@@ -16,7 +16,7 @@ header = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, l
 
 FILE_PATH = os.path.dirname(__file__)
 
-MAP_PATH = os.path.join(os.path.dirname(FILE_PATH),"seek_god_eye","icon","map_icon.png")
+MAP_PATH = os.path.join(os.path.dirname(FILE_PATH),"seek_god_eye","icon","map_icon.jpg")
 MAP_IMAGE = Image.open(MAP_PATH)
 MAP_SIZE = MAP_IMAGE.size
 
@@ -173,7 +173,7 @@ class Resource_map(object):
         self.crop()
 
         bio = BytesIO()
-        self.map_image.save(bio, format='PNG')
+        self.map_image.save(bio, format='JPEG')
         base64_str = 'base64://' + base64.b64encode(bio.getvalue()).decode()
 
         return f"[CQ:image,file={base64_str}]"

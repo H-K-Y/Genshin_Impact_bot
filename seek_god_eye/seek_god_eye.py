@@ -37,7 +37,7 @@ GOD_EYE_CLASS_LIST = {
 }
 
 
-MAP_IMAGE = Image.open(os.path.join(FILE_PATH,"icon","map_icon.png"))
+MAP_IMAGE = Image.open(os.path.join(FILE_PATH,"icon","map_icon.jpg"))
 MAP_SIZE = MAP_IMAGE.size
 
 
@@ -126,7 +126,7 @@ class God_eye_position_image(object):
     def get_cq_code(self):
         self.paste()
         bio = BytesIO()
-        self.map_image.save(bio, format='PNG')
+        self.map_image.save(bio, format='JPEG')
         base64_str = 'base64://' + base64.b64encode(bio.getvalue()).decode()
 
         return f"[CQ:image,file={base64_str}]"
@@ -221,7 +221,7 @@ class God_eye_map(object):
         self.crop()
 
         bio = BytesIO()
-        self.map_image.save(bio, format='PNG')
+        self.map_image.save(bio, format='JPEG')
         base64_str = 'base64://' + base64.b64encode(bio.getvalue()).decode()
 
         return f"[CQ:image,file={base64_str}]"
