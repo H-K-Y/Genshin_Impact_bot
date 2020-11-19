@@ -12,8 +12,11 @@ ARTIFACT_LIST = {}
 ARTIFACT_PROPERTY = []
 PROPERTY_LIST = {}
 
-artifact_obtain = []
+
+
+artifact_obtain = {}
 flower,feather,hourglass,cup,crown = (0,1,2,3,4)
+
 
 def init_json():
     # 读取join文件
@@ -32,38 +35,31 @@ def init_json():
     with open(os.path.join(FILE_PATH,"property_list.json"),"r",encoding="UTF-8") as f:
         PROPERTY_LIST = json.load(f)
 
-    for set_name in ARTIFACT_LIST.keys():
-        artifact_obtain.append(ARTIFACT_LIST[set_name]["obtain"])
-    artifact_obtain = list(set(artifact_obtain))
+    for suit_name in ARTIFACT_LIST.keys():
+        obtain = ARTIFACT_LIST[suit_name]["obtain"]
+        if obtain in artifact_obtain:
+            artifact_obtain[obtain].append(suit_name)
+        else:
+            artifact_obtain[obtain] = []
+            artifact_obtain[obtain].append(suit_name)
 
 init_json()
 
 
 
 class Artifact(object):
-    # name和property只需要提供一个参数即可
-    # name表示圣遗物名称，如果使用name初始化将随机圣遗物的属性
-    # property表示圣遗物属性，数据格式如下
-    # {
-    #     "name":"少女片刻的闲暇",
-    #     "level":14,
-    #     "main":"生命百分比加成",
-    #     "initial_secondary":{"生命数值加成":209,"防御数值加成":16,"防御百分比加成":0.051}, # 初始的副属性
-    #     "strengthen_secondary":[
-    #                            {"type":"add","property":"攻击数值加成","value":14},
-    #                            {"type":"up","property":"防御数值加成","value":16},
-    #                            {"type":"up","property":"防御数值加成","value":16}
-    #                            ] # 4 8 12级时增加或强化的副属性
-    # }
-    def __init__(self,name= None , property = None):
-        if name != None:
-            self._name_init(name)
-        elif property != None:
-            self._property_init(property)
+    def __init__(self, property = None):
+        # property是一个圣遗物名称字符串或者圣遗物属性字典
+        # 使用名称字符串初始化会随机圣遗物的属性
+        if property.__class__.__name__ == "str":
+            self._name_init(property)
+        elif property.__class__.__name__ == "dict":
+            self._dict_init(property)
         else:
-            raise ValueError("你需要提供 name 或 property 中至少一个参数")
+            raise ValueError("你需要提供圣遗物名称字符串或一个字典对象")
 
     def _name_init(self,_name):
+        # 名称初始化圣遗物
         self.name = _name
         self.suit_name = self.get_suit_name(self.name)
         self.level = 0
@@ -73,14 +69,13 @@ class Artifact(object):
         self.initialize_secondary()
         self.strengthen_secondary_list = []
 
-    def _property_init(self,property):
-        self.name = property["name"]
-        self.suit_name = self.get_suit_name(self.name)
-        self.level = property["level"]
-        self.artifact_type = self.get_artifact_type(self.suit_name, self.name)
-        self.main = property["main"]
-        self.initial_secondary = property["initial_secondary"]
-        self.strengthen_secondary_list = property["strengthen_secondary"]
+    def _dict_init(self,property):
+        # 字典初始化圣遗物
+        for key in property.keys():
+            self.__dict__[key] = property[key]
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
 
     @staticmethod
     def get_suit_name(_name):
@@ -108,16 +103,16 @@ class Artifact(object):
         else:
             return str(int(number))
 
-
     def get_random_main(self):
         # 获取一个随机的主属性
         return random.choice(ARTIFACT_PROPERTY[self.artifact_type]["property_list"])
 
     def get_random_secondary(self):
         # 获取一个不重复的随机副属性
+
         temp_set = set(ARTIFACT_PROPERTY[5]["property_list"])
-        temp_set.difference(set([self.main]))
-        temp_set.difference(set(self.initial_secondary.keys()))
+        temp_set.difference({self.main})
+        temp_set.difference(set(self.get_all_secondary()))
         return random.choice(list(temp_set))
 
     def get_secondary_value(self,secondary_name):
@@ -191,14 +186,7 @@ class Artifact(object):
 
     def get_artifact_dict(self):
         # 把圣遗物信息打包成dict返回
-        temp_dict = {
-            "name":self.name,
-            "level":self.level,
-            "main":self.main,
-            "initial_secondary":self.initial_secondary,
-            "strengthen_secondary":self.strengthen_secondary_list
-        }
-        return temp_dict
+        return self.__dict__
 
     def get_artifact_text(self):
         # 圣遗物详情
