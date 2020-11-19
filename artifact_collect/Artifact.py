@@ -66,8 +66,8 @@ class Artifact(object):
         self.artifact_type = self.get_artifact_type(self.suit_name,self.name)
         self.main = self.get_random_main()
         self.initial_secondary = {}
-        self.initialize_secondary()
         self.strengthen_secondary_list = []
+        self.initialize_secondary()
 
     def _dict_init(self,property):
         # 字典初始化圣遗物
@@ -134,10 +134,7 @@ class Artifact(object):
 
     def get_all_secondary(self):
         # 获取当前所有的副属性名称
-        strengthen_secondary_list = []
-        for i in self.strengthen_secondary_list:
-            strengthen_secondary_list.append(i["property"])
-        # strengthen_secondary_list = [i["property"] for i in self.strengthen_secondary_list]
+        strengthen_secondary_list = [i["property"] for i in self.strengthen_secondary_list]
         temp_list = list(self.initial_secondary.keys())
         temp_list.extend(strengthen_secondary_list)
         temp_list = list(set(temp_list))
