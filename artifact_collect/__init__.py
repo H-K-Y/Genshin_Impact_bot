@@ -49,8 +49,8 @@ async def _get_artifact(bot, ev):
 
     for _ in range(r):
         # 随机一个副本掉落的套装名字,然后随机部件的名字
-        r_suit_name = random.random(artifact_obtain[obtain])
-        r_artifact_name = random.random(ARTIFACT_LIST[r_suit_name]["element"])
+        r_suit_name = random.choice(artifact_obtain[obtain])
+        r_artifact_name = random.choice(ARTIFACT_LIST[r_suit_name]["element"])
 
         artifact = Artifact(r_artifact_name)
 
