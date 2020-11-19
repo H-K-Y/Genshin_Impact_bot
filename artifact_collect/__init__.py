@@ -105,9 +105,15 @@ async def _get_warehouse(bot, ev):
 
 
 
+@sv.on_prefix("转换狗粮")
+async def _transform_strengthen(bot, ev):
+    number = ev.message.extract_plain_text().strip()
+    uid = str(ev['user_id'])
+    init_user_info(uid)
 
-
-
+    del user_info[uid]["warehouse"][int(number)]
+    save_user_info()
+    await bot.send(ev, "已删除", at_sender=True)
 
 
 
@@ -126,7 +132,7 @@ async def kakin(bot, ev):
             uid = str(m.data['qq'])
             init_user_info(uid)
             user_info[uid]["stamina"] += 60
-
+    save_user_info()
     await bot.send(ev,f"充值完毕！谢谢惠顾～")
 
 
