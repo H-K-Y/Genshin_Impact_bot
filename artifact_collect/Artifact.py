@@ -208,11 +208,9 @@ class Artifact(object):
             secondary_property_value[i["property"]] += i["value"]
 
         mes = ""
-        mes += f"{self.name}\n"
-        mes += f"{ARTIFACT_PROPERTY[self.artifact_type]['name']}\n"
+        mes += f"{self.name} {ARTIFACT_PROPERTY[self.artifact_type]['name']}\n"
+        mes += f"★★★★★ 强化等级 +{self.level}\n"
         mes += f"{PROPERTY_LIST['main'][self.main]['txt']}   {self.number_to_str(main_property_value)}\n"
-        mes += f"★★★★★\n"
-        mes += f"+{self.level}\n"
         for secondary in secondary_property_value.keys():
             mes += f"• {PROPERTY_LIST['secondary'][secondary]['txt']} +{self.number_to_str(secondary_property_value[secondary])}\n"
 
