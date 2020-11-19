@@ -43,7 +43,7 @@ async def _get_artifact(bot, ev):
     r = random.randint(1,3)
     # 随机获得的狗粮点数
     strengthen_points = random.randint(70000,100000)
-    user_info["strengthen_points"] += strengthen_points
+    user_info[uid]["strengthen_points"] += strengthen_points
 
     mes = f"本次刷取副本为 {obtain} \n掉落圣遗物 {r} 个\n获得狗粮点数 {strengthen_points}\n\n"
 
