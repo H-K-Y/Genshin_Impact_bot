@@ -99,7 +99,8 @@ class Artifact(object):
         # 把数字转换成str并添加%符号
         # 小于1的是百分比字符串，属性为数值或元素精通用整数，其他用浮点数
         if number < 1 :
-            return ('%.1f'% number*100) + "%"
+            number = number*100
+            return ('%.1f'% number) + "%"
         else:
             return str(int(number))
 
