@@ -54,13 +54,13 @@ async def _get_artifact(bot, ev):
 
         artifact = Artifact(r_artifact_name)
 
-        number = int(len(user_info["warehouse"])) + 1
+        number = int(len(user_info[uid]["warehouse"])) + 1
 
         mes += f"当前仓库编号 {number}\n"
         mes += artifact.get_artifact_text()
         mes += "\n"
 
-        user_info["warehouse"].append(artifact.get_artifact_dict())
+        user_info[uid]["warehouse"].append(artifact.get_artifact_dict())
 
     save_user_info()
     await bot.send(ev, mes, at_sender=True)
