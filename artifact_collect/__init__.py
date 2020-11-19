@@ -111,7 +111,7 @@ async def _transform_strengthen(bot, ev):
     uid = str(ev['user_id'])
     init_user_info(uid)
 
-    del user_info[uid]["warehouse"][int(number)]
+    del user_info[uid]["warehouse"][int(number)-1]
     save_user_info()
     await bot.send(ev, "已删除", at_sender=True)
 
