@@ -207,7 +207,9 @@ async def _transform_strengthen(bot, ev):
 async def get_user_stamina(bot, ev):
     uid = str(ev['user_id'])
     init_user_info(uid)
-    await bot.send(ev, f"你当前的体力值为 {int(user_info[uid]['stamina'])} ,体力值每 {STAMINA_RESTORE} 分钟恢复1点，自动恢复上限为 {MAX_STAMINA}", at_sender=True)
+    mes = f"你当前的体力值为 {int(user_info[uid]['stamina'])} ,体力值每 {STAMINA_RESTORE} 分钟恢复1点，自动恢复上限为 {MAX_STAMINA}\n"
+    mes += f"你当前的狗粮点数为 {int(user_info[uid]['strengthen_points'])}"
+    await bot.send(ev,mes , at_sender=True)
 
 
 
