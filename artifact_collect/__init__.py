@@ -83,7 +83,7 @@ async def _get_warehouse(bot, ev):
 
     page = int(page)
 
-    mes = "仓库如下"
+    mes = "仓库如下\n"
     txt = ""
 
     for i in range(5):
@@ -174,8 +174,13 @@ async def strengthen(bot, ev):
         return
 
     artifact = Artifact(artifact)
+
+    if artifact.level == 0:
+        await bot.send(ev, "没有强化的圣遗物不能洗点", at_sender=True)
+        return
+
     strengthen_points = calculate_strengthen_points(1, artifact.level)
-    strengthen_points = strengthen_points * 0.5
+    strengthen_points = int(strengthen_points * 0.5)
 
     artifact.re_init()
     user_info[uid]["warehouse"][int(number) - 1] = artifact.get_artifact_dict()
@@ -190,7 +195,7 @@ async def strengthen(bot, ev):
 
 
 
-@sv.on_prefix("转换狗粮")
+@sv.on_prefix(["转换狗粮","转化狗粮"])
 async def _transform_strengthen(bot, ev):
     number = ev.message.extract_plain_text().strip()
     uid = str(ev['user_id'])
@@ -204,7 +209,7 @@ async def _transform_strengthen(bot, ev):
     artifact = Artifact(artifact)
 
     strengthen_points = calculate_strengthen_points(0,artifact.level)
-    strengthen_points = strengthen_points * 0.8
+    strengthen_points = int(strengthen_points * 0.8)
 
     del user_info[uid]["warehouse"][int(number)-1]
 

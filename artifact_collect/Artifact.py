@@ -245,7 +245,7 @@ class Artifact(object):
                 value = self.strengthen_secondary_list[int(start//4)]["value"]
                 value = self.number_to_str(value)
 
-                mes += f"第 {start} 级{strengthen_type}了{secondary}，强化值为 {value}\n"
+                mes += f"第 {start} 级{strengthen_type}了 {secondary} ，强化值为 {value}\n"
 
             start += 1
         return mes
