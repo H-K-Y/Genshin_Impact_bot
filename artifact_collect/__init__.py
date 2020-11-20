@@ -141,7 +141,7 @@ async def strengthen(bot, ev):
         artifact.strengthen()
 
     mes = "强化成功，当前圣遗物属性为：\n"
-    mes += artifact.get_artifact_detail(start_level)
+    mes += artifact.get_artifact_detail()
 
     user_info[uid]["warehouse"][int(number) - 1] = artifact.get_artifact_dict()
     save_user_info()
