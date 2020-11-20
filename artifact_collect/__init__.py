@@ -40,6 +40,7 @@ async def _get_artifact(bot, ev):
         await bot.send(ev, "体力值不足，请等待体力恢复.\n发送 查看体力值 可查看当前体力", at_sender=True)
         return
 
+    user_info[uid]["stamina"] -= 20
     # 随机掉了几个圣遗物
     r = random.randint(1,3)
     # 随机获得的狗粮点数
