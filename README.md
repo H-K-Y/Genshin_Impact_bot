@@ -48,7 +48,8 @@ HoshinoBot\hoshino\modules\Genshin_Impact_bot\seek_god_eye\icon\风神瞳\56.gif
 ![找神瞳](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/search_god_eye.png) 
 ### 资源位置查询
 ![资源位置查询](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/query_resource_points.png) 
-
+### 圣遗物收集
+![圣遗物收集](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/artifact_collect.png) 
 
 # 指令
 
@@ -74,8 +75,22 @@ HoshinoBot\hoshino\modules\Genshin_Impact_bot\seek_god_eye\icon\风神瞳\56.gif
 资源位置查询指令|  
 XXX哪里有|查询XXX的位置图，XXX是资源的名字  
 原神资源列表|查询所有的资源名称  
+圣遗物收集|  
+原神副本|查询当前有哪些副本，掉落哪个套装  
+刷副本 副本名称|刷一次副本，可获得狗粮点数和圣遗物  
+查看圣遗物仓库 1|查询仓库第一页有哪些圣遗物  
+强化圣遗物10级 5|把仓库编号为5的圣遗物强化10级  
+圣遗物洗点 5|把仓库编号为5的圣遗物洗点，洗点后返还50%的强化点数，强化等级降为0，全属性重新随机  
+圣遗物详情 5|查看圣遗物详情  
+转换狗粮 5|把仓库编号为5的圣遗物销毁转化为狗粮，会返还80%狗粮点数  
+查看体力值|查看自己体力值  
+氪体力 @群友|给群友氪体力，这个命令只有机器人管理员才能执行  
+
 
 # 更新记录
+
+### 2020-11-20
+* 加入圣遗物收集功能
 
 ### 2020-11-3
 * 修复了找神瞳可以添加相同名称的编号导致报错的问题
