@@ -242,7 +242,7 @@ class Artifact(object):
 
                 secondary = self.strengthen_secondary_list[start//4]["property"]
                 secondary = PROPERTY_LIST["secondary"][secondary]["txt"]
-                value = self.number_to_str(self.strengthen_secondary_list[start//4]["value"])
+                value = self.strengthen_secondary_list[start//4]["value"]
                 value = self.number_to_str(value)
 
                 mes += f"第 {start} 级{strengthen_type}了{secondary}，强化值为 {value}\n"

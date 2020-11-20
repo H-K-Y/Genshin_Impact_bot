@@ -19,7 +19,7 @@ async def get_obtain(bot, ev):
     mes = "当前副本如下\n"
     for name in artifact_obtain.keys():
         suits = " ".join(artifact_obtain[name])
-        mes += f"{name}  掉落{suits}\n"
+        mes += f"{name}  掉落  {suits}\n"
     await bot.send(ev, mes, at_sender=True)
 
 @sv.on_prefix("刷副本")
@@ -75,7 +75,7 @@ async def _get_warehouse(bot, ev):
     uid = str(ev['user_id'])
     init_user_info(uid)
     if page == "":
-        page = 1
+        page = "1"
 
     if not page.isdigit():
         await bot.send(ev, "你需要输入一个数字", at_sender=True)
@@ -199,8 +199,16 @@ async def _transform_strengthen(bot, ev):
 
     save_user_info()
 
-    mes = f"转化完成，圣遗物已转化为 {strengthen_points} 狗粮点数\n你当前狗粮点数为 {user_info[uid]['strengthen_points']} "
+    mes = f"转化完成，圣遗物已转化为 {int(strengthen_points)} 狗粮点数\n你当前狗粮点数为 {int(user_info[uid]['strengthen_points'])} "
     await bot.send(ev, mes, at_sender=True)
+
+
+@sv.on_fullmatch("查看体力值")
+async def get_user_stamina(bot, ev):
+    uid = str(ev['user_id'])
+    init_user_info(uid)
+    await bot.send(ev, f"你当前的体力值为 {int(user_info[uid]['stamina'])},体力值每 {STAMINA_RESTORE} 分钟恢复1点", at_sender=True)
+
 
 
 
