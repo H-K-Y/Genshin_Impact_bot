@@ -146,7 +146,20 @@ async def strengthen(bot, ev):
     save_user_info()
     await bot.send(ev, mes, at_sender=True)
 
+@sv.on_prefix("圣遗物详情")
+async def strengthen(bot, ev):
+    number = ev.message.extract_plain_text().strip()
+    uid = str(ev['user_id'])
+    init_user_info(uid)
 
+    try:
+        artifact = user_info[uid]["warehouse"][int(number) - 1]
+    except IndexError:
+        await bot.send(ev, "编号错误", at_sender=True)
+        return
+
+    artifact = Artifact(artifact)
+    await bot.send(ev, artifact.get_artifact_detail(), at_sender=True)
 
 @sv.on_prefix("圣遗物洗点")
 async def strengthen(bot, ev):
@@ -161,7 +174,7 @@ async def strengthen(bot, ev):
         return
 
     artifact = Artifact(artifact)
-    strengthen_points = calculate_strengthen_points(0, artifact.level)
+    strengthen_points = calculate_strengthen_points(1, artifact.level)
     strengthen_points = strengthen_points * 0.5
 
     artifact.re_init()

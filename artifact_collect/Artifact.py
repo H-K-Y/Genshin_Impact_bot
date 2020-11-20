@@ -232,17 +232,17 @@ class Artifact(object):
             start = 1
 
         while start <= self.level:
-            if start % 4 == 0:
+            if (start % 4) == 0:
 
-                strengthen_type = self.strengthen_secondary_list[start//4]["type"]
+                strengthen_type = self.strengthen_secondary_list[int(start//4)]["type"]
                 if strengthen_type == "up":
                     strengthen_type = "强化"
                 else:
                     strengthen_type = "新增"
 
-                secondary = self.strengthen_secondary_list[start//4]["property"]
+                secondary = self.strengthen_secondary_list[int(start//4)]["property"]
                 secondary = PROPERTY_LIST["secondary"][secondary]["txt"]
-                value = self.strengthen_secondary_list[start//4]["value"]
+                value = self.strengthen_secondary_list[int(start//4)]["value"]
                 value = self.number_to_str(value)
 
                 mes += f"第 {start} 级{strengthen_type}了{secondary}，强化值为 {value}\n"
