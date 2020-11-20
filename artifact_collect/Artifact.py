@@ -233,7 +233,6 @@ class Artifact(object):
 
         while start <= self.level:
             if (start % 4) == 0:
-                print(start)
                 strengthen_type = self.strengthen_secondary_list[int(start//4)-1]["type"]
                 if strengthen_type == "up":
                     strengthen_type = "强化"
