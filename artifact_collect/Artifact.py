@@ -191,7 +191,7 @@ class Artifact(object):
         if self.level >= 20:
             return
 
-        self.level += 1
+        self.level = self.level + 1
         secondary = ""
         secondary_value = 0
         strengthen_type = ""
