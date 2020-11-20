@@ -48,7 +48,8 @@ HoshinoBot\hoshino\modules\Genshin_Impact_bot\seek_god_eye\icon\风神瞳\56.gif
 ![找神瞳](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/search_god_eye.png) 
 ### 资源位置查询
 ![资源位置查询](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/query_resource_points.png) 
-
+### 圣遗物收集
+![圣遗物收集](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/artifact_collect.png) 
 
 # 指令
 
@@ -86,6 +87,9 @@ XXX哪里有|查询XXX的位置图，XXX是资源的名字
 
 
 # 更新记录
+
+### 2020-11-20
+* 加入圣遗物收集功能
 
 ### 2020-11-3
 * 修复了找神瞳可以添加相同名称的编号导致报错的问题
