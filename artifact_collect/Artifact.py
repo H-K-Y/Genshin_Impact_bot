@@ -1,9 +1,15 @@
 
-from ..config import SECONDARY_LEVEL_PROBABILITY
+
+
+from PIL import Image,ImageFont,ImageDraw
+from io import BytesIO
+from ..config import SECONDARY_LEVEL_PROBABILITY,CONSUME_STRENGTHEN_POINTS
 
 import os
 import json
 import random
+import base64
+
 
 
 FILE_PATH = os.path.dirname(__file__)
@@ -16,6 +22,10 @@ PROPERTY_LIST = {}
 
 artifact_obtain = {}
 flower,feather,hourglass,cup,crown = (0,1,2,3,4)
+
+back_image = Image.open(os.path.join(FILE_PATH,"icon", 'background.png'))
+ttf_path = os.path.join(FILE_PATH,"zh-cn.ttf")
+
 
 
 def init_json():
@@ -112,11 +122,11 @@ class Artifact(object):
         # 获取一个不重复的随机副属性
 
         temp_set = set(ARTIFACT_PROPERTY[5]["property_list"])
-        temp_set.difference({self.main})
-        temp_set.difference(set(self.get_all_secondary()))
+        temp_set = temp_set.difference({self.main})
+        temp_set = temp_set.difference(set(self.get_all_secondary_name()))
         return random.choice(list(temp_set))
 
-    def get_secondary_value(self,secondary_name):
+    def get_random_secondary_value(self,secondary_name):
         # 获取一个副属性的值
         # 每个副属性都有4个等级的值，表示出现或升级时的提升量，详情看property_list.json
         # 副属性4个等级的概率在config.py的SECONDARY_LEVEL_PROBABILITY里
@@ -133,13 +143,34 @@ class Artifact(object):
 
         return PROPERTY_LIST["secondary"][secondary_name]["level"][3]
 
-    def get_all_secondary(self):
+    def get_all_secondary_name(self):
         # 获取当前所有的副属性名称
         strengthen_secondary_list = [i["property"] for i in self.strengthen_secondary_list]
         temp_list = list(self.initial_secondary.keys())
         temp_list.extend(strengthen_secondary_list)
         temp_list = list(set(temp_list))
         return temp_list
+
+    def get_main_value(self):
+        # 获取主属性在当前等级的值是多少
+        # 返回一个数字
+        if self.level == 20:
+            # 强满后主属性直接获取最大值，否则用初始值加上强化等级乘以成长值
+            return PROPERTY_LIST["main"][self.main]["max"]
+        else:
+            return PROPERTY_LIST["main"][self.main]["initial_value"] + self.level * PROPERTY_LIST["main"][self.main]["growth_value"]
+
+    def get_secondary_property_value(self):
+        # 累加初始和强化副属性的值
+        # 返回一个字典，包含全部副属性和当前值是多少
+        secondary_property_value = {}
+        for secondary in self.get_all_secondary_name():
+            secondary_property_value[secondary] = 0
+        for key in self.initial_secondary.keys():
+            secondary_property_value[key] += self.initial_secondary[key]
+        for i in self.strengthen_secondary_list:
+            secondary_property_value[i["property"]] += i["value"]
+        return secondary_property_value
 
     def initialize_secondary(self):
         # 初始化副属性
@@ -150,12 +181,15 @@ class Artifact(object):
 
         for _ in range(number):
             secondary = self.get_random_secondary()
-            secondary_value = self.get_secondary_value(secondary)
+            secondary_value = self.get_random_secondary_value(secondary)
             self.initial_secondary[secondary] = secondary_value
 
     def strengthen(self):
         # 对圣遗物进行1次强化
         # 这个方法会返回一个字典，记录强化过程信息
+
+        if self.level >= 20:
+            return
 
         self.level += 1
         secondary = ""
@@ -166,16 +200,16 @@ class Artifact(object):
             if len(self.initial_secondary) + len(self.strengthen_secondary_list) < 4:
 
                 secondary = self.get_random_secondary()
-                secondary_value = self.get_secondary_value(secondary)
+                secondary_value = self.get_random_secondary_value(secondary)
                 strengthen_type = "add"
                 self.strengthen_secondary_list.append({"type": strengthen_type, "property": secondary, "value": secondary_value})
 
             else:
                 # 获取所有副属性
-                temp_list = self.get_all_secondary()
+                temp_list = self.get_all_secondary_name()
 
                 secondary = random.choice(temp_list)
-                secondary_value = self.get_secondary_value(secondary)
+                secondary_value = self.get_random_secondary_value(secondary)
                 strengthen_type = "up"
                 self.strengthen_secondary_list.append({"type": strengthen_type, "property": secondary, "value": secondary_value})
 
@@ -189,35 +223,88 @@ class Artifact(object):
         # 把圣遗物信息打包成dict返回
         return self.__dict__
 
-    def get_artifact_text(self):
+    def get_artifact_detail(self,start = 1):
         # 圣遗物详情
+        mes = self.get_artifact_CQ_code()
+        mes += "\n\n"
 
-        if self.level == 20:
-            # 强满后主属性直接获取最大值，否则用初始值加上强化等级乘以成长值
-            main_property_value = PROPERTY_LIST["main"][self.main]["max"]
-        else:
-            main_property_value = PROPERTY_LIST["main"][self.main]["initial_value"] + self.level * PROPERTY_LIST["main"][self.main]["growth_value"]
+        if start < 1:
+            start = 1
 
-        # 累加初始和强化副属性的值
-        secondary_property_value = {}
-        for secondary in self.get_all_secondary():
-            secondary_property_value[secondary] = 0
-        for key in self.initial_secondary.keys():
-            secondary_property_value[key] += self.initial_secondary[key]
-        for i in self.strengthen_secondary_list:
-            secondary_property_value[i["property"]] += i["value"]
+        while start <= self.level:
+            if start % 4 == 0:
 
-        mes = ""
-        mes += f"{self.name} {ARTIFACT_PROPERTY[self.artifact_type]['name']}\n"
-        mes += f"★★★★★ 强化等级 +{self.level}\n"
-        mes += f"{PROPERTY_LIST['main'][self.main]['txt']}   {self.number_to_str(main_property_value)}\n"
-        for secondary in secondary_property_value.keys():
-            mes += f"• {PROPERTY_LIST['secondary'][secondary]['txt']} +{self.number_to_str(secondary_property_value[secondary])}\n"
+                strengthen_type = self.strengthen_secondary_list[start//4]["type"]
+                if strengthen_type == "up":
+                    strengthen_type = "强化"
+                else:
+                    strengthen_type = "新增"
 
+                secondary = self.strengthen_secondary_list[start//4]["property"]
+                secondary = PROPERTY_LIST["secondary"][secondary]["txt"]
+                value = self.number_to_str(self.strengthen_secondary_list[start//4]["value"])
+                value = self.number_to_str(value)
+
+                mes += f"第 {start} 级{strengthen_type}了{secondary}，强化值为 {value}\n"
+
+            start += 1
         return mes
 
+    def get_icon_path(self):
+        # 获取图标的文件路径
+        name = f"{ARTIFACT_LIST[self.suit_name]['number']}_{self.artifact_type}.png"
+        return os.path.join(FILE_PATH,"icon",name)
+
+    def get_artifact_image(self):
+        # 获取圣遗物图片，会返回一个image
+
+        back = back_image.copy()
+
+        icon = Image.open(self.get_icon_path())
+        icon = icon.resize((192,192))
+
+        back.paste(icon, (216, 36), icon)
+
+        draw = ImageDraw.Draw(back)
+        main_property_value = self.get_main_value()
+        secondary_property_value = self.get_secondary_property_value()
+        draw.text((25, 10), self.name, fill="#ffffffff", font=ImageFont.truetype(ttf_path, size=28))
+        draw.text((25, 60), ARTIFACT_PROPERTY[self.artifact_type]['name'], fill="#ffffffff", font=ImageFont.truetype(ttf_path, size=20))
+        draw.text((25, 130), PROPERTY_LIST['main'][self.main]['txt'], fill="#bfafa8", font=ImageFont.truetype(ttf_path, size=20))
+        draw.text((25, 153), self.number_to_str(main_property_value), fill="#ffffffff", font=ImageFont.truetype(ttf_path, size=32))
+        draw.text((30, 260), f"+{self.level}", fill="#ffffffff", font=ImageFont.truetype(ttf_path, size=18))
+
+        x = 30
+        y = 300
+        for secondary in secondary_property_value.keys():
+            name = PROPERTY_LIST["secondary"][secondary]["txt"]
+            value = self.number_to_str( secondary_property_value[secondary] )
+            draw.text((x, y), f"·{name}+{value}", fill="#495366", font=ImageFont.truetype(ttf_path, size=22))
+            y += 32
+
+        return back
+
+    def get_artifact_CQ_code(self):
+        # 返回圣遗物图片的CQ码
+
+        image = self.get_artifact_image()
+        bio = BytesIO()
+        image.save(bio, format='PNG')
+        base64_str = 'base64://' + base64.b64encode(bio.getvalue()).decode()
+
+        return f"[CQ:image,file={base64_str}]"
 
 
+
+def calculate_strengthen_points(start = 1, end = 20):
+    # 计算强化需要的狗粮点数
+    if end > 20:
+        end = 20
+    value = 0
+    while start <= end:
+        value += CONSUME_STRENGTHEN_POINTS[start]
+        start += 1
+    return value
 
 
 

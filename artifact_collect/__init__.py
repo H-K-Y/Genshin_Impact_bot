@@ -1,7 +1,7 @@
 
 
-from .Artifact import artifact_obtain,ARTIFACT_LIST,Artifact
-from ..config import MAX_STAMINA,STAMINA_RESTORE
+from .Artifact import artifact_obtain,ARTIFACT_LIST,Artifact,calculate_strengthen_points
+from ..config import STAMINA_RESTORE
 from .json_rw import init_user_info,updata_uid_stamina,user_info,save_user_info
 
 from hoshino import Service
@@ -18,7 +18,8 @@ sv = Service("原神圣遗物收集")
 async def get_obtain(bot, ev):
     mes = "当前副本如下\n"
     for name in artifact_obtain.keys():
-        mes += f"{name}\n"
+        suits = " ".join(artifact_obtain[name])
+        mes += f"{name}  掉落{suits}\n"
     await bot.send(ev, mes, at_sender=True)
 
 @sv.on_prefix("刷副本")
@@ -57,7 +58,7 @@ async def _get_artifact(bot, ev):
         number = int(len(user_info[uid]["warehouse"])) + 1
 
         mes += f"当前仓库编号 {number}\n"
-        mes += artifact.get_artifact_text()
+        mes += artifact.get_artifact_CQ_code()
         mes += "\n"
 
         user_info[uid]["warehouse"].append(artifact.get_artifact_dict())
@@ -73,25 +74,24 @@ async def _get_warehouse(bot, ev):
     page = ev.message.extract_plain_text().strip()
     uid = str(ev['user_id'])
     init_user_info(uid)
+    if page == "":
+        page = 1
 
     if not page.isdigit():
         await bot.send(ev, "你需要输入一个数字", at_sender=True)
         return
 
-    if page == "":
-        page = 1
-    else:
-        page = int(page)
+    page = int(page)
 
-    mes = "仓库如下\n"
+    mes = "仓库如下"
     txt = ""
 
     for i in range(5):
         try:
             ar = user_info[uid]["warehouse"][i+(page-1)*5]
             artifact = Artifact(ar)
-            txt += f"\n仓库圣遗物编号 {i+(page-1)*5+1}"
-            txt += artifact.get_artifact_text()
+            txt += f"\n\n仓库圣遗物编号 {i+(page-1)*5+1}"
+            txt += artifact.get_artifact_CQ_code()
 
         except IndexError:
             pass
@@ -100,6 +100,78 @@ async def _get_warehouse(bot, ev):
         txt = "当前页数没有圣遗物"
 
     mes += txt
+    mes += f"\n\n当前为仓库第 {page} 页，你的仓库共有 {(len(user_info[uid]['warehouse'])//5)+1} 页"
+
+    await bot.send(ev, mes, at_sender=True)
+
+
+@sv.on_prefix("强化圣遗物")
+async def strengthen(bot, ev):
+    uid = str(ev['user_id'])
+    init_user_info(uid)
+
+    try:
+        txt = ev.message.extract_plain_text().replace(" ","")
+        strengthen_level,number = txt.split("级")
+
+    except Exception :
+        await bot.send(ev, "指令格式错误", at_sender=True)
+        return
+
+    try:
+        artifact = user_info[uid]["warehouse"][int(number) - 1]
+    except IndexError :
+        await bot.send(ev, "圣遗物编号错误", at_sender=True)
+        return
+
+    strengthen_level = int(strengthen_level)
+    artifact = Artifact(artifact)
+    strengthen_point = calculate_strengthen_points(artifact.level+1, artifact.level + strengthen_level)
+
+    if strengthen_point > user_info[uid]["strengthen_points"]:
+        await bot.send(ev, "狗粮点数不足\n你可以发送 刷副本 副本名称 获取狗粮点数\n或者发送 转换狗粮 圣遗物编号 销毁仓库里不需要的圣遗物获取狗粮点数", at_sender=True)
+        return
+
+    user_info[uid]["strengthen_points"] -= strengthen_point
+
+    start_level = artifact.level
+
+    for _ in range(strengthen_level):
+        artifact.strengthen()
+
+    mes = "强化成功，当前圣遗物属性为：\n"
+    mes += artifact.get_artifact_detail(start_level)
+
+    user_info[uid]["warehouse"][int(number) - 1] = artifact.get_artifact_dict()
+    save_user_info()
+    await bot.send(ev, mes, at_sender=True)
+
+
+
+@sv.on_prefix("圣遗物洗点")
+async def strengthen(bot, ev):
+    number = ev.message.extract_plain_text().strip()
+    uid = str(ev['user_id'])
+    init_user_info(uid)
+
+    try:
+        artifact = user_info[uid]["warehouse"][int(number) - 1]
+    except IndexError:
+        await bot.send(ev, "编号错误", at_sender=True)
+        return
+
+    artifact = Artifact(artifact)
+    strengthen_points = calculate_strengthen_points(0, artifact.level)
+    strengthen_points = strengthen_points * 0.5
+
+    artifact.re_init()
+    user_info[uid]["warehouse"][int(number) - 1] = artifact.get_artifact_dict()
+
+    user_info[uid]["strengthen_points"] += strengthen_points
+
+    mes = f"洗点完成，获得返还狗粮 {strengthen_points} \n当前圣遗物属性如下：\n"
+    mes += artifact.get_artifact_detail()
+    save_user_info()
 
     await bot.send(ev, mes, at_sender=True)
 
@@ -111,14 +183,24 @@ async def _transform_strengthen(bot, ev):
     uid = str(ev['user_id'])
     init_user_info(uid)
 
+    try:
+        artifact = user_info[uid]["warehouse"][int(number) - 1]
+    except IndexError :
+        await bot.send(ev, "编号错误", at_sender=True)
+        return
+    artifact = Artifact(artifact)
+
+    strengthen_points = calculate_strengthen_points(0,artifact.level)
+    strengthen_points = strengthen_points * 0.8
+
     del user_info[uid]["warehouse"][int(number)-1]
+
+    user_info[uid]["strengthen_points"] += strengthen_points
+
     save_user_info()
-    await bot.send(ev, "已删除", at_sender=True)
 
-
-
-
-
+    mes = f"转化完成，圣遗物已转化为 {strengthen_points} 狗粮点数\n你当前狗粮点数为 {user_info[uid]['strengthen_points']} "
+    await bot.send(ev, mes, at_sender=True)
 
 
 
@@ -126,7 +208,6 @@ async def _transform_strengthen(bot, ev):
 async def kakin(bot, ev):
     if ev.user_id not in bot.config.SUPERUSERS:
         return
-
     for m in ev.message:
         if m.type == 'at' and m.data['qq'] != 'all':
             uid = str(m.data['qq'])
@@ -136,6 +217,8 @@ async def kakin(bot, ev):
     await bot.send(ev,f"充值完毕！谢谢惠顾～")
 
 
-
+@sv.scheduled_job('interval', minutes=STAMINA_RESTORE)
+async def _call():
+    updata_uid_stamina()
 
 
