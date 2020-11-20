@@ -135,8 +135,6 @@ async def strengthen(bot, ev):
 
     user_info[uid]["strengthen_points"] -= strengthen_point
 
-    start_level = artifact.level
-
     for _ in range(strengthen_level):
         artifact.strengthen()
 
