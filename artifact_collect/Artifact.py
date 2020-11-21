@@ -1,7 +1,7 @@
 
 
 
-from PIL import Image,ImageFont,ImageDraw
+from PIL import Image,ImageFont,ImageDraw,ImageMath
 from io import BytesIO
 from ..config import SECONDARY_LEVEL_PROBABILITY,CONSUME_STRENGTHEN_POINTS
 
@@ -260,9 +260,12 @@ class Artifact(object):
         back = back_image.copy()
 
         icon = Image.open(self.get_icon_path())
-        icon = icon.resize((192,192))
+        icon = icon.resize((180,180))
 
-        back.paste(icon, (216, 36), icon)
+        icon_a = icon.getchannel("A") # 有的图alpha通道有问题，需要对alpha处理一下
+        icon_a = ImageMath.eval("convert(a*b/256, 'L')", a=icon_a, b=icon_a)
+
+        back.paste(icon, (220, 52), icon_a)
 
         draw = ImageDraw.Draw(back)
         main_property_value = self.get_main_value()
@@ -273,7 +276,7 @@ class Artifact(object):
         draw.text((25, 153), self.number_to_str(main_property_value), fill="#ffffffff", font=ImageFont.truetype(ttf_path, size=32))
         draw.text((30, 260), f"+{self.level}", fill="#ffffffff", font=ImageFont.truetype(ttf_path, size=18))
 
-        x = 30
+        x = 25
         y = 300
         for secondary in secondary_property_value.keys():
             name = PROPERTY_LIST["secondary"][secondary]["txt"]
