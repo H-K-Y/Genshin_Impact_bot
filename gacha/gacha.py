@@ -98,7 +98,12 @@ POOL = {
     }
 }
 
-
+DISTANCE_FREQUENCY = {
+    # 3个池子的5星是多少发才保底
+    '角色up池':90,
+    '武器up池':80,
+    '常驻池':90
+}
 
 
 
@@ -350,7 +355,7 @@ class Gacha(object):
         r = random.random()
 
         # 先检查是不是保底5星
-        if self.distance_5_star % 90 == 0:
+        if self.distance_5_star % DISTANCE_FREQUENCY[self.pool] == 0:
             self.gacha_rarity_statistics["5星"] += 1
             self.distance_5_star = 0 # 重置保底计数
             self.last_time_5 = self.get_5_star() # 抽一次卡，把结果赋值留给下一次抽卡判断

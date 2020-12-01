@@ -270,11 +270,11 @@ class Artifact(object):
         draw = ImageDraw.Draw(back)
         main_property_value = self.get_main_value()
         secondary_property_value = self.get_secondary_property_value()
-        draw.text((25, 10), self.name, fill="#ffffffff", font=ImageFont.truetype(ttf_path, size=28))
-        draw.text((25, 60), ARTIFACT_PROPERTY[self.artifact_type]['name'], fill="#ffffffff", font=ImageFont.truetype(ttf_path, size=20))
-        draw.text((25, 130), PROPERTY_LIST['main'][self.main]['txt'], fill="#bfafa8", font=ImageFont.truetype(ttf_path, size=20))
-        draw.text((25, 153), self.number_to_str(main_property_value), fill="#ffffffff", font=ImageFont.truetype(ttf_path, size=32))
-        draw.text((30, 260), f"+{self.level}", fill="#ffffffff", font=ImageFont.truetype(ttf_path, size=18))
+        draw.text((25, 10), self.name,                                       fill="#ffffffff",   font=ImageFont.truetype(ttf_path, size=28))
+        draw.text((25, 60), ARTIFACT_PROPERTY[self.artifact_type]['name'],   fill="#ffffffff",   font=ImageFont.truetype(ttf_path, size=20))
+        draw.text((25, 130), PROPERTY_LIST['main'][self.main]['txt'],        fill="#bfafa8",     font=ImageFont.truetype(ttf_path, size=20))
+        draw.text((25, 153), self.number_to_str(main_property_value),        fill="#ffffffff",   font=ImageFont.truetype(ttf_path, size=32))
+        draw.text((30, 260), f"+{self.level}",                               fill="#ffffffff",   font=ImageFont.truetype(ttf_path, size=18))
 
         x = 25
         y = 300

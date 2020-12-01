@@ -1,4 +1,4 @@
-from hoshino import Service
+from hoshino import Service,priv
 from .gacha import gacha_info , FILE_PATH , Gacha , POOL
 import os
 import json
@@ -94,6 +94,9 @@ async def gacha_(bot, ev):
 
 @sv.on_prefix(('原神卡池切换','原神切换卡池'))
 async def set_pool(bot, ev):
+
+    if not priv.check_priv(ev, priv.ADMIN):
+        await bot.finish(ev, '只有群管理才能切换卡池', at_sender=True)
 
     pool_name = ev.message.extract_plain_text().strip()
     gid = str(ev.group_id)
