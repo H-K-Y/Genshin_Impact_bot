@@ -21,6 +21,7 @@ async def inquire_resource_list(bot , ev):
     # 资源列表太长了导致消息经常发不出去
     # 所以只能这样了
     # await bot.send(ev, get_resource_list_mes(), at_sender=True)
+    m = "资源列表如下：\n"
     mes_list = []
     mes_list.append({
             "type": "node",
@@ -35,6 +36,8 @@ async def inquire_resource_list(bot , ev):
 
     for i in mes.keys():
         txt = f"{i}:  " + "，".join(mes[i])
+        m += txt
+        m += "\n"
         data = {
             "type": "node",
             "data": {
@@ -46,7 +49,8 @@ async def inquire_resource_list(bot , ev):
 
         mes_list.append(data)
 
-    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=mes_list)
+    # await bot.send_group_forward_msg(group_id=ev['group_id'], messages=mes_list)
+    await bot.send(ev, m, at_sender=True)
 
 
 
