@@ -33,7 +33,7 @@ async def inquire_resource_list(bot , ev):
 
 
     for i in mes.keys():
-        txt = f"{i}:" + ",".join(mes[i])
+        txt = f"{i}:  " + "  ".join(mes[i])
         data = {
             "type": "node",
             "data": {
