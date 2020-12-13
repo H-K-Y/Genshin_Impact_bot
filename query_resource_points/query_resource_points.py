@@ -271,41 +271,41 @@ def get_resource_list_mes():
 
     temp = {}
 
-    # for id in data["all_resource_type"].keys():
-    #     # 先找1级目录
-    #     if data["all_resource_type"][id]["depth"] == 1:
-    #         temp[id] = []
-    #
-    # for id in data["all_resource_type"].keys():
-    #     # 再找2级目录
-    #     if data["all_resource_type"][id]["depth"] == 2:
-    #         temp[str(data["all_resource_type"][id]["parent_id"])].append(id)
-
-    # mes = "当前资源列表如下：\n"
-    #
-    # for resource_type_id in temp.keys():
-    #     mes += f"{data['all_resource_type'][resource_type_id]['name']} :  "
-    #     for resource_id in temp[resource_type_id]:
-    #         mes += f"{data['all_resource_type'][resource_id]['name']},"
-    #     mes += "\n"
-    #
-    # return mes
-
     for id in data["all_resource_type"].keys():
         # 先找1级目录
         if data["all_resource_type"][id]["depth"] == 1:
-            temp[data["all_resource_type"][id]["name"]] = []
+            temp[id] = []
 
     for id in data["all_resource_type"].keys():
         # 再找2级目录
         if data["all_resource_type"][id]["depth"] == 2:
-            name = data["all_resource_type"][id]["name"]
-            parent_id = str(data["all_resource_type"][id]["parent_id"])
-            parent_name = data["all_resource_type"][parent_id]["name"]
+            temp[str(data["all_resource_type"][id]["parent_id"])].append(id)
 
-            temp[parent_name].append(name)
+    mes = "当前资源列表如下：\n"
 
-    return temp
+    for resource_type_id in temp.keys():
+        mes += f"{data['all_resource_type'][resource_type_id]['name']}："
+        for resource_id in temp[resource_type_id]:
+            mes += f"{data['all_resource_type'][resource_id]['name']}，"
+        mes += "\n\n"
+
+    return mes
+
+    # for id in data["all_resource_type"].keys():
+    #     # 先找1级目录
+    #     if data["all_resource_type"][id]["depth"] == 1:
+    #         temp[data["all_resource_type"][id]["name"]] = []
+    #
+    # for id in data["all_resource_type"].keys():
+    #     # 再找2级目录
+    #     if data["all_resource_type"][id]["depth"] == 2:
+    #         name = data["all_resource_type"][id]["name"]
+    #         parent_id = str(data["all_resource_type"][id]["parent_id"])
+    #         parent_name = data["all_resource_type"][parent_id]["name"]
+    #
+    #         temp[parent_name].append(name)
+    #
+    # return temp
 
 
 
