@@ -25,7 +25,7 @@ MAP_SIZE = MAP_IMAGE.size
 CENTER = (3505,1907)
 
 
-zoom = 0.5
+zoom = 0.75
 resource_icon_offset = (-int(150*0.5*zoom),-int(150*zoom))
 
 
@@ -234,7 +234,7 @@ class Resource_map(object):
         self.crop()
 
         bio = BytesIO()
-        self.map_image.save(bio, format='JPEG')
+        self.map_image.save(bio, format='PNG')
         base64_str = 'base64://' + base64.b64encode(bio.getvalue()).decode()
 
         return f"[CQ:image,file={base64_str}]"
