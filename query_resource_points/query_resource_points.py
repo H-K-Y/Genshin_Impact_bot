@@ -14,7 +14,6 @@ POINT_LIST_URL = 'https://api-static.mihoyo.com/common/blackboard/ys_obc/v1/map/
 
 header = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36'
 
-
 FILE_PATH = os.path.dirname(__file__)
 
 MAP_PATH = os.path.join(os.path.dirname(FILE_PATH),"seek_god_eye","icon","map_icon.jpg")
@@ -27,7 +26,6 @@ CENTER = (3505,1907)
 
 
 zoom = 0.5
-#
 resource_icon_offset = (-int(150*0.5*zoom),-int(150*zoom))
 
 
