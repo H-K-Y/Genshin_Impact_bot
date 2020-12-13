@@ -292,7 +292,7 @@ def get_resource_list_mes():
         mes += f"{data['all_resource_type'][resource_type_id]['name']}："
         for resource_id in temp[resource_type_id]:
             mes += f"{data['all_resource_type'][resource_id]['name']}，"
-        mes += "\n\n"
+        mes += "\n"
 
     return mes
 
