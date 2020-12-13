@@ -95,10 +95,11 @@ def up_icon_image(sublist):
                 # 米游社的图有时候会没有alpha导致报错，这时候直接使用box_alpha当做alpha就行
                 icon_alpha = box_alpha
 
-            icon = Image.new("RGBA", (150, 150), "#00000000").paste(icon, (0, -10))
+            icon2 = Image.new("RGBA", (150, 150), "#00000000")
+            icon2.paste(icon, (0, -10))
 
             bg = Image.new("RGBA", (150, 150), "#00000000")
-            bg.paste(icon, mask=icon_alpha)
+            bg.paste(icon2, mask=icon_alpha)
             bg.paste(box, mask=box)
 
             with open(icon_path, "wb") as icon_file:
