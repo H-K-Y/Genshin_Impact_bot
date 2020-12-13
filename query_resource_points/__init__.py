@@ -18,19 +18,27 @@ async def inquire_resource_points(bot, ev):
 async def inquire_resource_list(bot , ev):
     # 资源列表太长了导致消息经常发不出去
     # 所以只能这样了
-    # await bot.send(ev, get_resource_list_mes(), at_sender=True)
-    data = [
-        {
-            "type": "node",
-            "data": {
-                "name": "色图机器人",
-                "uin": "2854196310",
-                "content": get_resource_list_mes()
-                    }
-        }
-    ]
-
-    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=data)
+    await bot.send(ev, get_resource_list_mes(), at_sender=True)
+    # mes_list = []
+    # mes_list.append()
+    #
+    # mes = get_resource_list_mes()
+    #
+    #
+    # for i in mes.keys():
+    #
+    #
+    #     data = {
+    #         "type": "node",
+    #         "data": {
+    #             "name": "色图机器人",
+    #             "uin": "2854196310",
+    #             "content":
+    #                 }
+    #             }
+    #
+    #
+    # await bot.send_group_forward_msg(group_id=ev['group_id'], messages=mes_list
 
 @sv.on_fullmatch('刷新原神资源列表')
 async def inquire_resource_list(bot , ev):
