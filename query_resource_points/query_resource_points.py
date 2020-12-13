@@ -113,11 +113,11 @@ def up_label_and_point_list():
         label_data = json.loads(f.read().decode('utf-8'))
 
         for label in label_data["data"]["tree"]:
-            data["all_resource_type"][label["id"]] = label
+            data["all_resource_type"][str(label["id"])] = label
 
             for sublist in label["children"]:
-                data["all_resource_type"][sublist["id"]] = sublist
-                data["can_query_type_list"][sublist["name"]] = sublist["id"]
+                data["all_resource_type"][str(sublist["id"])] = sublist
+                data["can_query_type_list"][sublist["name"]] = str(sublist["id"])
                 up_icon_image(sublist)
 
             label["children"] = []
