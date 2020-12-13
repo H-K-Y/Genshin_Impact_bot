@@ -1,6 +1,6 @@
 
 from hoshino import Service
-from .query_resource_points import get_resource_map_mes,get_resource_list_mes
+from .query_resource_points import get_resource_map_mes,get_resource_list_mes,up_label_and_point_list
 
 sv = Service("原神资源图")
 
@@ -17,3 +17,8 @@ async def inquire_resource_points(bot, ev):
 @sv.on_fullmatch('原神资源列表')
 async def inquire_resource_list(bot , ev):
     await bot.send(ev, get_resource_list_mes(), at_sender=True)
+
+@sv.on_fullmatch('刷新原神资源列表')
+async def inquire_resource_list(bot , ev):
+    up_label_and_point_list()
+    await bot.send(ev, '刷新成功', at_sender=True)
