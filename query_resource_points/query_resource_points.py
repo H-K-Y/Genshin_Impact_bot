@@ -84,11 +84,16 @@ def up_icon_image(sublist):
         with request.urlopen(schedule) as f:
             icon = Image.open(f)
             icon = icon.resize((150, 150))
-            icon_alpha = icon.getchannel("A")
 
             box_alpha = Image.open(os.path.join(FILE_PATH,"icon","box_alpha.png")).getchannel("A")
             box = Image.open(os.path.join(FILE_PATH,"icon","box.png"))
-            icon_alpha = ImageMath.eval("convert(a*b/256, 'L')", a=icon_alpha, b=box_alpha)
+
+            try:
+                icon_alpha = icon.getchannel("A")
+                icon_alpha = ImageMath.eval("convert(a*b/256, 'L')", a=icon_alpha, b=box_alpha)
+            except ValueError:
+                # 米游社的图有时候会没有alpha导致报错，这时候直接使用box_alpha当做alpha就行
+                icon_alpha = box_alpha
 
             bg = Image.new("RGBA", (150, 150), "#00000000")
             bg.paste(icon, (0, -10), mask=icon_alpha)
