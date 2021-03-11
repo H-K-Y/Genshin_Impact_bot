@@ -4,6 +4,7 @@
 ### 这是一个[HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)的原神相关插件
 ### 这个项目目前正在扩展，加入更多原神相关娱乐和信息查询功能，敬请期待
 
+
 # 安装方法
 
 这个项目使用的HoshinoBot的消息触发器，如果你了解其他机器人框架的api(比如nonebot)可以只修改消息触发器就将本项目移植到其他框架
