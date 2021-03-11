@@ -4,9 +4,11 @@
 ### 这是一个[HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)的原神相关插件
 ### 这个项目目前正在扩展，加入更多原神相关娱乐和信息查询功能，敬请期待
 
-### 如果你是在项目名称为Genshin_Impact_gacha时安装的，请删除Genshin_Impact_gacha重新Git clone
-
 # 安装方法
+
+这个项目使用的HoshinoBot的消息触发器，如果你了解其他机器人框架的api(比如nonebot)可以只修改消息触发器就将本项目移植到其他框架
+
+下面介绍HoshinoBot的安装方法
 
 在 HoshinoBot\hoshino\modules 目录下使用以下命令拉取本项目
 ```
@@ -35,7 +37,7 @@ HoshinoBot\hoshino\modules\Genshin_Impact_bot\seek_god_eye\icon\风神瞳\56.gif
 
 如果出了新的角色或武器你还要加入新角色武器的图标，角色图标放在 gacha\icon\角色 文件夹，武器图标放在 gacha\icon\武器 文件夹
 
-图标为png格式，大小最好为125*130，小了可以，大了会被裁切
+图标为png格式，大小最好为125*125，小了可以，大了会被裁切
 
 改完后在群里发送 原神卡池 可以重载config.json文件
 
@@ -88,6 +90,11 @@ XXX哪里有|查询XXX的位置图，XXX是资源的名字
 
 
 # 更新记录
+
+### 2021-3-11
+* 对抽卡的概率进行调整现在更接近游戏里的效果
+* 对抽卡逻辑优化防止在非武器UP池抽出限定4星武器
+* 修正千岩系列武器图标星级错误的问题
 
 ### 2020-12-13
 * 资源列表查询现在改为直接抓取米游社地图的数据，每天自动更新
