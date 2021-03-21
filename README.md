@@ -36,9 +36,9 @@ HoshinoBot\hoshino\modules\Genshin_Impact_bot\seek_god_eye\icon\风神瞳\56.gif
 
 常驻角色和武器在常驻池里找，去掉当前up池的的up填写剩下的
 
-如果出了新的角色或武器你还要加入新角色武器的图标，角色图标放在 gacha\icon\角色 文件夹，武器图标放在 gacha\icon\武器 文件夹
+如果出了新的角色或武器你还要加入新角色武器的图标，角色图标放在 gacha\icon\角色图鉴 文件夹，武器图标放在 gacha\icon\武器图鉴 文件夹
 
-图标为png格式，大小最好为125*125，小了可以，大了会被裁切
+图标为png格式，大小最好为130*160，程序会自动对图片缩放
 
 改完后在群里发送 原神卡池 可以重载config.json文件
 
