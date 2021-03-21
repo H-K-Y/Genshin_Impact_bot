@@ -236,7 +236,6 @@ class Gacha(object):
             im = Image.open(self.get_png_path(self.gacha_list[i]))
             im = im.resize((130, 160))
 
-
             # pixel_w_offset = (125 - im.size[0]) / 2
             # pixel_h_offset = (130 - im.size[1]) / 2  # 因为角色和武器大小不一样，小的图像设置居中显示
 
