@@ -100,7 +100,7 @@ def generate_almanac():
         debuff_draw.text((0, i * 53 + 28), debuff_effect, fill="#b5b3acff", font=ImageFont.truetype(FONT_PATH, size=19))
 
     back.paste(buff, (150, 230), buff)
-    back.paste(buff, (150, 400), debuff)
+    back.paste(debuff, (150, 400), debuff)
 
     bio = BytesIO()
     back.save(bio, format='PNG')
