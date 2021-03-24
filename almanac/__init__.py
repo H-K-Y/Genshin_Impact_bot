@@ -27,8 +27,6 @@ with open(os.path.join(FILE_PATH,'group_list.json'),'r',encoding='UTF-8') as f:
 
 
 
-
-
 @sv.on_fullmatch('原神黄历')
 async def send_almanac(bot , ev):
     almanac_base64 = get_almanac_base64_str()
