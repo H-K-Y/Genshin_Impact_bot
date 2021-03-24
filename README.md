@@ -53,6 +53,8 @@ HoshinoBot\hoshino\modules\Genshin_Impact_bot\seek_god_eye\icon\风神瞳\56.gif
 ![资源位置查询](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/query_resource_points.png) 
 ### 圣遗物收集
 ![圣遗物收集](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/artifact_collect.png) 
+### 原神黄历
+![原神黄历](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/almanac.png) 
 
 # 指令
 
