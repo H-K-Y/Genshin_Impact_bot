@@ -76,12 +76,12 @@ def generate_almanac():
     day = month_to_chinese(time.strftime("%d")) + "日"
 
     draw = ImageDraw.Draw(back)
-    draw.text((88, 122), year, fill="#8d7650ff", font=ImageFont.truetype(FONT_PATH, size=25), anchor="mm",align="center")
-    draw.text((200, 122), day, fill="#f7f8f2ff", font=ImageFont.truetype(FONT_PATH, size=27), anchor="mm",align="center")
-    draw.text((305, 122), month, fill="#8d7650ff", font=ImageFont.truetype(FONT_PATH, size=25), anchor="mm",align="center")
+    draw.text((118, 165), year, fill="#8d7650ff", font=ImageFont.truetype(FONT_PATH, size=30), anchor="mm",align="center")
+    draw.text((260, 165), day, fill="#f7f8f2ff", font=ImageFont.truetype(FONT_PATH, size=35), anchor="mm",align="center")
+    draw.text((410, 165), month, fill="#8d7650ff", font=ImageFont.truetype(FONT_PATH, size=30), anchor="mm",align="center")
 
-    buff = Image.new("RGBA", (250, 125))
-    debuff = Image.new("RGBA", (250, 125))
+    buff = Image.new("RGBA", (325, 160))
+    debuff = Image.new("RGBA", (325, 160))
 
     buff_draw = ImageDraw.Draw(buff)
     debuff_draw = ImageDraw.Draw(debuff)
@@ -93,14 +93,14 @@ def generate_almanac():
         buff_effect = seed_random_list(seed , data[buff_name]["buff"] )
         debuff_effect = seed_random_list(seed , data[buff_name]["debuff"] )
 
-        buff_draw.text((0, i * 40), buff_name, fill="#756141ff", font=ImageFont.truetype(FONT_PATH, size=15))
-        debuff_draw.text((0, i * 40), debuff_name, fill="#756141ff", font=ImageFont.truetype(FONT_PATH, size=15))
+        buff_draw.text((0, i * 53), buff_name, fill="#756141ff", font=ImageFont.truetype(FONT_PATH, size=25))
+        debuff_draw.text((0, i * 53), debuff_name, fill="#756141ff", font=ImageFont.truetype(FONT_PATH, size=25))
 
-        buff_draw.text((0, i * 40 + 20), buff_effect, fill="#b5b3acff", font=ImageFont.truetype(FONT_PATH, size=11))
-        debuff_draw.text((0, i * 40 + 20), debuff_effect, fill="#b5b3acff", font=ImageFont.truetype(FONT_PATH, size=11))
+        buff_draw.text((0, i * 53 + 28), buff_effect, fill="#b5b3acff", font=ImageFont.truetype(FONT_PATH, size=19))
+        debuff_draw.text((0, i * 53 + 28), debuff_effect, fill="#b5b3acff", font=ImageFont.truetype(FONT_PATH, size=19))
 
-    back.paste(buff, (110, 175), buff)
-    back.paste(buff, (110, 300), debuff)
+    back.paste(buff, (150, 230), buff)
+    back.paste(buff, (150, 400), debuff)
 
     bio = BytesIO()
     back.save(bio, format='PNG')
