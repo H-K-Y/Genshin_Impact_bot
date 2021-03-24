@@ -48,6 +48,7 @@ def seed_random_list(seed:str,l:list):
     seed = seed + str(l)
     random.seed(seed)
     index = random.random() * len(l)
+    print(f"index : {index}")
 
     return l[int(index)]
 
