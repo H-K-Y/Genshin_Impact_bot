@@ -42,16 +42,13 @@ def load_data():
     almanac_data["date"] = ""
     almanac_data["almanac_base64_str"] = ""
 
+load_data()
 
 def seed_random_list(seed:str,l:list):
     # 使用随机种子随机选择列表中的元素，相同的种子和列表将返回同样的输出
     seed = seed + str(l)
     random.seed(seed)
     index = random.random() * len(l)
-    print(f"index : {index}")
-    print(f"l : {l},{type(l)}")
-
-
     return l[int(index)]
 
 
