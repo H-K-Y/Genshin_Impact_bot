@@ -91,7 +91,7 @@ def generate_almanac():
         debuff_name = today_luck[(i+3)]
 
         buff_effect = seed_random_list(seed , data[buff_name]["buff"] )
-        debuff_effect = seed_random_list(seed , data[buff_name]["debuff"] )
+        debuff_effect = seed_random_list(seed , data[debuff_name]["debuff"] )
 
         buff_draw.text((0, i * 53), buff_name, fill="#756141ff", font=ImageFont.truetype(FONT_PATH, size=25))
         debuff_draw.text((0, i * 53), debuff_name, fill="#756141ff", font=ImageFont.truetype(FONT_PATH, size=25))
