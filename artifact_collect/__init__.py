@@ -58,8 +58,8 @@ async def _get_artifact(bot, ev):
 
         number = int(len(user_info[uid]["warehouse"])) + 1
 
-        mes += f"当前仓库编号 {number}\n"
-        mes += artifact.get_artifact_CQ_code()
+        # mes += f"当前仓库编号 {number}\n"
+        mes += artifact.get_artifact_CQ_code(number)
         mes += "\n"
 
         user_info[uid]["warehouse"].append(artifact.get_artifact_dict())
@@ -91,8 +91,9 @@ async def _get_warehouse(bot, ev):
         try:
             ar = user_info[uid]["warehouse"][i+(page-1)*5]
             artifact = Artifact(ar)
-            txt += f"\n\n仓库圣遗物编号 {i+(page-1)*5+1}"
-            txt += artifact.get_artifact_CQ_code()
+            number = i + (page - 1) * 5 + 1
+            #txt += f"\n\n仓库圣遗物编号 {i+(page-1)*5+1}"
+            txt += artifact.get_artifact_CQ_code(number)
 
         except IndexError:
             pass
@@ -130,7 +131,7 @@ async def strengthen(bot, ev):
     strengthen_point = calculate_strengthen_points(artifact.level+1, artifact.level + strengthen_level)
 
     if strengthen_point > user_info[uid]["strengthen_points"]:
-        await bot.send(ev, "狗粮点数不足\n你可以发送 刷副本 副本名称 获取狗粮点数\n或者发送 转换狗粮 圣遗物编号 销毁仓库里不需要的圣遗物获取狗粮点数", at_sender=True)
+        await bot.send(ev, "狗粮点数不足\n你可以发送 刷副本 副本名称 获取狗粮点数\n或者发送 转换狗粮 圣遗物编号 销毁仓库里不需要的圣遗物获取狗粮点数\n发送 转换全部0级圣遗物 可将全部0级圣遗物销毁", at_sender=True)
         return
 
     user_info[uid]["strengthen_points"] -= strengthen_point
@@ -174,8 +175,8 @@ async def strengthen(bot, ev):
 
     artifact = Artifact(artifact)
 
-    if artifact.level == 0:
-        await bot.send(ev, "没有强化的圣遗物不能洗点", at_sender=True)
+    if artifact.level < 20:
+        await bot.send(ev, "没有强化满的圣遗物不能洗点", at_sender=True)
         return
 
     strengthen_points = calculate_strengthen_points(1, artifact.level)
@@ -242,6 +243,29 @@ async def kakin(bot, ev):
             user_info[uid]["stamina"] += 60
     save_user_info()
     await bot.send(ev,f"充值完毕！谢谢惠顾～")
+
+
+@sv.on_fullmatch(["转化全部0级圣遗物","转换全部0级圣遗物"])
+async def _transform_all_strengthen(bot, ev):
+    uid = str(ev['user_id'])
+    init_user_info(uid)
+
+    _0_level_artifact = 0
+    temp_list = []
+
+    for artifact in user_info[uid]["warehouse"]:
+        if artifact["level"] == 0:
+            _0_level_artifact += 1
+        else:
+            temp_list.append(artifact)
+
+    strengthen_points = _0_level_artifact * 3024
+
+    user_info[uid]["warehouse"] = temp_list
+    user_info[uid]["strengthen_points"] += strengthen_points
+    save_user_info()
+
+    await bot.send(ev, f"0级圣遗物已全部转化为狗粮，共转化 {_0_level_artifact} 个圣遗物，获得狗粮点数 {strengthen_points}")
 
 
 @sv.scheduled_job('interval', minutes=STAMINA_RESTORE)

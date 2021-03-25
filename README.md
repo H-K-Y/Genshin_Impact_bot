@@ -53,6 +53,8 @@ HoshinoBot\hoshino\modules\Genshin_Impact_bot\seek_god_eye\icon\风神瞳\56.gif
 ![资源位置查询](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/query_resource_points.png) 
 ### 圣遗物收集
 ![圣遗物收集](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/artifact_collect.png) 
+### 原神黄历
+![原神黄历](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/almanac.png) 
 
 # 指令
 
@@ -88,9 +90,14 @@ XXX哪里有|查询XXX的位置图，XXX是资源的名字
 转换狗粮 5|把仓库编号为5的圣遗物销毁转化为狗粮，会返还80%狗粮点数  
 查看体力值|查看自己体力值  
 氪体力 @群友|给群友氪体力，这个命令只有机器人管理员才能执行  
-
+原神黄历|  
+原神黄历|查看今天的黄历  
+开启\关闭原神黄历提醒|开启或关闭本群的每日黄历提醒  
 
 # 更新记录
+
+### 2021-3-24
+* 加入了原神黄历，黄历的数据来源于 [可莉特调](https://genshin.pub/)
 
 ### 2021-3-11
 * 对抽卡的概率进行调整现在更接近游戏里的效果
