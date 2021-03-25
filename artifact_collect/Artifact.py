@@ -272,7 +272,7 @@ class Artifact(object):
         secondary_property_value = self.get_secondary_property_value()
         draw.text((25, 10), self.name,                                       fill="#ffffffff",   font=ImageFont.truetype(ttf_path, size=28))
         if number : # 如果number不为0，在图片上加上编号
-            draw.text((25, 340), str(number), fill="#ffffffff", font=ImageFont.truetype(ttf_path, size=28))
+            draw.text((340, 10), str(number), fill="#ffffffff", font=ImageFont.truetype(ttf_path, size=28))
         draw.text((25, 60), ARTIFACT_PROPERTY[self.artifact_type]['name'],   fill="#ffffffff",   font=ImageFont.truetype(ttf_path, size=20))
         draw.text((25, 130), PROPERTY_LIST['main'][self.main]['txt'],        fill="#bfafa8",     font=ImageFont.truetype(ttf_path, size=20))
         draw.text((25, 153), self.number_to_str(main_property_value),        fill="#ffffffff",   font=ImageFont.truetype(ttf_path, size=32))
