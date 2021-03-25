@@ -254,7 +254,7 @@ class Artifact(object):
         name = f"{ARTIFACT_LIST[self.suit_name]['number']}_{self.artifact_type}.png"
         return os.path.join(FILE_PATH,"icon",name)
 
-    def get_artifact_image(self):
+    def get_artifact_image(self,number):
         # 获取圣遗物图片，会返回一个image
 
         back = back_image.copy()
@@ -271,6 +271,8 @@ class Artifact(object):
         main_property_value = self.get_main_value()
         secondary_property_value = self.get_secondary_property_value()
         draw.text((25, 10), self.name,                                       fill="#ffffffff",   font=ImageFont.truetype(ttf_path, size=28))
+        if number : # 如果number不为0，在图片上加上编号
+            draw.text((25, 340), str(number), fill="#ffffffff", font=ImageFont.truetype(ttf_path, size=28))
         draw.text((25, 60), ARTIFACT_PROPERTY[self.artifact_type]['name'],   fill="#ffffffff",   font=ImageFont.truetype(ttf_path, size=20))
         draw.text((25, 130), PROPERTY_LIST['main'][self.main]['txt'],        fill="#bfafa8",     font=ImageFont.truetype(ttf_path, size=20))
         draw.text((25, 153), self.number_to_str(main_property_value),        fill="#ffffffff",   font=ImageFont.truetype(ttf_path, size=32))
@@ -286,10 +288,10 @@ class Artifact(object):
 
         return back
 
-    def get_artifact_CQ_code(self):
-        # 返回圣遗物图片的CQ码
+    def get_artifact_CQ_code(self,number = 0):
+        # 返回圣遗物图片的CQ码 number为圣遗物在仓库的编号
 
-        image = self.get_artifact_image()
+        image = self.get_artifact_image(number)
         bio = BytesIO()
         image.save(bio, format='PNG')
         base64_str = 'base64://' + base64.b64encode(bio.getvalue()).decode()
