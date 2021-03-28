@@ -31,7 +31,7 @@ with open(USER_INFO_PATH,'r',encoding='UTF-8') as f:
         for artifact in user_info[uid]["warehouse"]:
             suit_name = artifact["suit_name"]
             artifact_name = artifact["name"]
-            if ( suit_name in ARTIFACT_LIST ) and ( artifact_name in ARTIFACT_LIST["element"]):
+            if ( suit_name in ARTIFACT_LIST ) and ( artifact_name in ARTIFACT_LIST[suit_name]["element"]):
                 temp_user_artifact_list.append(artifact)
 
         user_info[uid]["warehouse"] = temp_user_artifact_list
