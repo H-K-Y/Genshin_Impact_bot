@@ -76,6 +76,9 @@ async def send_arms_material_remind(bot , ev):
     
 @sv.on_fullmatch("今日材料")
 async def send_arms_material_remind(bot , ev):
+    if time.strftime("%w") == "0":
+        await bot.send(ev, "今天是周日，所有材料副本都开放了。")
+        return 
     arms_material_CQ = get_today_material("武器突破材料")
     roles_material_CQ = get_today_material("角色天赋材料")
     await bot.send(ev, arms_material_CQ)
