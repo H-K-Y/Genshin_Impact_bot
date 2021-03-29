@@ -112,9 +112,11 @@ def generate_almanac():
 
 def get_almanac_base64_str():
 
-    if almanac_data["date"] == time.strftime("%Y-%m-%d"):
-        return almanac_data["almanac_base64_str"]
-    else:
-        generate_almanac()
-        return almanac_data["almanac_base64_str"]
+    # if almanac_data["date"] == time.strftime("%Y-%m-%d"):
+    #     return almanac_data["almanac_base64_str"]
+    # else:
+    #     generate_almanac()
+    #     return almanac_data["almanac_base64_str"]
+    generate_almanac()
+    return almanac_data["almanac_base64_str"]
 
