@@ -1,6 +1,3 @@
-
-
-
 from PIL import Image,ImageFont,ImageDraw,ImageMath
 from io import BytesIO
 from ..config import SECONDARY_LEVEL_PROBABILITY,CONSUME_STRENGTHEN_POINTS
@@ -147,8 +144,11 @@ class Artifact(object):
         # 获取当前所有的副属性名称
         strengthen_secondary_list = [i["property"] for i in self.strengthen_secondary_list]
         temp_list = list(self.initial_secondary.keys())
-        temp_list.extend(strengthen_secondary_list)
-        temp_list = list(set(temp_list))
+        # temp_list.extend(strengthen_secondary_list)
+        for i in strengthen_secondary_list:
+            if not (i in temp_list):
+                temp_list.append(i)
+        # temp_list = list(set(temp_list))
         return temp_list
 
     def get_main_value(self):
