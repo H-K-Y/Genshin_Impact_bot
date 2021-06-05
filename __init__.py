@@ -1,8 +1,6 @@
 from hoshino import Service
 
-
 sv = Service("原神帮助")
-
 
 help_txt = '''这是一个HoshinoBot的原神相关插件，包含原神抽卡，丘丘语翻译，找神瞳,找资源点等功能
 插件仓库在 https://github.com/H-K-Y/Genshin_Impact_bot.git
@@ -41,6 +39,8 @@ XXX哪里有：查询XXX的位置图，XXX是资源的名字
 
 原神黄历
 原神黄历 ： 查看今天的黄历
+原神抽签 ： 抽一签
+解签 ： 解答抽签结果
 开启\关闭原神黄历提醒  ： 开启或关闭本群的每日黄历提醒
 
 原神每日材料提醒
@@ -54,5 +54,3 @@ XXX哪里有：查询XXX的位置图，XXX是资源的名字
 @sv.on_fullmatch("原神帮助")
 async def help(bot, ev):
     await bot.send(ev, help_txt)
-
-
