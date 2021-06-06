@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
-from almanac import month_to_chinese
-from tweaks import text_r90
+from .almanac import month_to_chinese
+from .tweaks import text_r90
 import textwrap
 import random
 import time
