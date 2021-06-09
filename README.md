@@ -1,105 +1,45 @@
 # Genshin_Impact_bot
 
-### This is a Genshin Impact plugin for [HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)
-### 这是一个[HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)的原神相关插件
-### 这个项目目前正在扩展，加入更多原神相关娱乐和信息查询功能，敬请期待
+<img src="https://img.shields.io/github/license/H-K-Y/Genshin_Impact_bot.svg"/><img src="https://img.shields.io/github/repo-size/H-K-Y/Genshin_Impact_bot.svg"/><img src="https://img.shields.io/github/last-commit/H-K-Y/Genshin_Impact_bot.svg"/><img src="https://img.shields.io/badge/language-python-3572A5.svg"/>
 
 
-# 安装方法
+>This is a Genshin Impact plugin for [HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)
+>这是一个[HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)的原神相关插件
 
-这个项目使用的HoshinoBot的消息触发器，如果你了解其他机器人框架的api(比如nonebot)可以只修改消息触发器就将本项目移植到其他框架
+**这个项目目前正在扩展，加入更多原神相关娱乐和信息查询功能，敬请期待**
 
-下面介绍HoshinoBot的安装方法
+## 简介
 
-在 HoshinoBot\hoshino\modules 目录下使用以下命令拉取本项目
-```
-git clone https://github.com/H-K-Y/Genshin_Impact_bot.git
-```
-然后在 HoshinoBot\\hoshino\\config\\\__bot__.py 文件的 MODULES_ON 加入 Genshin_Impact_bot
+这个插件帮助群员在QQ群内进行诸如查询资源点位/寻找神瞳等功能。
 
-config.py文件有插件的常用配置，你可以根据自己的情况修改
+相应的，也加入了一些趣味性的功能如原神抽卡，黄历，抽签等；
 
-重启 HoshinoBot
+## 目录
 
-### (可选)放置找神瞳的gif动态图
-原神观测枢wiki上还有如何拿到神瞳的gif动态图，如果你想让机器人发送动态图可以在Releases下载
+- [部署](#段落)
+  - [安装](/doc/%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97.md)
+  - [自定义](/doc/%E8%87%AA%E5%AE%9A%E4%B9%89.md)
+- 使用
+  - [命令](/doc/%E5%91%BD%E4%BB%A4.md)
+  - [演示](/doc/%E6%BC%94%E7%A4%BA.md)
 
-gif图包解压后放在icon路径下，安装完的路径应该是
-```
-HoshinoBot\hoshino\modules\Genshin_Impact_bot\seek_god_eye\icon\风神瞳\56.gif
-```
+## 致谢
 
-### 如何修改卡池
-卡池的信息是保存在gacha\config.json里的，修改时注意json文件的格式
+**[米游社|观测枢wiki](https://bbs.mihoyo.com/ys/obc/?bbs_presentation_style=no_header)**
 
-4星和5星的武器角色up分别对照角色up池和武器up池来填
+**[可莉特调](https://genshin.pub)**
 
-常驻角色和武器在常驻池里找，去掉当前up池的的up填写剩下的
+## 许可
 
-如果出了新的角色或武器你还要加入新角色武器的图标，角色图标放在 gacha\icon\角色图鉴 文件夹，武器图标放在 gacha\icon\武器图鉴 文件夹
+[GPL-3.0](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/LICENSE) © H-K-Y
 
-图标为png格式，大小最好为130*160，程序会自动对图片缩放
 
-改完后在群里发送 原神卡池 可以重载config.json文件
+## 更新记录
 
-# 效果演示
-### 原神抽卡
-![原神抽卡](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/genshin_impact_gacha.png) 
-### 丘丘语翻译
-![丘丘语翻译](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/qiu_qiu_translation.png) 
-### 找神瞳
-![找神瞳](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/search_god_eye.png) 
-### 资源位置查询
-![资源位置查询](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/query_resource_points.png) 
-### 圣遗物收集
-![圣遗物收集](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/artifact_collect.png) 
-### 原神黄历
-![原神黄历](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/screenshot/almanac.png) 
+### 2021-6-2
+* 加入抽签功能
+* 部分代码依照PEP标准进行格式化
 
-# 指令
-
-指令|说明
-:--|:--  
-原神帮助|查看插件的帮助  
-原神抽卡指令|  
-@bot相遇之缘|10连抽卡  
-@bot纠缠之缘|90连抽卡  
-@bot原之井|180连抽卡  
-原神卡池|查看当前UP池，这个指令也可以用来重载卡池配置文件，config.json保存的是当前卡池信息  
-原神卡池切换|切换其他原神卡池  
-原神丘丘语翻译指令|  
-丘丘一下 丘丘语句|翻译丘丘语,注意这个翻译只能把丘丘语翻译成中文，不能反向  
-丘丘词典 丘丘语句|查询丘丘语句的单词含义  
-找神瞳指令|  
-找风神瞳 <神瞳编号>|让机器人发送风神瞳的位置，神瞳编号为可选参数，不写编号机器人会随机一个编号，风可以换成岩来找岩神瞳  
-找到神瞳了 <神瞳编号>|让机器人记录这个神瞳编号，以后机器人不会给你发送这个编号  
-@bot删除找到神瞳 <神瞳编号>|在你已经找到的神瞳记录里删除这个编号  
-@bot重置风神瞳找到记录|删除所有风神瞳的找到记录，这个指令会有二次确认，风可以换成岩来重置岩神瞳的记录  
-@bot找到多少神瞳了|查看当前你找到多少神瞳了  
-@bot没找到的风神瞳|查看没有找到的风神瞳地图位置和编号  
-资源位置查询指令|  
-XXX哪里有|查询XXX的位置图，XXX是资源的名字  
-原神资源列表|查询所有的资源名称  
-圣遗物收集|  
-原神副本|查询当前有哪些副本，掉落哪个套装  
-刷副本 副本名称|刷一次副本，可获得狗粮点数和圣遗物  
-查看圣遗物仓库 1|查询仓库第一页有哪些圣遗物  
-强化圣遗物10级 5|把仓库编号为5的圣遗物强化10级  
-圣遗物洗点 5|把仓库编号为5的圣遗物洗点，洗点后返还50%的强化点数，强化等级降为0，全属性重新随机  
-圣遗物详情 5|查看圣遗物详情  
-转换狗粮 5|把仓库编号为5的圣遗物销毁转化为狗粮，会返还80%狗粮点数  
-查看体力值|查看自己体力值  
-氪体力 @群友|给群友氪体力，这个命令只有机器人管理员才能执行  
-原神黄历|  
-原神黄历|查看今天的黄历  
-开启\关闭原神黄历提醒|开启或关闭本群的每日黄历提醒  
-原神每日材料提醒|  
-今日武器突破材料|查看今日武器突破材料  
-今日角色天赋材料|查看今日角色天赋材料  
-今日材料|查看今天的武器突破材料和角色天赋材料  
-开启\关闭原神每日素材提醒|开启或关闭本群的每日素材提醒  
-
-# 更新记录
 
 ### 2021-3-28
 * 圣遗物收集修改冰本的圣遗物名称，增加岩本
@@ -153,8 +93,4 @@ XXX哪里有|查询XXX的位置图，XXX是资源的名字
 * 加入10连抽，90连抽和180连抽
 * 加入抽卡发送图片功能
 * 修复了Windows系统发送图片时可能出现的路径问题，图片全部改为base64发送
-
-
-
-
 
