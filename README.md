@@ -1,6 +1,6 @@
 # Genshin_Impact_bot
 
-<img src="https://img.shields.io/github/license/H-K-Y/Genshin_Impact_bot.svg"/><img src="https://img.shields.io/github/repo-size/H-K-Y/Genshin_Impact_bot.svg"/><img src="https://img.shields.io/github/last-commit/H-K-Y/Genshin_Impact_bot.svg"/><img src="https://img.shields.io/badge/language-python-3572A5.svg"/>
+<img src="https://img.shields.io/github/license/H-K-Y/Genshin_Impact_bot.svg"/> <img src="https://img.shields.io/github/repo-size/H-K-Y/Genshin_Impact_bot.svg"/> <img src="https://img.shields.io/github/last-commit/H-K-Y/Genshin_Impact_bot.svg"/> <img src="https://img.shields.io/badge/language-python-3572A5.svg"/>
 
 
 >This is a Genshin Impact plugin for [HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)
