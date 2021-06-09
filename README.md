@@ -4,6 +4,7 @@
 
 
 >This is a Genshin Impact plugin for [HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)
+>
 >这是一个[HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)的原神相关插件
 
 **这个项目目前正在扩展，加入更多原神相关娱乐和信息查询功能，敬请期待**
