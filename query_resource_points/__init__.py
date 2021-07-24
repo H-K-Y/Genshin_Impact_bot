@@ -1,6 +1,6 @@
 
 from hoshino import Service
-from .query_resource_points import get_resource_map_mes,get_resource_list_mes,up_label_and_point_list
+from .query_resource_points import get_resource_map_mes,get_resource_list_mes,up_label_and_point_list,up_map
 
 sv = Service("原神资源查询")
 
@@ -39,4 +39,11 @@ async def inquire_resource_list(bot , ev):
 async def inquire_resource_list(bot , ev):
     up_label_and_point_list()
     await bot.send(ev, '刷新成功', at_sender=True)
+
+
+
+@sv.on_fullmatch('更新原神地图')
+async def up_map_icon(bot , ev):
+    up_map(True)
+    await bot.send(ev, '更新成功', at_sender=True)
 
