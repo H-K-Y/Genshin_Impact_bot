@@ -21,8 +21,8 @@ MAP_PATH = os.path.join(FILE_PATH,"icon","map_icon.jpg")
 
 
 # 这3个常量放在up_map()函数里更新
-MAP_IMAGE = None
-MAP_SIZE = None
+# MAP_IMAGE = None
+# MAP_SIZE = None
 CENTER = None
 
 
@@ -185,15 +185,15 @@ def up_label_and_point_list():
 
 
 def up_map(re_download_map = False):
-    global MAP_IMAGE
-    global MAP_SIZE
+    # global MAP_IMAGE
+    # global MAP_SIZE
     global CENTER
 
     if (not os.path.exists(MAP_PATH)) or (re_download_map):
         update_map_icon()
 
-    MAP_IMAGE = Image.open(MAP_PATH)
-    MAP_SIZE = MAP_IMAGE.size
+    # MAP_IMAGE = Image.open(MAP_PATH)
+    # MAP_SIZE = MAP_IMAGE.size
 
     schedule = request.Request(MAP_URL)
     schedule.add_header('User-Agent', header)
@@ -219,18 +219,18 @@ class Resource_map(object):
     def __init__(self,resource_name):
         self.resource_id = str(data["can_query_type_list"][resource_name])
 
+        self.map_image = Image.open(MAP_PATH)
+        self.map_size = self.map_image.size
+
         # 地图要要裁切的左上角和右下角坐标
         # 这里初始化为地图的大小
-        self.x_start = MAP_SIZE[0]
-        self.y_start = MAP_SIZE[1]
+        self.x_start = self.map_size[0]
+        self.y_start = self.map_size[1]
         self.x_end = 0
         self.y_end = 0
 
-        self.map_image = MAP_IMAGE.copy()
-
         self.resource_icon = Image.open(self.get_icon_path())
         self.resource_icon = self.resource_icon.resize((int(150*zoom),int(150*zoom)))
-
 
         self.resource_xy_list = self.get_resource_point_list()
 
@@ -257,16 +257,20 @@ class Resource_map(object):
     def paste(self):
         for x,y in self.resource_xy_list:
             # 把资源图片贴到地图上
+            # 这时地图已经裁切过了，要以裁切后的地图左上角为中心再转换一次坐标
+            x -= self.x_start
+            y -= self.y_start
             self.map_image.paste(self.resource_icon,(x + resource_icon_offset[0] , y + resource_icon_offset[1]),self.resource_icon)
-
-            # 找出4个方向最远的坐标，用于后边裁切
-            self.x_start = min(x,self.x_start)
-            self.y_start = min(y,self.y_start)
-            self.x_end = max(x,self.x_end)
-            self.y_end = max(y,self.y_end)
 
 
     def crop(self):
+        # 把大地图裁切到只保留资源图标位置
+        for x,y in self.resource_xy_list:
+            # 找出4个方向最远的坐标，用于后边裁切
+            self.x_start = min(x, self.x_start)
+            self.y_start = min(y, self.y_start)
+            self.x_end = max(x, self.x_end)
+            self.y_end = max(y, self.y_end)
 
         # 先把4个方向扩展150像素防止把资源图标裁掉
         self.x_start -= 150
@@ -291,9 +295,9 @@ class Resource_map(object):
         if not self.resource_xy_list:
             return "没有这个资源的信息"
 
-        self.paste()
-
         self.crop()
+
+        self.paste()
 
         bio = BytesIO()
         self.map_image.save(bio, format='JPEG')
