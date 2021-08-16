@@ -28,7 +28,7 @@ async def artifact_rate(bot, ev):
             image_url = i.data["url"]
             break
         continue
-    await bot.send(ev, f"图片收到啦~\n正在识图中...")
+    # await bot.send(ev, f"图片收到啦~\n正在识图中...")
     image_content = BytesIO(requests.get(image_url).content)
     image_b64 = b64encode(image_content.read()).decode()
     try:
@@ -40,7 +40,7 @@ async def artifact_rate(bot, ev):
         err_msg = artifact_attr["full"]["message"]
         await bot.send(ev, f"发生了点小错误：\n{err_msg}", at_sender=True)
         return
-    await bot.send(ev, f"识图成功！\n正在评分中...", at_sender=True)
+    # await bot.send(ev, f"识图成功！\n正在评分中...", at_sender=True)
     rate_result = await rate_artifact(artifact_attr)
     if 'err' in rate_result.keys():
         err_msg = rate_result["full"]["message"]
