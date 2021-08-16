@@ -1,8 +1,9 @@
-from hoshino import Service
+from nonebot import on_command
+from nonebot.adapters import Bot, Event
 
-sv = Service("原神帮助")
+genshin_impact_bot_help = on_command("原神帮助")
 
-help_txt = '''这是一个HoshinoBot的原神相关插件，包含原神抽卡，丘丘语翻译，找神瞳,找资源点等功能
+help_txt = '''这是一个HoshinoBot和nonebot2的原神相关插件，包含原神抽卡，丘丘语翻译，找神瞳,找资源点等功能
 插件仓库在 https://github.com/H-K-Y/Genshin_Impact_bot.git
 
 指令：
@@ -15,13 +16,6 @@ help_txt = '''这是一个HoshinoBot的原神相关插件，包含原神抽卡�
 
 丘丘一下 丘丘语句 ：翻译丘丘语,注意这个翻译只能把丘丘语翻译成中文，不能反向
 丘丘词典 丘丘语句 ：查询丘丘语句的单词含义
- 
-找风神瞳 <神瞳编号>：让机器人发送风神瞳的位置，神瞳编号为可选参数，不写编号机器人会随机一个编号，风可以换成岩来找岩神瞳
-找到神瞳了 <神瞳编号>：让机器人记录这个神瞳编号，以后机器人不会给你发送这个编号
-@bot删除找到神瞳 <神瞳编号>：在你已经找到的神瞳记录里删除这个编号
-@bot重置风神瞳找到记录 ： 删除所有风神瞳的找到记录，这个指令会有二次确认，风可以换成岩来重置岩神瞳的记录
-@bot找到多少神瞳了 ： 查看当前你找到多少神瞳了
-@bot没找到的风神瞳 ： 查看没有找到的风神瞳地图位置和编号
 
 XXX哪里有：查询XXX的位置图，XXX是资源的名字
 原神资源列表：查询所有的资源名称
@@ -51,6 +45,6 @@ XXX哪里有：查询XXX的位置图，XXX是资源的名字
 '''
 
 
-@sv.on_fullmatch("原神帮助")
-async def help(bot, ev):
-    await bot.send(ev, help_txt)
+@genshin_impact_bot_help.handle()
+async def genshin_impact_bot_help_(bot: Bot, event: Event):
+    await genshin_impact_bot_help.finish(help_txt)

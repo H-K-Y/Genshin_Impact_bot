@@ -1,11 +1,19 @@
-from hoshino import Service,priv
+from nonebot import on_command,on_startswith
+from nonebot.rule import to_me
+from nonebot.adapters import Bot, Event
+from nonebot.adapters.cqhttp import GROUP_ADMIN, GROUP_OWNER
+from nonebot.permission import SUPERUSER
 from .gacha import gacha_info , FILE_PATH , Gacha , POOL
 import os
 import json
-from ..config import Gacha10Limit,Gacha90Limit,Gacha180Limit
+# from ..config import Gacha10Limit,Gacha90Limit,Gacha180Limit
 
 
-sv = Service('原神抽卡')
+gacha_10 = on_command(("相遇之缘",), rule=to_me())
+gacha_90 = on_command(("纠缠之缘",), rule=to_me())
+gacha_180 = on_command(("原之井",), rule=to_me())
+look_pool = on_command(("原神卡池","原神up","原神UP"))
+set_pool = on_startswith(('原神卡池切换','原神切换卡池'))
 
 group_pool = {
     # 这个字典保存每个群对应的卡池是哪个，群号字符串为key,卡池名为value，群号不包含在字典key里卡池按默认DEFAULT_POOL
@@ -30,71 +38,63 @@ with open(os.path.join(FILE_PATH,'gid_pool.json'),'r',encoding='UTF-8') as f:
 
 
 
-@sv.on_prefix(["相遇之缘"], only_to_me=True)
-async def gacha_(bot, ev):
-    gid = str(ev.group_id)
-    userid = ev['user_id']
-    if not daily_limiter_10.check(userid):
-        await bot.send(ev, '今天已经抽了很多次啦，明天再来吧~')
-        return
+@gacha_10.handle()
+async def gacha_10_(bot: Bot, event: Event):
+    gid = str(event.group_id)
+
     if gid in group_pool:
         G = Gacha(group_pool[gid])
     else:
         G = Gacha()
-    daily_limiter_10.increase(userid)
-    await bot.send(ev, G.gacha_10() , at_sender=True)
 
-@sv.on_prefix(["纠缠之缘"], only_to_me=True)
-async def gacha_(bot, ev):
-    gid = str(ev.group_id)
-    userid = ev['user_id']
-    if not daily_limiter_90.check(userid):
-        await bot.send(ev, '今天已经抽了很多次啦，明天再来吧~')
-        return
+    await gacha_10.finish(G.gacha_10() , at_sender=True)
+
+@gacha_90.handle()
+async def gacha_90_(bot: Bot, event: Event):
+    gid = str(event.group_id)
+
     if gid in group_pool:
         G = Gacha(group_pool[gid])
     else:
         G = Gacha()
-    daily_limiter_90.increase(userid)
-    await bot.send(ev, G.gacha_90(90) , at_sender=True)
+    await gacha_90.finish(G.gacha_90(90) , at_sender=True)
 
 
 
-@sv.on_prefix(["原之井"], only_to_me=True)
-async def gacha_(bot, ev):
-    gid = str(ev.group_id)
-    userid = ev['user_id']
-    if not daily_limiter_180.check(userid):
-        await bot.send(ev, '今天已经抽了很多次啦，明天再来吧~')
-        return
-    daily_limiter_180.increase(userid)
+@gacha_180.handle()
+async def gacha_180_(bot: Bot, event: Event):
+    gid = str(event.group_id)
+
     if gid in group_pool:
         G = Gacha(group_pool[gid])
     else:
         G = Gacha()
-    await bot.send(ev, G.gacha_90(180) , at_sender=True)
+    await gacha_180.finish(G.gacha_90(180) , at_sender=True)
 
 
 
-@sv.on_prefix(["原神卡池","原神up","原神UP"])
-async def gacha_(bot, ev):
-    gid = str(ev.group_id)
+@look_pool.handle()
+async def look_pool_(bot: Bot, event: Event):
+    gid = str(event.group_id)
 
     if gid in group_pool:
         info = gacha_info(group_pool[gid])
     else:
         info = gacha_info()
 
-    await bot.send(ev, info , at_sender=True)
+    await look_pool.finish(info , at_sender=True)
 
-@sv.on_prefix(('原神卡池切换','原神切换卡池'))
-async def set_pool(bot, ev):
+@set_pool.handle()
+async def set_pool_(bot: Bot, event: Event):
 
-    if not priv.check_priv(ev, priv.ADMIN):
-        await bot.finish(ev, '只有群管理才能切换卡池', at_sender=True)
+    if not (await GROUP_ADMIN(bot, event) or
+            await GROUP_OWNER(bot, event) or
+            (str(event.user_id) in SUPERUSER) ):
+        await set_pool.finish('只有群管理才能切换卡池', at_sender=True)
+        return
 
-    pool_name = ev.message.extract_plain_text().strip()
-    gid = str(ev.group_id)
+    pool_name = event.message.extract_plain_text().strip()
+    gid = str(event.group_id)
 
     if pool_name in POOL.keys():
         if gid in group_pool:
@@ -102,11 +102,11 @@ async def set_pool(bot, ev):
         else:
             group_pool.setdefault(gid,pool_name)
         save_group_pool()
-        await bot.send(ev, f"卡池已切换为 {pool_name} ")
+        await set_pool.finish(f"卡池已切换为 {pool_name} ")
         return
 
     txt = "请使用以下命令来切换卡池\n"
     for i in POOL.keys():
         txt += f"原神卡池切换 {i} \n"
 
-    await bot.send(ev, txt)
+    await set_pool.finish(txt)

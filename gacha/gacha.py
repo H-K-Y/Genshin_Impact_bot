@@ -172,8 +172,6 @@ class Gacha(object):
     def get_png_path(name):
         # 获取png文件路径，传入的参数是角色或武器名字，会自动在角色和武器文件夹搜索，找不到抛出异常
 
-        # role_name_path = os.path.join(ICON_PATH, "角色", str(name) + ".png")
-        # arms_name_path = os.path.join(ICON_PATH, "武器", str(name) + ".png")
         role_name_path = os.path.join(ICON_PATH, "角色图鉴", str(name) + ".png")
         arms_name_path = os.path.join(ICON_PATH, "武器图鉴", str(name) + ".png")
 
