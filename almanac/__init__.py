@@ -1,15 +1,26 @@
-from hoshino import Service, priv, get_bot
+from nonebot import on_command,get_bot
+from nonebot import require
+from nonebot.adapters import Bot, Event
+from nonebot.adapters.cqhttp import GROUP_ADMIN, GROUP_OWNER
+from nonebot.permission import SUPERUSER
 from .almanac import get_almanac_base64_str, load_data
 from .tweaks import *
 from .draw_lots import get_pic, draw_info, gen_pic
+
 import os
 import json
+
+get_almanac = on_command('原神黄历')
+reload_data = on_command('重载原神黄历数据')
+open_remind = on_command('开启原神黄历提醒')
+off_remind = on_command("关闭原神黄历提醒")
+draw_lots = on_command('原神抽签')
+answer_lots = on_command('解签')
+
 
 FILE_PATH = os.path.dirname(__file__)
 DB_PATH = os.path.join(FILE_PATH, "assets", "config.json")
 jdb = jsondb(DB_PATH)
-
-sv = Service("原神黄历")
 
 group_list = []
 
@@ -28,48 +39,58 @@ with open(os.path.join(FILE_PATH, 'group_list.json'), 'r', encoding='UTF-8') as 
     group_list = json.load(f)
 
 
-@sv.on_fullmatch('原神黄历')
-async def send_almanac(bot, ev):
+@get_almanac.handle()
+async def get_almanac_(bot: Bot, event: Event):
     almanac_base64 = get_almanac_base64_str()
     mes = f"[CQ:image,file={almanac_base64}] \n ※ 黄历数据来源于 genshin.pub"
-    await bot.send(ev, mes)
+    await get_almanac.finish(mes)
 
 
-@sv.on_fullmatch('重载原神黄历数据')
-async def reload_data(bot, ev):
-    if not priv.check_priv(ev, priv.ADMIN):
+@reload_data.handle()
+async def reload_data_(bot: Bot, event: Event):
+    if not (await GROUP_ADMIN(bot, event) or
+            await GROUP_OWNER(bot, event) or
+            (str(event.user_id) in SUPERUSER) ):
+        await reload_data.finish('你没有权限这么做', at_sender=True)
         return
+
     load_data()
-    await bot.send(ev, "重载成功")
+    await reload_data.finish("重载成功")
 
 
-@sv.on_fullmatch('开启原神黄历提醒')
-async def open_remind(bot, ev):
-    if not priv.check_priv(ev, priv.ADMIN):
-        await bot.send(ev, "你没有权限这么做")
+@open_remind.handle()
+async def open_remind_(bot: Bot, event: Event):
+    if not (await GROUP_ADMIN(bot, event) or
+            await GROUP_OWNER(bot, event) or
+            (str(event.user_id) in SUPERUSER)):
+        await reload_data.finish('你没有权限这么做', at_sender=True)
         return
 
-    gid = str(ev.group_id)
+    gid = str(event.group_id)
     if not (gid in group_list):
         group_list.append(gid)
         save_group_list()
-    await bot.send(ev, "每日提醒已开启，每天8点会发送今日原神黄历")
+    await open_remind.finish("每日提醒已开启，每天8点会发送今日原神黄历")
 
 
-@sv.on_fullmatch('关闭原神黄历提醒')
-async def off_remind(bot, ev):
-    if not priv.check_priv(ev, priv.ADMIN):
-        await bot.send(ev, "你没有权限这么做")
+@off_remind.handle()
+async def off_remind_(bot: Bot, event: Event):
+    if not (await GROUP_ADMIN(bot, event) or
+            await GROUP_OWNER(bot, event) or
+            (str(event.user_id) in SUPERUSER)):
+        await reload_data.finish('你没有权限这么做', at_sender=True)
         return
 
-    gid = str(ev.group_id)
+    gid = str(event.group_id)
     if gid in group_list:
         group_list.remove(gid)
         save_group_list()
-    await bot.send(ev, "每日提醒已关闭")
+    await off_remind.finish("每日提醒已关闭")
 
 
-@sv.scheduled_job('cron', hour='8')
+scheduler = require("nonebot_plugin_apscheduler").scheduler
+
+@scheduler.scheduled_job('cron', hour='8')
 async def almanac_remind():
     # 每日提醒
     bot = get_bot()
@@ -79,9 +100,9 @@ async def almanac_remind():
         await bot.send_group_msg(group_id=int(gid), message=mes)
 
 
-@sv.on_fullmatch('原神抽签')
-async def draw_lots(bot, ev):
-    uid = str(ev['user_id'])
+@draw_lots.handle()
+async def draw_lots_(bot: Bot, event: Event):
+    uid = str(event.user_id)
     quser = jdb.user(uid)
 
     if quser.db["time"] == get_time():
@@ -99,12 +120,12 @@ async def draw_lots(bot, ev):
         jdb.save()
         msg = f"{cq_str}\n ※ 抽签条目来源于 genshin.pub"
 
-    await bot.send(ev, msg, at_sender=True)
+    await draw_lots.finish( msg, at_sender=True)
 
 
-@sv.on_fullmatch('解签')
-async def answer_lots(bot, ev):
-    uid = str(ev['user_id'])
+@answer_lots.handle()
+async def answer_lots_(bot: Bot, event: Event):
+    uid = str(event.user_id)
     quser = jdb.user(uid)
 
     try:
@@ -112,4 +133,4 @@ async def answer_lots(bot, ev):
         msg = f'解签：{answer}\n ※ 解签条目来源于 genshin.pub'
     except KeyError:
         msg = '你还没抽过签哦~向我说“原神抽签”试试吧~'
-    await bot.send(ev, msg, at_sender=True)
+    await answer_lots.finish(msg, at_sender=True)

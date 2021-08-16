@@ -1,27 +1,39 @@
+from nonebot import on_command,on_startswith
+from nonebot import require
+from nonebot.adapters import Bot, Event
+from nonebot.permission import SUPERUSER
+
 from .Artifact import artifact_obtain, ARTIFACT_LIST, Artifact, calculate_strengthen_points
 from ..config import STAMINA_RESTORE, MAX_STAMINA
 from .json_rw import init_user_info, updata_uid_stamina, user_info, save_user_info
-
-from hoshino import Service
-
 import random
 
-sv = Service("原神圣遗物收集")
+get_obtain = on_command(("原神副本", "圣遗物副本", "查看原神副本", "查看圣遗物副本"))
+get_artifact = on_startswith("刷副本")
+get_warehouse = on_startswith("查看圣遗物仓库")
+strengthen_artifact = on_startswith("强化圣遗物")
+artifact_info = on_startswith("圣遗物详情")
+artifact_re_init = on_startswith("圣遗物洗点")
+transform = on_startswith(("转换狗粮", "转化狗粮"))
+transform_all = on_command(("转化全部0级圣遗物", "转换全部0级圣遗物"))
+get_user_stamina = on_command("查看体力值")
+recharge = on_command("氪体力")
 
 
-@sv.on_fullmatch(["原神副本", "圣遗物副本", "查看原神副本", "查看圣遗物副本"])
-async def get_obtain(bot, ev):
+
+@get_obtain.handle()
+async def get_obtain_(bot: Bot, event: Event):
     mes = "当前副本如下\n"
     for name in artifact_obtain.keys():
         suits = " ".join(artifact_obtain[name])
         mes += f"{name}  掉落  {suits}\n"
-    await bot.send(ev, mes, at_sender=True)
+    await get_obtain.finish(mes, at_sender=True)
 
 
-@sv.on_prefix("刷副本")
-async def _get_artifact(bot, ev):
-    obtain = ev.message.extract_plain_text().strip()
-    uid = str(ev['user_id'])
+@get_artifact.handle()
+async def get_artifact_(bot: Bot, event: Event):
+    obtain = event.message.extract_plain_text().strip()
+    uid = str(event.user_id)
     init_user_info(uid)
 
     if obtain == "":
@@ -29,11 +41,11 @@ async def _get_artifact(bot, ev):
 
     if not (obtain in artifact_obtain.keys()):
         mes = f"没有副本名叫 {obtain} ,发送 原神副本 可查看所有副本"
-        await bot.send(ev, mes, at_sender=True)
+        await get_artifact.finish(mes, at_sender=True)
         return
 
     if user_info[uid]["stamina"] < 20:
-        await bot.send(ev, "体力值不足，请等待体力恢复.\n发送 查看体力值 可查看当前体力", at_sender=True)
+        await get_artifact.finish("体力值不足，请等待体力恢复.\n发送 查看体力值 可查看当前体力", at_sender=True)
         return
 
     user_info[uid]["stamina"] -= 20
@@ -61,19 +73,19 @@ async def _get_artifact(bot, ev):
         user_info[uid]["warehouse"].append(artifact.get_artifact_dict())
 
     save_user_info()
-    await bot.send(ev, mes, at_sender=True)
+    await get_artifact.finish(mes, at_sender=True)
 
 
-@sv.on_prefix("查看圣遗物仓库")
-async def _get_warehouse(bot, ev):
-    page = ev.message.extract_plain_text().strip()
-    uid = str(ev['user_id'])
+@get_warehouse.handle()
+async def get_warehouse_(bot: Bot, event: Event):
+    page = event.message.extract_plain_text().strip()
+    uid = str(event.user_id)
     init_user_info(uid)
     if page == "":
         page = "1"
 
     if not page.isdigit():
-        await bot.send(ev, "你需要输入一个数字", at_sender=True)
+        await get_warehouse.finish("你需要输入一个数字", at_sender=True)
         return
 
     page = int(page)
@@ -98,26 +110,26 @@ async def _get_warehouse(bot, ev):
     mes += txt
     mes += f"\n\n当前为仓库第 {page} 页，你的仓库共有 {(len(user_info[uid]['warehouse']) // 5) + 1} 页"
 
-    await bot.send(ev, mes, at_sender=True)
+    await get_warehouse.finish(mes, at_sender=True)
 
 
-@sv.on_prefix("强化圣遗物")
-async def strengthen(bot, ev):
-    uid = str(ev['user_id'])
+@strengthen_artifact.handle()
+async def strengthen_artifact_(bot: Bot, event: Event):
+    uid = str(event.user_id)
     init_user_info(uid)
 
     try:
-        txt = ev.message.extract_plain_text().replace(" ", "")
+        txt = event.message.extract_plain_text().replace(" ", "")
         strengthen_level, number = txt.split("级")
 
     except Exception:
-        await bot.send(ev, "指令格式错误", at_sender=True)
+        await strengthen_artifact.finish("指令格式错误", at_sender=True)
         return
 
     try:
         artifact = user_info[uid]["warehouse"][int(number) - 1]
     except IndexError:
-        await bot.send(ev, "圣遗物编号错误", at_sender=True)
+        await strengthen_artifact.finish("圣遗物编号错误", at_sender=True)
         return
 
     strengthen_level = int(strengthen_level)
@@ -125,7 +137,7 @@ async def strengthen(bot, ev):
     strengthen_point = calculate_strengthen_points(artifact.level + 1, artifact.level + strengthen_level)
 
     if strengthen_point > user_info[uid]["strengthen_points"]:
-        await bot.send(ev,
+        await strengthen_artifact.finish(
                        "狗粮点数不足\n你可以发送 刷副本 副本名称 获取狗粮点数\n或者发送 转换狗粮 圣遗物编号 销毁仓库里不需要的圣遗物获取狗粮点数\n发送 转换全部0级圣遗物 可将全部0级圣遗物销毁",
                        at_sender=True)
         return
@@ -140,41 +152,41 @@ async def strengthen(bot, ev):
 
     user_info[uid]["warehouse"][int(number) - 1] = artifact.get_artifact_dict()
     save_user_info()
-    await bot.send(ev, mes, at_sender=True)
+    await strengthen_artifact.finish(mes, at_sender=True)
 
 
-@sv.on_prefix("圣遗物详情")
-async def strengthen(bot, ev):
-    number = ev.message.extract_plain_text().strip()
-    uid = str(ev['user_id'])
+@artifact_info.handle()
+async def artifact_info_(bot: Bot, event: Event):
+    number = event.message.extract_plain_text().strip()
+    uid = str(event.user_id)
     init_user_info(uid)
 
     try:
         artifact = user_info[uid]["warehouse"][int(number) - 1]
     except IndexError:
-        await bot.send(ev, "编号错误", at_sender=True)
+        await artifact_info.finish("编号错误", at_sender=True)
         return
 
     artifact = Artifact(artifact)
-    await bot.send(ev, artifact.get_artifact_detail(), at_sender=True)
+    await artifact_info.finish(artifact.get_artifact_detail(), at_sender=True)
 
 
-@sv.on_prefix("圣遗物洗点")
-async def strengthen(bot, ev):
-    number = ev.message.extract_plain_text().strip()
-    uid = str(ev['user_id'])
+@artifact_re_init.handle()
+async def artifact_re_init_(bot: Bot, event: Event):
+    number = event.message.extract_plain_text().strip()
+    uid = str(event.user_id)
     init_user_info(uid)
 
     try:
         artifact = user_info[uid]["warehouse"][int(number) - 1]
     except IndexError:
-        await bot.send(ev, "编号错误", at_sender=True)
+        await artifact_re_init.finish("编号错误", at_sender=True)
         return
 
     artifact = Artifact(artifact)
 
     if artifact.level < 20:
-        await bot.send(ev, "没有强化满的圣遗物不能洗点", at_sender=True)
+        await artifact_re_init.finish("没有强化满的圣遗物不能洗点", at_sender=True)
         return
 
     strengthen_points = calculate_strengthen_points(1, artifact.level)
@@ -189,19 +201,19 @@ async def strengthen(bot, ev):
     mes += artifact.get_artifact_detail()
     save_user_info()
 
-    await bot.send(ev, mes, at_sender=True)
+    await artifact_re_init.finish(mes, at_sender=True)
 
 
-@sv.on_prefix(["转换狗粮", "转化狗粮"])
-async def _transform_strengthen(bot, ev):
-    number = ev.message.extract_plain_text().strip()
-    uid = str(ev['user_id'])
+@transform.handle()
+async def transform_(bot: Bot, event: Event):
+    number = event.message.extract_plain_text().strip()
+    uid = str(event.user_id)
     init_user_info(uid)
 
     try:
         artifact = user_info[uid]["warehouse"][int(number) - 1]
     except IndexError:
-        await bot.send(ev, "编号错误", at_sender=True)
+        await transform.finish("编号错误", at_sender=True)
         return
     artifact = Artifact(artifact)
 
@@ -215,34 +227,35 @@ async def _transform_strengthen(bot, ev):
     save_user_info()
 
     mes = f"转化完成，圣遗物已转化为 {int(strengthen_points)} 狗粮点数\n你当前狗粮点数为 {int(user_info[uid]['strengthen_points'])} "
-    await bot.send(ev, mes, at_sender=True)
+    await transform.finish(mes, at_sender=True)
 
 
-@sv.on_fullmatch("查看体力值")
-async def get_user_stamina(bot, ev):
-    uid = str(ev['user_id'])
+@get_user_stamina.handle()
+async def get_user_stamina_(bot: Bot, event: Event):
+    uid = str(event.user_id)
     init_user_info(uid)
     mes = f"你当前的体力值为 {int(user_info[uid]['stamina'])} ,体力值每 {STAMINA_RESTORE} 分钟恢复1点，自动恢复上限为 {MAX_STAMINA}\n"
     mes += f"你当前的狗粮点数为 {int(user_info[uid]['strengthen_points'])}"
-    await bot.send(ev, mes, at_sender=True)
+    await get_user_stamina.finish(mes, at_sender=True)
 
 
-@sv.on_prefix('氪体力')
-async def kakin(bot, ev):
-    if ev.user_id not in bot.config.SUPERUSERS:
+@recharge.handle()
+async def recharge_(bot: Bot, event: Event):
+    if not (str(event.user_id) in SUPERUSER):
+        await recharge.finish(f"这个指令仅限超级管理员使用")
         return
-    for m in ev.message:
+    for m in event.message:
         if m.type == 'at' and m.data['qq'] != 'all':
             uid = str(m.data['qq'])
             init_user_info(uid)
             user_info[uid]["stamina"] += 60
     save_user_info()
-    await bot.send(ev, f"充值完毕！谢谢惠顾～")
+    await recharge.finish(f"充值完毕！谢谢惠顾～")
 
 
-@sv.on_fullmatch(["转化全部0级圣遗物", "转换全部0级圣遗物"])
-async def _transform_all_strengthen(bot, ev):
-    uid = str(ev['user_id'])
+@transform_all.handle()
+async def transform_all_(bot: Bot, event: Event):
+    uid = str(event.user_id)
     init_user_info(uid)
 
     _0_level_artifact = 0
@@ -260,9 +273,12 @@ async def _transform_all_strengthen(bot, ev):
     user_info[uid]["strengthen_points"] += strengthen_points
     save_user_info()
 
-    await bot.send(ev, f"0级圣遗物已全部转化为狗粮，共转化 {_0_level_artifact} 个圣遗物，获得狗粮点数 {strengthen_points}")
+    await transform_all.finish(f"0级圣遗物已全部转化为狗粮，共转化 {_0_level_artifact} 个圣遗物，获得狗粮点数 {strengthen_points}")
 
 
-@sv.scheduled_job('interval', minutes=STAMINA_RESTORE)
+
+updata_stamina = require("nonebot_plugin_apscheduler").scheduler
+
+@updata_stamina.scheduled_job('interval', minutes=STAMINA_RESTORE)
 async def _call():
     updata_uid_stamina()
