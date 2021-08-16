@@ -1,9 +1,7 @@
 from nonebot import on_command
 from nonebot.adapters import Bot, Event
-import nonebot
 
-nonebot.load_plugin(".gacha")
-
+import gacha
 
 
 genshin_impact_bot_help = on_command("原神帮助")
