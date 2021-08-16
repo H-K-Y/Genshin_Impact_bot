@@ -1,9 +1,14 @@
 from nonebot import on_command
 from nonebot.adapters import Bot, Event
+import nonebot
+
+nonebot.load_plugin(".gacha")
+
+
 
 genshin_impact_bot_help = on_command("原神帮助")
 
-help_txt = '''这是一个HoshinoBot和nonebot2的原神相关插件，包含原神抽卡，丘丘语翻译，找神瞳,找资源点等功能
+help_txt = '''这是一个HoshinoBot和nonebot2的原神相关插件，包含原神抽卡，丘丘语翻译，找资源点等功能
 插件仓库在 https://github.com/H-K-Y/Genshin_Impact_bot.git
 
 指令：
