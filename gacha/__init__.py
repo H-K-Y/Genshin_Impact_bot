@@ -2,6 +2,7 @@ from nonebot import on_command,on_startswith
 from nonebot.rule import to_me
 from nonebot.adapters import Bot, Event
 from nonebot.adapters.cqhttp import GROUP_ADMIN, GROUP_OWNER
+from nonebot.adapters.cqhttp import Message
 from nonebot.permission import SUPERUSER
 from .gacha import gacha_info , FILE_PATH , Gacha , POOL
 import os
@@ -47,7 +48,7 @@ async def gacha_10_(bot: Bot, event: Event):
     else:
         G = Gacha()
 
-    await gacha_10.finish(G.gacha_10() , at_sender=True)
+    await gacha_10.finish(Message(G.gacha_10()) , at_sender=True)
 
 @gacha_90.handle()
 async def gacha_90_(bot: Bot, event: Event):
@@ -57,7 +58,7 @@ async def gacha_90_(bot: Bot, event: Event):
         G = Gacha(group_pool[gid])
     else:
         G = Gacha()
-    await gacha_90.finish(G.gacha_90(90) , at_sender=True)
+    await gacha_90.finish(Message(G.gacha_90(90)) , at_sender=True)
 
 
 
@@ -69,7 +70,7 @@ async def gacha_180_(bot: Bot, event: Event):
         G = Gacha(group_pool[gid])
     else:
         G = Gacha()
-    await gacha_180.finish(G.gacha_90(180) , at_sender=True)
+    await gacha_180.finish(Message(G.gacha_90(180)) , at_sender=True)
 
 
 
@@ -82,7 +83,7 @@ async def look_pool_(bot: Bot, event: Event):
     else:
         info = gacha_info()
 
-    await look_pool.finish(info , at_sender=True)
+    await look_pool.finish(Message(info) , at_sender=True)
 
 @set_pool.handle()
 async def set_pool_(bot: Bot, event: Event):
@@ -93,7 +94,7 @@ async def set_pool_(bot: Bot, event: Event):
         await set_pool.finish('只有群管理才能切换卡池', at_sender=True)
         return
 
-    pool_name = event.get_message().strip()
+    pool_name = str(event.get_message()).strip()
     gid = str(event.group_id)
 
     if pool_name in POOL.keys():

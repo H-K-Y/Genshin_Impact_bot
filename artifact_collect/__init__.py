@@ -1,6 +1,7 @@
 from nonebot import on_command,on_startswith
 from nonebot import require
 from nonebot.adapters import Bot, Event
+from nonebot.adapters.cqhttp import Message
 from nonebot.permission import SUPERUSER
 
 from .Artifact import artifact_obtain, ARTIFACT_LIST, Artifact, calculate_strengthen_points
@@ -32,7 +33,7 @@ async def get_obtain_(bot: Bot, event: Event):
 
 @get_artifact.handle()
 async def get_artifact_(bot: Bot, event: Event):
-    obtain = event.get_message().strip()
+    obtain = str(event.get_message()).strip()
     uid = str(event.user_id)
     init_user_info(uid)
 
@@ -73,12 +74,12 @@ async def get_artifact_(bot: Bot, event: Event):
         user_info[uid]["warehouse"].append(artifact.get_artifact_dict())
 
     save_user_info()
-    await get_artifact.finish(mes, at_sender=True)
+    await get_artifact.finish(Message(mes), at_sender=True)
 
 
 @get_warehouse.handle()
 async def get_warehouse_(bot: Bot, event: Event):
-    page = event.get_message().strip()
+    page = str(event.get_message()).strip()
     uid = str(event.user_id)
     init_user_info(uid)
     if page == "":
@@ -110,7 +111,7 @@ async def get_warehouse_(bot: Bot, event: Event):
     mes += txt
     mes += f"\n\n当前为仓库第 {page} 页，你的仓库共有 {(len(user_info[uid]['warehouse']) // 5) + 1} 页"
 
-    await get_warehouse.finish(mes, at_sender=True)
+    await get_warehouse.finish(Message(mes), at_sender=True)
 
 
 @strengthen_artifact.handle()
@@ -119,7 +120,7 @@ async def strengthen_artifact_(bot: Bot, event: Event):
     init_user_info(uid)
 
     try:
-        txt = event.get_message().replace(" ", "")
+        txt = str(event.get_message()).replace(" ", "")
         strengthen_level, number = txt.split("级")
 
     except Exception:
@@ -152,12 +153,12 @@ async def strengthen_artifact_(bot: Bot, event: Event):
 
     user_info[uid]["warehouse"][int(number) - 1] = artifact.get_artifact_dict()
     save_user_info()
-    await strengthen_artifact.finish(mes, at_sender=True)
+    await strengthen_artifact.finish(Message(mes), at_sender=True)
 
 
 @artifact_info.handle()
 async def artifact_info_(bot: Bot, event: Event):
-    number = event.get_message().strip()
+    number = str(event.get_message()).strip()
     uid = str(event.user_id)
     init_user_info(uid)
 
@@ -168,12 +169,12 @@ async def artifact_info_(bot: Bot, event: Event):
         return
 
     artifact = Artifact(artifact)
-    await artifact_info.finish(artifact.get_artifact_detail(), at_sender=True)
+    await artifact_info.finish(Message(artifact.get_artifact_detail()), at_sender=True)
 
 
 @artifact_re_init.handle()
 async def artifact_re_init_(bot: Bot, event: Event):
-    number = event.get_message().strip()
+    number = str(event.get_message()).strip()
     uid = str(event.user_id)
     init_user_info(uid)
 
@@ -201,12 +202,12 @@ async def artifact_re_init_(bot: Bot, event: Event):
     mes += artifact.get_artifact_detail()
     save_user_info()
 
-    await artifact_re_init.finish(mes, at_sender=True)
+    await artifact_re_init.finish(Message(mes), at_sender=True)
 
 
 @transform.handle()
 async def transform_(bot: Bot, event: Event):
-    number = event.get_message().strip()
+    number = str(event.get_message()).strip()
     uid = str(event.user_id)
     init_user_info(uid)
 
@@ -227,7 +228,7 @@ async def transform_(bot: Bot, event: Event):
     save_user_info()
 
     mes = f"转化完成，圣遗物已转化为 {int(strengthen_points)} 狗粮点数\n你当前狗粮点数为 {int(user_info[uid]['strengthen_points'])} "
-    await transform.finish(mes, at_sender=True)
+    await transform.finish(Message(mes), at_sender=True)
 
 
 @get_user_stamina.handle()
@@ -236,7 +237,7 @@ async def get_user_stamina_(bot: Bot, event: Event):
     init_user_info(uid)
     mes = f"你当前的体力值为 {int(user_info[uid]['stamina'])} ,体力值每 {STAMINA_RESTORE} 分钟恢复1点，自动恢复上限为 {MAX_STAMINA}\n"
     mes += f"你当前的狗粮点数为 {int(user_info[uid]['strengthen_points'])}"
-    await get_user_stamina.finish(mes, at_sender=True)
+    await get_user_stamina.finish(Message(mes), at_sender=True)
 
 
 @recharge.handle()

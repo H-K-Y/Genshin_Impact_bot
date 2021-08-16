@@ -1,23 +1,31 @@
 
-from nonebot import on_command
-from nonebot import require
+from nonebot import on_command,on_startswith,on_endswith
+from nonebot.adapters.cqhttp import Message
 from nonebot.adapters import Bot, Event
 from .query_resource_points import get_resource_map_mes,get_resource_list_mes,up_label_and_point_list,up_map
 
-inquire_resource = on_command(('在哪', '在哪里', '哪有', '哪里有'))
+inquire_resource_startswith = on_startswith(('哪有', '哪里有'))
+inquire_resource_endswith = on_endswith(('在哪', '在哪里', '哪有', '哪里有'))
 resource_list = on_command('原神资源列表')
 up_resource_list = on_command('刷新原神资源列表')
 up_map_icon = on_command('更新原神地图')
 
 
-@inquire_resource.handle()
-async def inquire_resource_(bot: Bot, event: Event):
 
-    resource_name = event.get_message().strip()
+async def _inquire_resource_(bot: Bot, event: Event):
+    resource_name = str(event.get_message()).strip()
     if resource_name == "":
         return
+    await bot.send(Message(get_resource_map_mes(resource_name)), at_sender=True)
 
-    await inquire_resource.finish(get_resource_map_mes(resource_name), at_sender=True)
+@inquire_resource_startswith.handle()
+async def inquire_resource_startswith_(bot: Bot, event: Event):
+    await _inquire_resource_(bot,event)
+
+
+@inquire_resource_endswith.handle()
+async def inquire_resource_endswith_(bot: Bot, event: Event):
+    await _inquire_resource_(bot,event)
 
 
 

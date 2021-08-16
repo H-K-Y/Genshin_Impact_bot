@@ -12,7 +12,7 @@ suffix = "\n※ 这个插件只能从丘丘语翻译为中文，不能反向翻�
 
 @qiu_qiu.handle()
 async def qiu_qiu_(bot: Bot, event: Event):
-    txt = event.get_message().strip().lower()
+    txt = str(event.get_message()).strip().lower()
     if txt == "":
         return
     mes = qiu_qiu_word_translation(txt)
@@ -23,7 +23,7 @@ async def qiu_qiu_(bot: Bot, event: Event):
 
 @qiu_qiu_dictionary.handle()
 async def qiu_qiu_dictionary_(bot: Bot, event: Event):
-    txt = event.get_message().strip().lower()
+    txt = str(event.get_message()).strip().lower()
     if txt == "":
         return
     mes = qiu_qiu_phrase_translation(txt)

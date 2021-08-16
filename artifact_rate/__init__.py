@@ -1,6 +1,7 @@
 from .artifact_eval import *
 from nonebot import on_command
 from nonebot.adapters import Bot, Event
+from nonebot.adapters.cqhttp import Message
 import requests
 
 from base64 import b64encode
@@ -50,4 +51,4 @@ async def artifact_rate_(bot: Bot, event: Event):
     format_result = f'圣遗物评分结果：\n主属性：{artifact_attr["main_item"]["name"]}\n{get_format_sub_item(artifact_attr)}'\
                     f'------------------------------\n总分：{rate_result["total_percent"]}\n'\
                     f'主词条：{rate_result["main_percent"]}\n副词条：{rate_result["sub_percent"]}\n评分、识图均来自genshin.pub'
-    await artifact_rate.finish( format_result, at_sender=True)
+    await artifact_rate.finish( Message(format_result), at_sender=True)

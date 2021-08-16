@@ -2,6 +2,7 @@ from nonebot import on_command,get_bot
 from nonebot import require
 from nonebot.adapters import Bot, Event
 from nonebot.adapters.cqhttp import GROUP_ADMIN, GROUP_OWNER
+from nonebot.adapters.cqhttp import Message
 from nonebot.permission import SUPERUSER
 from .almanac import get_almanac_base64_str, load_data
 from .tweaks import *
@@ -43,7 +44,7 @@ with open(os.path.join(FILE_PATH, 'group_list.json'), 'r', encoding='UTF-8') as 
 async def get_almanac_(bot: Bot, event: Event):
     almanac_base64 = get_almanac_base64_str()
     mes = f"[CQ:image,file={almanac_base64}] \n ※ 黄历数据来源于 genshin.pub"
-    await get_almanac.finish(mes)
+    await get_almanac.finish(Message(mes))
 
 
 @reload_data.handle()
@@ -96,6 +97,7 @@ async def almanac_remind():
     bot = get_bot()
     almanac_base64 = get_almanac_base64_str()
     mes = f"[CQ:image,file={almanac_base64}] \n ※ 黄历数据来源于 genshin.pub"
+    mes = Message(mes)
     for gid in group_list:
         await bot.send_group_msg(group_id=int(gid), message=mes)
 
@@ -120,7 +122,7 @@ async def draw_lots_(bot: Bot, event: Event):
         jdb.save()
         msg = f"{cq_str}\n ※ 抽签条目来源于 genshin.pub"
 
-    await draw_lots.finish( msg, at_sender=True)
+    await draw_lots.finish( Message(msg), at_sender=True)
 
 
 @answer_lots.handle()
@@ -133,4 +135,4 @@ async def answer_lots_(bot: Bot, event: Event):
         msg = f'解签：{answer}\n ※ 解签条目来源于 genshin.pub'
     except KeyError:
         msg = '你还没抽过签哦~向我说“原神抽签”试试吧~'
-    await answer_lots.finish(msg, at_sender=True)
+    await answer_lots.finish((msg), at_sender=True)

@@ -2,6 +2,7 @@ from nonebot import on_command,get_bot
 from nonebot import require
 from nonebot.adapters import Bot, Event
 from nonebot.adapters.cqhttp import GROUP_ADMIN, GROUP_OWNER
+from nonebot.adapters.cqhttp import Message
 from nonebot.permission import SUPERUSER
 from PIL import Image
 from io import BytesIO
@@ -87,13 +88,13 @@ async def off_remind_(bot: Bot, event: Event):
 @arms_material.handle()
 async def arms_material_(bot: Bot, event: Event):
     arms_material_CQ = get_today_material("武器突破材料")
-    await arms_material.finish(arms_material_CQ)
+    await arms_material.finish(Message(arms_material_CQ))
 
 
 @role_material.handle()
 async def role_material_(bot: Bot, event: Event):
     roles_material_CQ = get_today_material("角色天赋材料")
-    await role_material.finish(roles_material_CQ)
+    await role_material.finish(Message(roles_material_CQ))
 
 
 @material.handle()
@@ -103,8 +104,8 @@ async def material_(bot: Bot, event: Event):
         return
     arms_material_CQ = get_today_material("武器突破材料")
     roles_material_CQ = get_today_material("角色天赋材料")
-    await material.finish(arms_material_CQ)
-    await material.finish(roles_material_CQ)
+    await material.finish(Message(arms_material_CQ))
+    await material.finish(Message(roles_material_CQ))
 
 
 
@@ -120,7 +121,7 @@ async def material_remind_():
     arms_material_CQ = get_today_material("武器突破材料")
     roles_material_CQ = get_today_material("角色天赋材料")
     for gid in group_list:
-        await bot.send_group_msg(group_id=int(gid),message=arms_material_CQ)
-        await bot.send_group_msg(group_id=int(gid), message=roles_material_CQ)
+        await bot.send_group_msg(group_id=int(gid),message=Message(arms_material_CQ))
+        await bot.send_group_msg(group_id=int(gid), message=Message(roles_material_CQ))
         
         
