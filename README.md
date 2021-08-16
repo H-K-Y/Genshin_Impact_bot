@@ -5,13 +5,13 @@
 
 >This is a Genshin Impact plugin for [HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)
 >
->这是一个[HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)的原神相关插件
+>这是一个[HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)和[nonebot2](https://github.com/nonebot/nonebot2)的原神相关插件
 
 **这个项目目前正在扩展，加入更多原神相关娱乐和信息查询功能，敬请期待**
 
 ## 简介
 
-这个插件帮助群员在QQ群内进行诸如查询资源点位/寻找神瞳等功能。
+这个插件帮助群员在QQ群内进行诸如查询资源点位等功能。
 
 相应的，也加入了一些趣味性的功能如原神抽卡，黄历，抽签等；
 
@@ -36,6 +36,10 @@
 
 
 ## 更新记录
+
+### 2021-8-16
+
+* 项目移植到nonebot 2 
 
 ### 2021-8-14
 
