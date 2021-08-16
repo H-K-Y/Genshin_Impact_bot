@@ -93,7 +93,7 @@ async def set_pool_(bot: Bot, event: Event):
         await set_pool.finish('只有群管理才能切换卡池', at_sender=True)
         return
 
-    pool_name = event.message.extract_plain_text().strip()
+    pool_name = event.get_message().strip()
     gid = str(event.group_id)
 
     if pool_name in POOL.keys():

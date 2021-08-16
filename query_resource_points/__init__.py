@@ -1,24 +1,30 @@
 
-from hoshino import Service
+from nonebot import on_command
+from nonebot import require
+from nonebot.adapters import Bot, Event
 from .query_resource_points import get_resource_map_mes,get_resource_list_mes,up_label_and_point_list,up_map
 
-sv = Service("原神资源查询")
+inquire_resource = on_command(('在哪', '在哪里', '哪有', '哪里有'))
+resource_list = on_command('原神资源列表')
+up_resource_list = on_command('刷新原神资源列表')
+up_map_icon = on_command('更新原神地图')
 
-@sv.on_suffix(('在哪', '在哪里', '哪有', '哪里有'))
-@sv.on_prefix(('哪有', '哪里有'))
-async def inquire_resource_points(bot, ev):
 
-    resource_name = ev.message.extract_plain_text().strip()
+@inquire_resource.handle()
+async def inquire_resource_(bot: Bot, event: Event):
+
+    resource_name = event.get_message().strip()
     if resource_name == "":
         return
 
-    await bot.send(ev, get_resource_map_mes(resource_name), at_sender=True)
+    await inquire_resource.finish(get_resource_map_mes(resource_name), at_sender=True)
 
 
 
-@sv.on_fullmatch('原神资源列表')
-async def inquire_resource_list(bot , ev):
+@resource_list.handle()
+async def resource_list_(bot: Bot, event: Event):
     # 长条消息经常发送失败，所以只能这样了
+    group_id = event.group_id
     mes_list = []
     txt_list = get_resource_list_mes().split("\n")
     for txt in txt_list:
@@ -32,18 +38,18 @@ async def inquire_resource_list(bot , ev):
                 }
         mes_list.append(data)
     # await bot.send(ev, get_resource_list_mes(), at_sender=True)
-    await bot.send_group_forward_msg(group_id=ev['group_id'], messages=mes_list)
+    await bot.send_group_forward_msg(group_id=group_id, messages=mes_list)
 
 
-@sv.on_fullmatch('刷新原神资源列表')
-async def inquire_resource_list(bot , ev):
+@up_resource_list.handle()
+async def up_resource_list_(bot: Bot, event: Event):
     up_label_and_point_list()
-    await bot.send(ev, '刷新成功', at_sender=True)
+    await up_resource_list.finish('刷新成功', at_sender=True)
 
 
 
-@sv.on_fullmatch('更新原神地图')
-async def up_map_icon(bot , ev):
+@up_map_icon.handle()
+async def up_map_icon_(bot: Bot, event: Event):
     up_map(True)
-    await bot.send(ev, '更新成功', at_sender=True)
+    await up_map_icon.finish('更新成功', at_sender=True)
 

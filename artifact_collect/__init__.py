@@ -32,7 +32,7 @@ async def get_obtain_(bot: Bot, event: Event):
 
 @get_artifact.handle()
 async def get_artifact_(bot: Bot, event: Event):
-    obtain = event.message.extract_plain_text().strip()
+    obtain = event.get_message().strip()
     uid = str(event.user_id)
     init_user_info(uid)
 
@@ -78,7 +78,7 @@ async def get_artifact_(bot: Bot, event: Event):
 
 @get_warehouse.handle()
 async def get_warehouse_(bot: Bot, event: Event):
-    page = event.message.extract_plain_text().strip()
+    page = event.get_message().strip()
     uid = str(event.user_id)
     init_user_info(uid)
     if page == "":
@@ -119,7 +119,7 @@ async def strengthen_artifact_(bot: Bot, event: Event):
     init_user_info(uid)
 
     try:
-        txt = event.message.extract_plain_text().replace(" ", "")
+        txt = event.get_message().replace(" ", "")
         strengthen_level, number = txt.split("级")
 
     except Exception:
@@ -157,7 +157,7 @@ async def strengthen_artifact_(bot: Bot, event: Event):
 
 @artifact_info.handle()
 async def artifact_info_(bot: Bot, event: Event):
-    number = event.message.extract_plain_text().strip()
+    number = event.get_message().strip()
     uid = str(event.user_id)
     init_user_info(uid)
 
@@ -173,7 +173,7 @@ async def artifact_info_(bot: Bot, event: Event):
 
 @artifact_re_init.handle()
 async def artifact_re_init_(bot: Bot, event: Event):
-    number = event.message.extract_plain_text().strip()
+    number = event.get_message().strip()
     uid = str(event.user_id)
     init_user_info(uid)
 
@@ -206,7 +206,7 @@ async def artifact_re_init_(bot: Bot, event: Event):
 
 @transform.handle()
 async def transform_(bot: Bot, event: Event):
-    number = event.message.extract_plain_text().strip()
+    number = event.get_message().strip()
     uid = str(event.user_id)
     init_user_info(uid)
 

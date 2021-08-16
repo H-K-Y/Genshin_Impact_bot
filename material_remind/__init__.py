@@ -1,4 +1,8 @@
-from hoshino import Service,get_bot
+from nonebot import on_command,get_bot
+from nonebot import require
+from nonebot.adapters import Bot, Event
+from nonebot.adapters.cqhttp import GROUP_ADMIN, GROUP_OWNER
+from nonebot.permission import SUPERUSER
 from PIL import Image
 from io import BytesIO
 
@@ -7,7 +11,12 @@ import json
 import time
 import base64
 
-sv = Service("原神每日素材提醒")
+open_remind = on_command("开启原神每日素材提醒")
+off_remind = on_command("关闭原神每日素材提醒")
+arms_material = on_command(("今日武器突破材料","今日武器材料","武器材料","今日武器升级材料"))
+role_material = on_command(("今日角色天赋材料","今日角色材料","角色材料","今日天赋升级材料"))
+material = on_command(("今日材料","今日素材"))
+
 
 FILE_PATH = os.path.dirname(__file__)
 
@@ -45,47 +54,64 @@ def get_today_material(name:str):
     return f"[CQ:image,file={base64_str}]"
 
 
-@sv.on_fullmatch('开启原神每日素材提醒')
-async def open_remind(bot , ev):
-    gid = str(ev.group_id)
+@open_remind.handle()
+async def open_remind_(bot: Bot, event: Event):
+    if not (await GROUP_ADMIN(bot, event) or
+            await GROUP_OWNER(bot, event) or
+            (str(event.user_id) in SUPERUSER)):
+        await open_remind.finish('你没有权限执行这个指令', at_sender=True)
+        return
+
+    gid = str(event.group_id)
     if not (gid in group_list):
         group_list.append(gid)
         save_group_list()
-    await bot.send(ev, "每日提醒已开启，每天8点会发送今日素材")
+    await open_remind.finish("每日提醒已开启，每天8点会发送今日素材")
 
 
-@sv.on_fullmatch('关闭原神每日素材提醒')
-async def off_remind(bot , ev):
-    gid = str(ev.group_id)
+@off_remind.handle()
+async def off_remind_(bot: Bot, event: Event):
+    if not (await GROUP_ADMIN(bot, event) or
+            await GROUP_OWNER(bot, event) or
+            (str(event.user_id) in SUPERUSER)):
+        await off_remind.finish('你没有权限执行这个指令', at_sender=True)
+        return
+
+    gid = str(event.group_id)
     if gid in group_list:
         group_list.remove(gid)
         save_group_list()
-    await bot.send(ev, "每日提醒已关闭")
+    await off_remind.finish("每日提醒已关闭")
 
 
-@sv.on_fullmatch(["今日武器突破材料","今日武器材料","武器材料","今日武器升级材料"])
-async def send_arms_material_remind(bot , ev):
+@arms_material.handle()
+async def arms_material_(bot: Bot, event: Event):
     arms_material_CQ = get_today_material("武器突破材料")
-    await bot.send(ev, arms_material_CQ)
+    await arms_material.finish(arms_material_CQ)
 
 
-@sv.on_fullmatch(["今日角色天赋材料","今日角色材料","角色材料","今日天赋升级材料"])
-async def send_arms_material_remind(bot , ev):
+@role_material.handle()
+async def role_material_(bot: Bot, event: Event):
     roles_material_CQ = get_today_material("角色天赋材料")
-    await bot.send(ev, roles_material_CQ)
-    
-@sv.on_fullmatch(["今日材料","今日素材"])
-async def send_arms_material_remind(bot , ev):
+    await role_material.finish(roles_material_CQ)
+
+
+@material.handle()
+async def material_(bot: Bot, event: Event):
     if time.strftime("%w") == "0":
-        await bot.send(ev, "今天是周日，所有材料副本都开放了。")
+        await material.finish("今天是周日，所有材料副本都开放了。")
         return
     arms_material_CQ = get_today_material("武器突破材料")
     roles_material_CQ = get_today_material("角色天赋材料")
-    await bot.send(ev, arms_material_CQ)
-    await bot.send(ev, roles_material_CQ)
+    await material.finish(arms_material_CQ)
+    await material.finish(roles_material_CQ)
 
-@sv.scheduled_job('cron', hour='8')
-async def material_remind():
+
+
+material_remind = require("nonebot_plugin_apscheduler").scheduler
+
+@material_remind.scheduled_job('cron', hour='8')
+async def material_remind_():
     # 每日提醒
     if time.strftime("%w") == "0":
         # 如果今天是周日就不发了
