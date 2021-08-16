@@ -2,13 +2,8 @@ from hoshino import Service,priv
 from .gacha import gacha_info , FILE_PATH , Gacha , POOL
 import os
 import json
-from hoshino.util import DailyNumberLimiter
 from ..config import Gacha10Limit,Gacha90Limit,Gacha180Limit
 
-
-daily_limiter_10 = DailyNumberLimiter(Gacha10Limit)
-daily_limiter_90 = DailyNumberLimiter(Gacha90Limit)
-daily_limiter_180 = DailyNumberLimiter(Gacha180Limit)
 
 sv = Service('原神抽卡')
 
