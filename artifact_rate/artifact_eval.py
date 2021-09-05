@@ -1,4 +1,4 @@
-import requests
+import httpx
 
 import json
 
@@ -6,11 +6,10 @@ ocr_url = "https://api.genshin.pub/api/v1/app/ocr"
 rate_url = "https://api.genshin.pub/api/v1/relic/rate"
 head = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                  "Chrome/92.0.4515.131 Safari/537.36 Edg/92.0.902.67 ",
+                  "Chrome/92.0.4515.131 Safari/537.36 Edg/92.0.902.67",
     "Content-Type": "application/json; charset=UTF-8",
     "Connection": "close"
 }
-
 
 async def get_artifact_attr(b64_str):
     upload_json = json.dumps(
@@ -19,8 +18,9 @@ async def get_artifact_attr(b64_str):
         }
     )
     try:
-        req = requests.post(ocr_url, data=upload_json, headers=head, timeout=8)
-    except requests.exceptions.RequestException as e:
+        async with httpx.AsyncClient() as client:
+            req = await client.post(ocr_url, data=upload_json, headers=head, timeout=8)
+    except httpx._exceptions.TimeoutException as e:
         raise e
     data = json.loads(req.text)
     if req.status_code != 200:
@@ -31,8 +31,9 @@ async def get_artifact_attr(b64_str):
 async def rate_artifact(artifact_attr: dict):
     upload_json_str = json.dumps(artifact_attr, ensure_ascii=False).encode('utf-8')
     try:
-        req = requests.post(rate_url, data=upload_json_str, headers=head, timeout=8)
-    except requests.exceptions.RequestException as e:
+        async with httpx.AsyncClient() as client:
+            req = await client.post(rate_url, data=upload_json_str, headers=head, timeout=8)
+    except httpx._exceptions.TimeoutException as e:
         raise e
     data = json.loads(req.text)
     if req.status_code != 200:

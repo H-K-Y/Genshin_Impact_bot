@@ -10,7 +10,7 @@ from io import BytesIO
 artifact_rate = on_command(("圣遗物评分", "-rate"))
 
 
-def get_format_sub_item(artifact_attr):
+async def get_format_sub_item(artifact_attr):
     msg = ""
     for i in artifact_attr["sub_item"]:
         msg += f'{i["name"]:\u3000<6} | {i["value"]}\n'
@@ -48,7 +48,7 @@ async def artifact_rate_(bot: Bot, event: Event):
         err_msg = rate_result["full"]["message"]
         await artifact_rate.finish(f"发生了点小错误：\n{err_msg}\n*注：将在下版本加入属性修改", at_sender=True)
         return
-    format_result = f'圣遗物评分结果：\n主属性：{artifact_attr["main_item"]["name"]}\n{get_format_sub_item(artifact_attr)}'\
+    format_result = f'圣遗物评分结果：\n主属性：{artifact_attr["main_item"]["name"]}\n{await get_format_sub_item(artifact_attr)}'\
                     f'------------------------------\n总分：{rate_result["total_percent"]}\n'\
                     f'主词条：{rate_result["main_percent"]}\n副词条：{rate_result["sub_percent"]}\n评分、识图均来自genshin.pub'
     await artifact_rate.finish( Message(format_result), at_sender=True)
