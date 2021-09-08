@@ -27,7 +27,7 @@ Image.MAX_IMAGE_PIXELS = None
 CENTER = None
 
 
-zoom = 0.75
+zoom = 0.5
 resource_icon_offset = (-int(150*0.5*zoom),-int(150*zoom))
 
 
@@ -112,11 +112,6 @@ def update_map_icon():
     #     url = map_url_list[w][-1]['url']
     #     icon = download_icon(url)
     #     y += icon.size[1]
-
-    # map_back = map_back.crop([map_padding[0],
-    #                           map_padding[1],
-    #                           map_size[0] - map_padding[0],
-    #                           map_size[1] - map_padding[1]])
 
     # with open(MAP_PATH, "wb") as jpg:
     #     map_back.save(jpg)
