@@ -18,6 +18,7 @@ header = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, l
 FILE_PATH = os.path.dirname(__file__)
 
 MAP_PATH = os.path.join(FILE_PATH,"icon","map_icon.jpg")
+Image.MAX_IMAGE_PIXELS = None
 
 
 # 这3个常量放在up_map()函数里更新
