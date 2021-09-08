@@ -27,7 +27,7 @@ Image.MAX_IMAGE_PIXELS = None
 CENTER = None
 
 
-zoom = 0.75
+zoom = 0.5
 resource_icon_offset = (-int(150*0.5*zoom),-int(150*zoom))
 
 
@@ -69,15 +69,15 @@ data = {
     "date":"" #记录上次更新"all_resource_point_list"的日期
 }
 
-def download_icon(url):
-    # 下载分块的地图图片文件
-    # 返回 Image
-    schedule = request.Request(url)
-    schedule.add_header('User-Agent', header)
-
-    with request.urlopen(schedule) as f:
-        icon = Image.open(f)
-        return icon
+# def download_icon(url):
+#     # 下载分块的地图图片文件
+#     # 返回 Image
+#     schedule = request.Request(url)
+#     schedule.add_header('User-Agent', header)
+#
+#     with request.urlopen(schedule) as f:
+#         icon = Image.open(f)
+#         return icon
 
 
 def update_map_icon():
@@ -91,31 +91,29 @@ def update_map_icon():
         data = json.loads(rew_data)["data"]["info"]["detail"]
         data = json.loads(data)
 
-    map_url_list = data['slices']
-    map_size = data["total_size"]
-    map_padding = data["padding"]
-    x,y = [0,0]
-    map_back = Image.new("RGB",map_size)
-    for w in range(len(map_url_list)):
-        x = 0
-        for h in range(len(map_url_list[w])):
-            url = map_url_list[w][h]['url']
-            icon = download_icon(url)
-            map_back.paste(icon,[x,y])
+    map_url = data['slices'][0][0]["url"]
+    request.urlretrieve(map_url, MAP_PATH)
 
-            x += icon.size[0]
+    # map_url_list = data['slices']
+    # map_size = data["total_size"]
+    # map_padding = data["padding"]
+    # x,y = [0,0]
+    # map_back = Image.new("RGB",map_size)
+    # for w in range(len(map_url_list)):
+    #     x = 0
+    #     for h in range(len(map_url_list[w])):
+    #         url = map_url_list[w][h]['url']
+    #         icon = download_icon(url)
+    #         map_back.paste(icon,[x,y])
+    #
+    #         x += icon.size[0]
+    #
+    #     url = map_url_list[w][-1]['url']
+    #     icon = download_icon(url)
+    #     y += icon.size[1]
 
-        url = map_url_list[w][-1]['url']
-        icon = download_icon(url)
-        y += icon.size[1]
-
-    # map_back = map_back.crop([map_padding[0],
-    #                           map_padding[1],
-    #                           map_size[0] - map_padding[0],
-    #                           map_size[1] - map_padding[1]])
-
-    with open(MAP_PATH, "wb") as jpg:
-        map_back.save(jpg)
+    # with open(MAP_PATH, "wb") as jpg:
+    #     map_back.save(jpg)
 
 
 
