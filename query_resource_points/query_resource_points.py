@@ -7,7 +7,6 @@ import os
 import time
 import base64
 import math
-import copy
 
 
 
@@ -140,8 +139,7 @@ def sort_resource_point():
     # 分类资源点
 
     for resource_point in data["all_resource_point_list"]:
-        resource_id = resource_point["label_id"]
-        point_id = resource_point["id"]
+        resource_id = str(resource_point["label_id"])
         x_pos = resource_point["x_pos"]
         y_pos = resource_point["y_pos"]
         if not resource_id in data["sort_resource_point_list"]:
@@ -196,15 +194,10 @@ def up_label_and_point_list():
 
 
 def up_map(re_download_map = False):
-    # global MAP_IMAGE
-    # global MAP_SIZE
     global CENTER
 
     if (not os.path.exists(MAP_PATH)) or (re_download_map):
         update_map_icon()
-
-    # MAP_IMAGE = Image.open(MAP_PATH)
-    # MAP_SIZE = MAP_IMAGE.size
 
     schedule = request.Request(MAP_URL)
     schedule.add_header('User-Agent', header)
