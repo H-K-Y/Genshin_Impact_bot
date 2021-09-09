@@ -6,7 +6,6 @@ import json
 import os
 import time
 import base64
-import math
 
 
 
@@ -22,9 +21,9 @@ MAP_PATH = os.path.join(FILE_PATH,"icon","map_icon.jpg")
 Image.MAX_IMAGE_PIXELS = None
 
 
-# 这个常量放在up_map()函数里更新
+# 这3个常量放在up_map()函数里更新
 CENTER = None
-DISTANCE = 1000
+
 
 zoom = 0.5
 resource_icon_offset = (-int(150*0.5*zoom),-int(150*zoom))
@@ -65,12 +64,6 @@ data = {
             #     "display_state": 1
             # },
     ],
-    "sort_resource_point_list":{
-        # 这个字典存放已经分类好的资源点组，查询资源点时每个组会生成一张图片
-        # "2":[
-        #     [{"x_pos": -1789,"y_pos": 2628},]
-        # ]
-    },
     "date":"" #记录上次更新"all_resource_point_list"的日期
 }
 
@@ -88,7 +81,6 @@ def update_map_icon():
 
     map_url = data['slices'][0][0]["url"]
     request.urlretrieve(map_url, MAP_PATH)
-
 
 
 def up_icon_image(sublist):
@@ -126,43 +118,6 @@ def up_icon_image(sublist):
             with open(icon_path, "wb") as icon_file:
                 bg.save(icon_file)
 
-def is_point_distance(x1,y1,x2,y2,distance = DISTANCE):
-    # 计算两点之间的距离看是不是小于 distance
-    # 是的话返回 True 否则返回 False
-    x = max(x1,x2) - min(x1,x2)
-    y = max(y1,y2) - min(y1,y2)
-
-    return math.sqrt(x*x + y*y) < distance
-
-
-def sort_resource_point():
-    # 分类资源点
-
-    for resource_point in data["all_resource_point_list"]:
-        resource_id = str(resource_point["label_id"])
-        x_pos = resource_point["x_pos"]
-        y_pos = resource_point["y_pos"]
-        if not resource_id in data["sort_resource_point_list"]:
-            # 第一次分组  注意这是一个多层列表嵌套
-            new_list = [
-                    [{"x_pos":x_pos,"y_pos":y_pos}]
-                    ]
-            data["sort_resource_point_list"].setdefault(resource_id,new_list)
-            continue
-
-        add_list = True
-        for group in data["sort_resource_point_list"][resource_id]:
-            for pos in group:
-                if is_point_distance(x_pos, y_pos, pos["x_pos"], pos["y_pos"]):
-                    group.append({"x_pos": x_pos, "y_pos": y_pos})
-                    add_list = False
-                    break
-
-        if add_list:
-            test_list = [{"x_pos": x_pos, "y_pos": y_pos}]
-            data["sort_resource_point_list"][resource_id].append(test_list)
-
-
 def up_label_and_point_list():
     # 更新label列表和资源点列表
 
@@ -175,10 +130,12 @@ def up_label_and_point_list():
 
         for label in label_data["data"]["tree"]:
             data["all_resource_type"][str(label["id"])] = label
+
             for sublist in label["children"]:
                 data["all_resource_type"][str(sublist["id"])] = sublist
                 data["can_query_type_list"][sublist["name"]] = str(sublist["id"])
                 up_icon_image(sublist)
+
             label["children"] = []
 
     schedule = request.Request(POINT_LIST_URL)
@@ -189,7 +146,6 @@ def up_label_and_point_list():
         test = json.loads(f.read().decode('utf-8'))
         data["all_resource_point_list"] = test["data"]["point_list"]
 
-    sort_resource_point()
     data["date"] = time.strftime("%d")
 
 
@@ -220,7 +176,7 @@ up_map()
 
 class Resource_map(object):
 
-    def __init__(self,resource_name,point_list):
+    def __init__(self,resource_name):
         self.resource_id = str(data["can_query_type_list"][resource_name])
 
         self.map_image = Image.open(MAP_PATH)
@@ -236,7 +192,7 @@ class Resource_map(object):
         self.resource_icon = Image.open(self.get_icon_path())
         self.resource_icon = self.resource_icon.resize((int(150*zoom),int(150*zoom)))
 
-        self.resource_xy_list = self.get_resource_point_list(point_list)
+        self.resource_xy_list = self.get_resource_point_list()
 
     def get_icon_path(self):
         # 检查有没有图标，有返回正确图标，没有返回默认图标
@@ -247,13 +203,14 @@ class Resource_map(object):
         else:
             return os.path.join(FILE_PATH,"icon","0.png")
 
-    def get_resource_point_list(self,point_list):
+    def get_resource_point_list(self):
         temp_list = []
-        for resource_point in point_list:
-            # 获取xy坐标，然后加上中心点的坐标完成坐标转换
-            x = resource_point["x_pos"] + CENTER[0]
-            y = resource_point["y_pos"] + CENTER[1]
-            temp_list.append((int(x),int(y)))
+        for resource_point in data["all_resource_point_list"]:
+            if str(resource_point["label_id"]) == self.resource_id :
+                # 获取xy坐标，然后加上中心点的坐标完成坐标转换
+                x = resource_point["x_pos"] + CENTER[0]
+                y = resource_point["y_pos"] + CENTER[1]
+                temp_list.append((int(x),int(y)))
         return temp_list
 
 
@@ -321,13 +278,14 @@ def get_resource_map_mes(name):
     if not (name in data["can_query_type_list"]):
         return f"没有 {name} 这种资源。\n发送 原神资源列表 查看所有资源名称"
 
-    resource_id = data["can_query_type_list"][name]
-    count = 0
+    map = Resource_map(name)
+    count = map.get_resource_count()
+
+    if not count:
+        return f"没有找到 {name} 资源的位置，可能米游社wiki还没更新。"
+
     mes = f"资源 {name} 的位置如下\n"
-    for point_list in data["sort_resource_point_list"][resource_id]:
-        map = Resource_map(name,point_list)
-        count += map.get_resource_count()
-        mes += map.get_cq_cod()
+    mes += map.get_cq_cod()
 
     mes += f"\n\n※ {name} 一共找到 {count} 个位置点\n※ 数据来源于米游社wiki"
 
@@ -363,6 +321,3 @@ def get_resource_list_mes():
         mes += "\n"
 
     return mes
-
-
-
