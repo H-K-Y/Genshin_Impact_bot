@@ -2,7 +2,7 @@
 from nonebot import on_command,on_regex
 from nonebot.adapters.cqhttp import Message
 from nonebot.adapters import Bot, Event
-from .query_resource_points import get_resource_map_mes,get_resource_list_mes,up_label_and_point_list,up_map
+from .query_resource_points import get_resource_map_mes,get_resource_list_mes,init_point_list_and_map
 
 inquire_resource = on_regex(r"^哪里有|^哪有|在哪里$|在哪$")
 resource_list = on_command('原神资源列表')
@@ -16,7 +16,7 @@ async def _inquire_resource_(bot: Bot, event: Event,state:dict):
     resource_name = resource_name.replace(state["_matched"],"")
     if resource_name == "":
         return
-    await inquire_resource.finish(Message(get_resource_map_mes(resource_name)), at_sender=True)
+    await inquire_resource.finish(Message(await get_resource_map_mes(resource_name)), at_sender=True)
 
 
 
@@ -42,13 +42,13 @@ async def resource_list_(bot: Bot, event: Event):
 
 @up_resource_list.handle()
 async def up_resource_list_(bot: Bot, event: Event):
-    up_label_and_point_list()
+    await init_point_list_and_map()
     await up_resource_list.finish('刷新成功', at_sender=True)
 
 
 
 @up_map_icon.handle()
 async def up_map_icon_(bot: Bot, event: Event):
-    up_map(True)
+    await init_point_list_and_map()
     await up_map_icon.finish('更新成功', at_sender=True)
 
