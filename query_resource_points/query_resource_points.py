@@ -1,17 +1,19 @@
 
-from urllib import request
 from PIL import Image,ImageMath
 from io import BytesIO
+from loguru import logger
 import json
 import os
 import time
 import base64
+import httpx
+import asyncio
 
 
 
 LABEL_URL      = 'https://api-static.mihoyo.com/common/blackboard/ys_obc/v1/map/label/tree?app_sn=ys_obc'
 POINT_LIST_URL = 'https://api-static.mihoyo.com/common/blackboard/ys_obc/v1/map/point/list?map_id=2&app_sn=ys_obc'
-MAP_URL = "https://api-static.mihoyo.com/common/map_user/ys_obc/v1/map/info?map_id=2&app_sn=ys_obc&lang=zh-cn"
+MAP_URL        = "https://api-static.mihoyo.com/common/map_user/ys_obc/v1/map/info?map_id=2&app_sn=ys_obc&lang=zh-cn"
 
 header = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36'
 
@@ -21,10 +23,8 @@ MAP_PATH = os.path.join(FILE_PATH,"icon","map_icon.jpg")
 Image.MAX_IMAGE_PIXELS = None
 
 
-# 这3个常量放在up_map()函数里更新
-# MAP_IMAGE = None
-# MAP_SIZE = None
 CENTER = None
+MAP_ICON = None
 
 
 zoom = 0.5
@@ -69,146 +69,122 @@ data = {
     "date":"" #记录上次更新"all_resource_point_list"的日期
 }
 
-# def download_icon(url):
-#     # 下载分块的地图图片文件
-#     # 返回 Image
-#     schedule = request.Request(url)
-#     schedule.add_header('User-Agent', header)
-#
-#     with request.urlopen(schedule) as f:
-#         icon = Image.open(f)
-#         return icon
+
+async def download_icon(url):
+    # 下载图片，返回Image对象
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(url=url)
+        if resp.status_code != 200:
+            raise ValueError(f"获取图片数据失败，错误代码 {resp.status_code}")
+        icon = resp.content
+        return Image.open(BytesIO(icon))
+
+async def download_json(url):
+    # 获取资源数据，返回 JSON
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(url=url)
+        if resp.status_code != 200:
+            raise ValueError(f"获取资源点数据失败，错误代码 {resp.status_code}")
+        return resp.json()
 
 
-def update_map_icon():
-    # 更新地图文件
-    print("正在更新地图文件")
-    schedule = request.Request(MAP_URL)
-    schedule.add_header('User-Agent', header)
-
-    with request.urlopen(schedule) as f:
-        rew_data = f.read().decode('utf-8')
-        data = json.loads(rew_data)["data"]["info"]["detail"]
-        data = json.loads(data)
-
-    map_url = data['slices'][0][0]["url"]
-    request.urlretrieve(map_url, MAP_PATH)
-
-    # map_url_list = data['slices']
-    # map_size = data["total_size"]
-    # map_padding = data["padding"]
-    # x,y = [0,0]
-    # map_back = Image.new("RGB",map_size)
-    # for w in range(len(map_url_list)):
-    #     x = 0
-    #     for h in range(len(map_url_list[w])):
-    #         url = map_url_list[w][h]['url']
-    #         icon = download_icon(url)
-    #         map_back.paste(icon,[x,y])
-    #
-    #         x += icon.size[0]
-    #
-    #     url = map_url_list[w][-1]['url']
-    #     icon = download_icon(url)
-    #     y += icon.size[1]
-
-    # with open(MAP_PATH, "wb") as jpg:
-    #     map_back.save(jpg)
-
-
-
-def up_icon_image(sublist):
+async def up_icon_image(sublist):
     # 检查是否有图标，没有图标下载保存到本地
     id = sublist["id"]
-    icon_url = sublist["icon"]
-
     icon_path = os.path.join(FILE_PATH,"icon",f"{id}.png")
 
     if not os.path.exists(icon_path):
-        print(f"正在更新图标 {id}")
-        schedule = request.Request(icon_url)
-        schedule.add_header('User-Agent', header)
-        with request.urlopen(schedule) as f:
-            icon = Image.open(f)
-            icon = icon.resize((150, 150))
+        logger.info(f"正在更新资源图标 {id}")
+        icon_url = sublist["icon"]
+        icon = await download_icon(icon_url)
+        icon = icon.resize((150, 150))
 
-            box_alpha = Image.open(os.path.join(FILE_PATH,"icon","box_alpha.png")).getchannel("A")
-            box = Image.open(os.path.join(FILE_PATH,"icon","box.png"))
+        box_alpha = Image.open(os.path.join(FILE_PATH,"icon","box_alpha.png")).getchannel("A")
+        box = Image.open(os.path.join(FILE_PATH,"icon","box.png"))
 
-            try:
-                icon_alpha = icon.getchannel("A")
-                icon_alpha = ImageMath.eval("convert(a*b/256, 'L')", a=icon_alpha, b=box_alpha)
-            except ValueError:
-                # 米游社的图有时候会没有alpha导致报错，这时候直接使用box_alpha当做alpha就行
-                icon_alpha = box_alpha
+        try:
+            icon_alpha = icon.getchannel("A")
+            icon_alpha = ImageMath.eval("convert(a*b/256, 'L')", a=icon_alpha, b=box_alpha)
+        except ValueError:
+            # 米游社的图有时候会没有alpha导致报错，这时候直接使用box_alpha当做alpha就行
+            icon_alpha = box_alpha
 
-            icon2 = Image.new("RGBA", (150, 150), "#00000000")
-            icon2.paste(icon, (0, -10))
+        icon2 = Image.new("RGBA", (150, 150), "#00000000")
+        icon2.paste(icon, (0, -10))
 
-            bg = Image.new("RGBA", (150, 150), "#00000000")
-            bg.paste(icon2, mask=icon_alpha)
-            bg.paste(box, mask=box)
+        bg = Image.new("RGBA", (150, 150), "#00000000")
+        bg.paste(icon2, mask=icon_alpha)
+        bg.paste(box, mask=box)
 
-            with open(icon_path, "wb") as icon_file:
-                bg.save(icon_file)
+        with open(icon_path, "wb") as icon_file:
+            bg.save(icon_file)
 
-def up_label_and_point_list():
+async def up_label_and_point_list():
     # 更新label列表和资源点列表
+    logger.info(f"正在更新资源点数据")
+    label_data = await download_json(LABEL_URL)
+    for label in label_data["data"]["tree"]:
+        data["all_resource_type"][str(label["id"])] = label
+        for sublist in label["children"]:
+            data["all_resource_type"][str(sublist["id"])] = sublist
+            data["can_query_type_list"][sublist["name"]] = str(sublist["id"])
+            await up_icon_image(sublist)
+        label["children"] = []
 
-    schedule = request.Request(LABEL_URL)
-    schedule.add_header('User-Agent', header)
-    with request.urlopen(schedule) as f:
-        if f.code != 200:  # 检查返回的状态码是否是200
-            raise ValueError(f"资源标签列表初始化失败，错误代码{f.code}")
-        label_data = json.loads(f.read().decode('utf-8'))
-
-        for label in label_data["data"]["tree"]:
-            data["all_resource_type"][str(label["id"])] = label
-
-            for sublist in label["children"]:
-                data["all_resource_type"][str(sublist["id"])] = sublist
-                data["can_query_type_list"][sublist["name"]] = str(sublist["id"])
-                up_icon_image(sublist)
-
-            label["children"] = []
-
-    schedule = request.Request(POINT_LIST_URL)
-    schedule.add_header('User-Agent', header)
-    with request.urlopen(schedule) as f:
-        if f.code != 200:  # 检查返回的状态码是否是200
-            raise ValueError(f"资源点列表初始化失败，错误代码{f.code}")
-        test = json.loads(f.read().decode('utf-8'))
+        test = await download_json(POINT_LIST_URL)
         data["all_resource_point_list"] = test["data"]["point_list"]
-
     data["date"] = time.strftime("%d")
+    logger.info(f"资源点数据更新完成")
 
 
-def up_map(re_download_map = False):
-    # global MAP_IMAGE
-    # global MAP_SIZE
+async def up_map():
+    # 更新地图文件 并按照资源点的范围自动裁切掉不需要的地方
+    # 裁切地图需要最新的资源点位置，所以要先调用 up_label_and_point_list 再更新地图
     global CENTER
+    global MAP_ICON
+    logger.info(f"正在更新地图数据")
+    map_info = await download_json(MAP_URL)
+    map_info = map_info["data"]["info"]["detail"]
+    map_info = json.loads(map_info)
 
-    if (not os.path.exists(MAP_PATH)) or (re_download_map):
-        update_map_icon()
+    map_url = map_info['slices'][0][0]["url"]
+    origin = map_info["origin"]
 
-    # MAP_IMAGE = Image.open(MAP_PATH)
-    # MAP_SIZE = MAP_IMAGE.size
+    map_icon = await download_icon(map_url)
+    map_size = map_icon.size
+    x_start = map_size[0]
+    y_start = map_size[1]
+    x_end = 0
+    y_end = 0
+    for resource_point in data["all_resource_point_list"]:
+        x_pos = resource_point["x_pos"] + origin[0]
+        y_pos = resource_point["y_pos"] + origin[1]
+        x_start = min(x_start,x_pos)
+        y_start = min(y_start,y_pos)
+        x_end = max(x_end,x_pos)
+        y_end = max(y_end,y_pos)
 
-    schedule = request.Request(MAP_URL)
-    schedule.add_header('User-Agent', header)
-    with request.urlopen(schedule) as f:
-        rew_data = f.read().decode('utf-8')
-        data = json.loads(rew_data)["data"]["info"]["detail"]
-        data = json.loads(data)
+    x_start -= 200
+    y_start -= 200
+    x_end += 200
+    y_end += 200
 
-    CENTER = data["origin"]
+    CENTER = [origin[0] - x_start, origin[1] - y_start]
+    MAP_ICON = map_icon.crop((x_start, y_start, x_end, y_end))
+    # with open(MAP_PATH , "wb") as icon_file:
+    #     map_icon.save(icon_file)
+    logger.info(f"地图数据更新完成")
 
+
+async def init_point_list_and_map():
+    await up_label_and_point_list()
+    await up_map()
 
 
 
 # 初始化
-up_label_and_point_list()
-up_map()
+loop = asyncio.get_event_loop()
+loop.run_until_complete(init_point_list_and_map())
 
 
 
@@ -218,7 +194,8 @@ class Resource_map(object):
     def __init__(self,resource_name):
         self.resource_id = str(data["can_query_type_list"][resource_name])
 
-        self.map_image = Image.open(MAP_PATH)
+        # self.map_image = Image.open(MAP_PATH)
+        self.map_image = MAP_ICON.copy()
         self.map_size = self.map_image.size
 
         # 地图要要裁切的左上角和右下角坐标
@@ -309,10 +286,10 @@ class Resource_map(object):
 
 
 
-def get_resource_map_mes(name):
+async def get_resource_map_mes(name):
 
     if data["date"] !=  time.strftime("%d"):
-        up_label_and_point_list()
+        await init_point_list_and_map()
 
     if not (name in data["can_query_type_list"]):
         return f"没有 {name} 这种资源。\n发送 原神资源列表 查看所有资源名称"
@@ -360,6 +337,3 @@ def get_resource_list_mes():
         mes += "\n"
 
     return mes
-
-
-
