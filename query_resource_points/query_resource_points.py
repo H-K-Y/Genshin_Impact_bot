@@ -146,12 +146,12 @@ async def up_map():
     # 裁切地图需要最新的资源点位置，所以要先调用 up_label_and_point_list 再更新地图
     global CENTER
     logging.info(f"正在更新地图数据")
-    data = await download_json(MAP_URL)
-    data = data["data"]["info"]["detail"]
-    data = json.loads(data)
+    map_info = await download_json(MAP_URL)
+    map_info = map_info["data"]["info"]["detail"]
+    map_info = json.loads(map_info)
 
-    map_url = data['slices'][0][0]["url"]
-    origin = data["origin"]
+    map_url = map_info['slices'][0][0]["url"]
+    origin = map_info["origin"]
 
     map_icon = await download_icon(map_url)
     map_size = map_icon.size
