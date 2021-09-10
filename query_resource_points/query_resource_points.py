@@ -32,6 +32,7 @@ resource_icon_offset = (-int(150*0.5*zoom),-int(150*zoom))
 
 LOG_FORMAT = "%(asctime)s [%(levelname)s] [原神资源信息查询] - %(message)s"
 DATE_FORMAT = "%m-%d %H:%M:%S"
+log = logging.getLogger("query_resource_point")
 logging.basicConfig(level=logging.INFO,format=LOG_FORMAT, datefmt=DATE_FORMAT)
 
 
@@ -98,7 +99,7 @@ async def up_icon_image(sublist):
     icon_path = os.path.join(FILE_PATH,"icon",f"{id}.png")
 
     if not os.path.exists(icon_path):
-        logging.info(f"正在更新资源图标 {id}")
+        log.info(f"正在更新资源图标 {id}")
         icon_url = sublist["icon"]
         icon = await download_icon(icon_url)
         icon = icon.resize((150, 150))
@@ -125,7 +126,7 @@ async def up_icon_image(sublist):
 
 async def up_label_and_point_list():
     # 更新label列表和资源点列表
-    logging.info(f"正在更新资源点数据")
+    log.info(f"正在更新资源点数据")
     label_data = await download_json(LABEL_URL)
     for label in label_data["data"]["tree"]:
         data["all_resource_type"][str(label["id"])] = label
@@ -138,14 +139,14 @@ async def up_label_and_point_list():
         test = await download_json(POINT_LIST_URL)
         data["all_resource_point_list"] = test["data"]["point_list"]
     data["date"] = time.strftime("%d")
-    logging.info(f"资源点数据更新完成")
+    log.info(f"资源点数据更新完成")
 
 
 async def up_map():
     # 更新地图文件 并按照资源点的范围自动裁切掉不需要的地方
     # 裁切地图需要最新的资源点位置，所以要先调用 up_label_and_point_list 再更新地图
     global CENTER
-    logging.info(f"正在更新地图数据")
+    log.info(f"正在更新地图数据")
     map_info = await download_json(MAP_URL)
     map_info = map_info["data"]["info"]["detail"]
     map_info = json.loads(map_info)
@@ -171,7 +172,7 @@ async def up_map():
     map_icon.crop((x_start, y_start, x_end, y_end))
     with open(MAP_PATH , "wb") as icon_file:
         map_icon.save(icon_file)
-    logging.info(f"地图数据更新完成")
+    log.info(f"地图数据更新完成")
 
 
 async def init_point_list_and_map():
