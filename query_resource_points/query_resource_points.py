@@ -169,7 +169,7 @@ async def up_map():
         y_end = max(y_end,y_pos)
 
     CENTER = [origin[0] - x_start, origin[1] - y_start]
-    map_icon.crop((x_start, y_start, x_end, y_end))
+    map_icon = map_icon.crop((x_start, y_start, x_end, y_end))
     with open(MAP_PATH , "wb") as icon_file:
         map_icon.save(icon_file)
     log.info(f"地图数据更新完成")
