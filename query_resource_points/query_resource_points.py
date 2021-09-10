@@ -33,7 +33,7 @@ zoom = 0.5
 resource_icon_offset = (-int(150*0.5*zoom),-int(150*zoom))
 
 LOG_FORMAT = "{time:MM-DD HH:mm:ss} {level} [原神资源信息查询] - {message}"
-logger.remove()
+# logger.remove()
 logger.add(sys.stderr ,format=LOG_FORMAT)
 
 
