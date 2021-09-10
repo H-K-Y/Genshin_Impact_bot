@@ -8,7 +8,6 @@ import time
 import base64
 import httpx
 import asyncio
-import sys
 
 
 
@@ -24,17 +23,12 @@ MAP_PATH = os.path.join(FILE_PATH,"icon","map_icon.jpg")
 Image.MAX_IMAGE_PIXELS = None
 
 
-
 CENTER = None
 MAP_ICON = None
 
 
 zoom = 0.5
 resource_icon_offset = (-int(150*0.5*zoom),-int(150*zoom))
-
-LOG_FORMAT = "{time:MM-DD HH:mm:ss} {level} [原神资源信息查询] - {message}"
-# logger.remove()
-logger.add(sys.stderr ,format=LOG_FORMAT)
 
 
 data = {
