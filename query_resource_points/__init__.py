@@ -12,7 +12,7 @@ async def inquire_resource_points(bot, ev):
     if resource_name == "":
         return
 
-    await bot.send(ev, get_resource_map_mes(resource_name), at_sender=True)
+    await bot.send(ev, await get_resource_map_mes(resource_name), at_sender=True)
 
 
 
