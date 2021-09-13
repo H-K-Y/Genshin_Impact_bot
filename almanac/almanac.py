@@ -37,7 +37,7 @@ def month_to_chinese(month: str):
 def load_data():
     # 载入config.json文件的数据
     global data
-    with open(os.path.join(FILE_PATH, LIST_PATH), 'r', encoding='UTF-8') as f:
+    with open(LIST_PATH, 'r', encoding='UTF-8') as f:
         data = json.load(f)
 
     almanac_data["date"] = ""
