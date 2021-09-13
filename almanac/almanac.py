@@ -37,6 +37,7 @@ def month_to_chinese(month: str):
 def load_data():
     # 载入config.json文件的数据
     global data
+    print(f"PATH:{os.path.join(FILE_PATH, LIST_PATH)}")
     with open(os.path.join(FILE_PATH, LIST_PATH), 'r', encoding='UTF-8') as f:
         data = json.load(f)
 
