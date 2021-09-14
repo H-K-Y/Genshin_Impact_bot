@@ -14,9 +14,9 @@ import base64
 
 open_remind = on_command("开启原神每日素材提醒")
 off_remind = on_command("关闭原神每日素材提醒")
-arms_material = on_command(("今日武器突破材料","今日武器材料","武器材料","今日武器升级材料"))
-role_material = on_command(("今日角色天赋材料","今日角色材料","角色材料","今日天赋升级材料"))
-material = on_command(("今日材料","今日素材"))
+arms_material = on_command(cmd = "今日武器升级材料", aliases = ("今日武器突破材料","今日武器材料","武器材料"))
+role_material = on_command(cmd = "今日天赋升级材料", aliases = ("今日角色天赋材料","今日角色材料","角色材料"))
+material = on_command(cmd = "今日素材", aliases = ("今日材料",))
 
 
 FILE_PATH = os.path.dirname(__file__)

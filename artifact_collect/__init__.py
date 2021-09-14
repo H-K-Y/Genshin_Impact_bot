@@ -9,14 +9,14 @@ from ..config import STAMINA_RESTORE, MAX_STAMINA
 from .json_rw import init_user_info, updata_uid_stamina, user_info, save_user_info
 import random
 
-get_obtain = on_command(cmd =("原神副本", "圣遗物副本", "查看原神副本", "查看圣遗物副本"))
+get_obtain = on_command(cmd = "原神副本",aliases = ("圣遗物副本", "查看原神副本", "查看圣遗物副本"))
 get_artifact = on_startswith("刷副本")
 get_warehouse = on_startswith("查看圣遗物仓库")
 strengthen_artifact = on_startswith("强化圣遗物")
 artifact_info = on_startswith("圣遗物详情")
 artifact_re_init = on_startswith("圣遗物洗点")
-transform = on_startswith(("转换狗粮", "转化狗粮"))
-transform_all = on_command(("转化全部0级圣遗物", "转换全部0级圣遗物"))
+transform = on_startswith(cmd = "转换狗粮",aliases = ("转化狗粮",))
+transform_all = on_command(cmd = "转换全部0级圣遗物",aliases = ("转化全部0级圣遗物", ))
 get_user_stamina = on_command("查看体力值")
 recharge = on_command("氪体力")
 
@@ -24,7 +24,6 @@ recharge = on_command("氪体力")
 
 @get_obtain.handle()
 async def get_obtain_(bot: Bot):
-    print("原神副本")
     mes = "当前副本如下\n"
     for name in artifact_obtain.keys():
         suits = " ".join(artifact_obtain[name])
