@@ -13,8 +13,8 @@ import json
 gacha_10 = on_command(("相遇之缘",), rule=to_me())
 gacha_90 = on_command(("纠缠之缘",), rule=to_me())
 gacha_180 = on_command(("原之井",), rule=to_me())
-look_pool = on_command(("原神卡池","原神up","原神UP"))
-set_pool = on_startswith(('原神卡池切换','原神切换卡池'))
+look_pool = on_command(cmd="原神卡池",aliases = {"原神up","原神UP"})
+set_pool = on_startswith(('原神卡池切换','原神切换卡池')
 
 group_pool = {
     # 这个字典保存每个群对应的卡池是哪个，群号字符串为key,卡池名为value，群号不包含在字典key里卡池按默认DEFAULT_POOL
