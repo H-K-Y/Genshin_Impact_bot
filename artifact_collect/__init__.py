@@ -24,6 +24,7 @@ recharge = on_command("氪体力")
 
 @get_obtain.handle()
 async def get_obtain_(bot: Bot, event: Event):
+    print("原神副本")
     mes = "当前副本如下\n"
     for name in artifact_obtain.keys():
         suits = " ".join(artifact_obtain[name])
@@ -33,7 +34,7 @@ async def get_obtain_(bot: Bot, event: Event):
 
 @get_artifact.handle()
 async def get_artifact_(bot: Bot, event: Event):
-    obtain = str(event.get_message()).strip()
+    obtain = str(event.get_message())[3:].strip()
     uid = str(event.user_id)
     init_user_info(uid)
 
@@ -79,7 +80,7 @@ async def get_artifact_(bot: Bot, event: Event):
 
 @get_warehouse.handle()
 async def get_warehouse_(bot: Bot, event: Event):
-    page = str(event.get_message()).strip()
+    page = str(event.get_message())[7:].strip()
     uid = str(event.user_id)
     init_user_info(uid)
     if page == "":
@@ -120,7 +121,7 @@ async def strengthen_artifact_(bot: Bot, event: Event):
     init_user_info(uid)
 
     try:
-        txt = str(event.get_message()).replace(" ", "")
+        txt = str(event.get_message())[5:].replace(" ", "")
         strengthen_level, number = txt.split("级")
 
     except Exception:
@@ -158,7 +159,7 @@ async def strengthen_artifact_(bot: Bot, event: Event):
 
 @artifact_info.handle()
 async def artifact_info_(bot: Bot, event: Event):
-    number = str(event.get_message()).strip()
+    number = str(event.get_message())[5:].strip()
     uid = str(event.user_id)
     init_user_info(uid)
 
@@ -174,7 +175,7 @@ async def artifact_info_(bot: Bot, event: Event):
 
 @artifact_re_init.handle()
 async def artifact_re_init_(bot: Bot, event: Event):
-    number = str(event.get_message()).strip()
+    number = str(event.get_message())[5:].strip()
     uid = str(event.user_id)
     init_user_info(uid)
 
@@ -207,7 +208,7 @@ async def artifact_re_init_(bot: Bot, event: Event):
 
 @transform.handle()
 async def transform_(bot: Bot, event: Event):
-    number = str(event.get_message()).strip()
+    number = str(event.get_message())[4:].strip()
     uid = str(event.user_id)
     init_user_info(uid)
 
