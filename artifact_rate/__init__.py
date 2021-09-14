@@ -7,7 +7,7 @@ import requests
 from base64 import b64encode
 from io import BytesIO
 
-artifact_rate = on_command(("圣遗物评分", "-rate"))
+artifact_rate = on_command("圣遗物评分")
 
 
 async def get_format_sub_item(artifact_attr):
