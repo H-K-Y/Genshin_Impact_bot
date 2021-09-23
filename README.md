@@ -26,6 +26,8 @@
 
 ## 致谢
 
+特别感谢[刘老板](https://github.com/noahzark)对插件的赞助
+
 **[米游社|观测枢wiki](https://bbs.mihoyo.com/ys/obc/?bbs_presentation_style=no_header)**
 
 **[可莉特调](https://genshin.pub)**
