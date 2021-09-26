@@ -131,8 +131,8 @@ async def up_label_and_point_list():
             await up_icon_image(sublist)
         label["children"] = []
 
-        test = await download_json(POINT_LIST_URL)
-        data["all_resource_point_list"] = test["data"]["point_list"]
+    test = await download_json(POINT_LIST_URL)
+    data["all_resource_point_list"] = test["data"]["point_list"]
     data["date"] = time.strftime("%d")
     logger.info(f"资源点数据更新完成")
 
