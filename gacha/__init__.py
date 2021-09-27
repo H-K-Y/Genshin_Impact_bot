@@ -4,10 +4,10 @@ from nonebot.adapters import Bot, Event
 from nonebot.adapters.cqhttp import GROUP_ADMIN, GROUP_OWNER
 from nonebot.adapters.cqhttp import Message
 from nonebot.permission import SUPERUSER
-from .gacha import gacha_info , FILE_PATH , Gacha , POOL
+from .gacha import gacha_info , FILE_PATH , Gacha
+from .pool_data import POOL, init_pool_list
 import os
 import json
-# from ..config import Gacha10Limit,Gacha90Limit,Gacha180Limit
 
 
 gacha_10 = on_command(("相遇之缘",), rule=to_me())
@@ -15,6 +15,7 @@ gacha_90 = on_command(("纠缠之缘",), rule=to_me())
 gacha_180 = on_command(("原之井",), rule=to_me())
 look_pool = on_command(cmd="原神卡池",aliases = {"原神up","原神UP"})
 set_pool = on_startswith(('原神卡池切换','原神切换卡池'))
+up_pool_data = on_command('更新原神卡池')
 
 group_pool = {
     # 这个字典保存每个群对应的卡池是哪个，群号字符串为key,卡池名为value，群号不包含在字典key里卡池按默认DEFAULT_POOL
@@ -111,3 +112,14 @@ async def set_pool_(bot: Bot, event: Event):
         txt += f"原神卡池切换 {i} \n"
 
     await set_pool.finish(txt)
+
+
+
+@up_pool_data.handle()
+async def up_pool_pata_():
+    await up_pool_data.finish("正在更新卡池")
+    await init_pool_list()
+    await up_pool_data.finish("更新完成")
+
+
+

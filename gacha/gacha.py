@@ -1,9 +1,8 @@
 from PIL import Image
 from io import BytesIO
-
+from .pool_data import POOL ,UP_PROBABILITY,POOL_PROBABILITY,DISTANCE_FREQUENCY
 
 import os
-import json
 import random
 import math
 import base64
@@ -14,119 +13,6 @@ ICON_PATH = os.path.join(FILE_PATH,'icon')
 
 
 DEFAULT_POOL = "角色up池" # 默认卡池
-
-POOL_PROBABILITY  = {
-    # 所有卡池的4星和5星概率,这里直接填写官方给出的概率，程序会自动对4星概率进行累计
-    "角色up池":{"5" : 0.006 , "4" : 0.051 },
-    "武器up池":{"5" : 0.007 , "4" : 0.060 },
-    "常驻池" : {"5" : 0.006 , "4" : 0.051 }
-}
-
-UP_PROBABILITY = {
-    # 这里保存的是当UP池第一次抽取到或上次已经抽取过UP时，本次出现UP的概率有多大，常驻池不受影响
-    "角色up池":0.5,
-    "武器up池":0.75
-}
-
-
-ROLE_ARMS_LIST = {
-    # 所有卡池数据
-
-    "5星up角色": [],
-    "4星up角色": [],
-    "5星up武器": [],
-    "4星up武器": [],
-    "5星常驻角色": [],
-    "4星常驻角色": [],
-    "4星白给角色": [],
-    "5星常驻武器": [],
-    "4星常驻武器": [],
-    "3星武器": [],
-
-    "空":[], #这个列表是留空占位的，不会有任何数据
-
-    '5星全角色武器':[],
-    
-    '5星常驻池':[],
-    '4星常驻池':[],
-
-    '5星角色up池全角色':[],
-    '4星角色up池全物品':[],
-
-    '5星武器up池全武器':[],
-    '4星武器up池全物品':[]
-}
-
-
-CORRESPONDENCE = {
-    # 这里记录的是ROLE_ARMS_LIST最后7个列表与其他列表的包含关系
-    '5星全角色武器':["5星常驻角色","5星up角色","5星常驻武器","5星up武器"],
-
-    '5星常驻池':["5星常驻角色","5星常驻武器"],
-    '4星常驻池':["4星常驻角色","4星白给角色","4星常驻武器"],
-
-    '5星角色up池全角色':["5星up角色","5星常驻角色"],
-    '4星角色up池全物品':["4星常驻角色","4星常驻武器"],
-
-    '5星武器up池全武器':["5星up武器","5星常驻武器"],
-    '4星武器up池全物品':["4星常驻武器","4星常驻角色"]
-}
-
-
-POOL = {
-    # 这个字典记录的是3个不同的卡池，每个卡池的抽取列表的value是ROLE_ARMS_LIST的哪个列表的key
-    # 比如角色UP池的5星UP列表value是"5星up角色"，就表示角色UP池的5星UP列表是保存在ROLE_ARMS_LIST["5星up角色"]这个列表里的
-    '角色up池':{
-        '5星up':"5星up角色",
-        '随机全5星':'5星角色up池全角色',
-        '4星up':"4星up角色",
-        '随机全4星':'4星角色up池全物品'
-    },
-
-    '武器up池':{
-        '5星up':"5星up武器",
-        '随机全5星':'5星武器up池全武器',
-        '4星up':"4星up武器",
-        '随机全4星':'4星武器up池全物品'
-    },
-
-    '常驻池':{
-        '5星up': '空',
-        '5星物品':'5星常驻池',
-        '4星up': '空',
-        '4星物品':'4星常驻池'
-    }
-}
-
-DISTANCE_FREQUENCY = {
-    # 3个池子的5星是多少发才保底
-    '角色up池':90,
-    '武器up池':80,
-    '常驻池':90
-}
-
-
-
-
-
-def init_role_arms_list():
-    # 初始化卡池数据
-    with open(os.path.join(FILE_PATH,'config.json'),'r', encoding='UTF-8') as f:
-        data = json.load(f)
-        for key in data.keys():
-            ROLE_ARMS_LIST[key] = data[key]
-
-    for key in CORRESPONDENCE.keys():
-        for i in CORRESPONDENCE[key]:
-            ROLE_ARMS_LIST[key].extend(ROLE_ARMS_LIST[i]) # 对后7个列表填充数据
-        ROLE_ARMS_LIST[key] = list(set(ROLE_ARMS_LIST[key])) # 去除重复数据
-
-init_role_arms_list()
-
-
-
-
-
 
 
 
@@ -191,22 +77,18 @@ class Gacha(object):
         if self.pool == "常驻池":
             return False
 
-        _5_star_up_list = POOL[self.pool]["5星up"]
-        _4_star_up_list = POOL[self.pool]["4星up"]
-
-        if (name in ROLE_ARMS_LIST[_4_star_up_list]) or (name in ROLE_ARMS_LIST[_5_star_up_list]):
+        if (name in POOL[self.pool]['5_star_UP']) or (name in POOL[self.pool]['4_star_UP']):
             return True
 
         return False
 
 
-    @staticmethod
-    def is_star(name):
+    def is_star(self,name):
         # 检查角色或物品是几星的
         # 返回对应的星星数
-        if name in ROLE_ARMS_LIST['5星全角色武器']:
+        if (name in POOL[self.pool]['5_star_UP']) or (name in POOL[self.pool]['5_star_not_UP']):
             return "★★★★★"
-        if name in ROLE_ARMS_LIST['4星常驻池']: # 4星常驻池就包含所有4星角色装备了
+        if (name in POOL[self.pool]['4_star_UP']) or (name in POOL[self.pool]['4_star_not_UP']): # 4星常驻池就包含所有4星角色装备了
             return "★★★★"
         return "★★★"
 
@@ -225,7 +107,6 @@ class Gacha(object):
     def concat_pic(self, border=5):
         # self.gacha_list是一个列表，这个函数找到列表中名字对应的图片，然后拼接成一张大图返回
         num = len(self.gacha_list)
-        # w, h = [125, 130]
         w, h = [130, 160]
 
         des = Image.new('RGBA', (w * min(num, border), h * math.ceil(num / border)), (255, 255, 255, 0))
@@ -234,14 +115,11 @@ class Gacha(object):
             im = Image.open(self.get_png_path(self.gacha_list[i]))
             im = im.resize((130, 160))
 
-            # pixel_w_offset = (125 - im.size[0]) / 2
-            # pixel_h_offset = (130 - im.size[1]) / 2  # 因为角色和武器大小不一样，小的图像设置居中显示
-
             w_row = (i % border) + 1
             h_row = math.ceil((i + 1) / border)
 
-            pixel_w = (w_row - 1) * w #+ pixel_w_offset
-            pixel_h = (h_row - 1) * h #+ pixel_h_offset
+            pixel_w = (w_row - 1) * w
+            pixel_h = (h_row - 1) * h
 
             des.paste(im, (int(pixel_w), int(pixel_h)))
 
@@ -257,21 +135,19 @@ class Gacha(object):
     def update_last(self,name):
         # 这个方法用来更新第一次抽到4星或5星或UP的计数
         if not self.last_4_up:
-            up_4_star = POOL[self.pool]['4星up']
-            if name in ROLE_ARMS_LIST[up_4_star]:
+            if name in POOL[self.pool]['4_star_UP']:
                 self.last_4_up = self.current_times + 1
 
         if not self.last_5_up:
-            up_5_star = POOL[self.pool]['5星up']
-            if name in ROLE_ARMS_LIST[up_5_star]:
+            if name in POOL[self.pool]['5_star_UP']:
                 self.last_5_up = self.current_times + 1
 
         if not self.last_4:
-            if name in ROLE_ARMS_LIST["4星常驻池"]:
+            if name in POOL[self.pool]['4_star_not_UP']:
                 self.last_4 = self.current_times + 1
 
         if not self.last_5:
-            if name in ROLE_ARMS_LIST["5星全角色武器"]:
+            if name in POOL[self.pool]['5_star_not_UP']:
                 self.last_5 = self.current_times + 1
 
     def is_guaranteed(self,frequency):
@@ -295,55 +171,43 @@ class Gacha(object):
 
 
     def get_5_star(self):
-        # 先检查上次5星是否是UP，不是UP本次抽取必定是UP，
-        # 如果上次是UP，角色UP池本次有50%的概率还是UP，50%概率所有5星随机，
-        # 武器UP池本次有75%的概率还是UP，25%概率所有5星随机，详情看UP_PROBABILITY
+        # 先检查上次5星是否是UP，不是UP本次抽取必定是 UP，
+        # 如果上次是UP，角色UP池本次有50%的概率还是 UP，50%概率非 UP，
+        # 武器UP池本次有75%的概率还是 UP，25%概率非 UP，详情看UP_PROBABILITY
 
         # 先看是不是常驻池
         if self.pool ==  '常驻池':
-            key = POOL['常驻池']['5星物品'] # 先获取常驻池的5星保存在ROLE_ARMS_LIST的哪个列表
-            return random.choice(ROLE_ARMS_LIST[key])
+            return random.choice(POOL[self.pool]['5_star_not_UP'])
 
         # 下边是角色或武器的UP
-        # 先获取5星UP和全5星角色武器保存在ROLE_ARMS_LIST的哪个列表
-        # up_5_star和all_5_star是ROLE_ARMS_LIST的key
-        # UP武器和UP角色对应的列表是不一样的，详情看POOL
-        up_5_star = POOL[self.pool]['5星up']
-        all_5_star = POOL[self.pool]['随机全5星']
         if self.is_up(self.last_time_5):
 
             if random.random() < UP_PROBABILITY[self.pool]:
-                return random.choice(ROLE_ARMS_LIST[up_5_star])
+                return random.choice(POOL[self.pool]['5_star_UP'])
             else:
-                return random.choice(ROLE_ARMS_LIST[all_5_star])
+                return random.choice(POOL[self.pool]['5_star_not_UP'])
         else:
-            return random.choice(ROLE_ARMS_LIST[up_5_star])
+            return random.choice(POOL[self.pool]['5_star_UP'])
 
 
 
     def get_4_star(self):
-        # 先检查上次4星是否是UP，不是UP本次抽取必定是UP，
-        # 如果上次是UP，角色UP池本次有50%的概率还是UP，50%概率所有4星随机，
-        # 武器UP池本次有75%的概率还是UP，25%概率所有4星随机，详情看UP_PROBABILITY
+        # 先检查上次4星是否是UP，不是UP本次抽取必定是 UP，
+        # 如果上次是UP，角色UP池本次有50%的概率还是 UP，50%概率非 UP
+        # 武器UP池本次有75%的概率还是UP，25%概率非 UP，详情看UP_PROBABILITY
 
         # 先看是不是常驻池
         if self.pool ==  '常驻池':
-            key = POOL['常驻池']['4星物品'] # 先获取常驻池的4星保存在ROLE_ARMS_LIST的哪个列表
-            return random.choice(ROLE_ARMS_LIST[key])
+            return random.choice(POOL[self.pool]['4_star_not_UP'])
 
         # 下边是角色或武器的UP
-        # 先获取4星UP和全4星角色武器保存在ROLE_ARMS_LIST的哪个列表
-        # up_4_star和all_4_star是ROLE_ARMS_LIST的key
-        # UP武器和UP角色对应的列表是不一样的，详情看POOL
-        up_4_star = POOL[self.pool]['4星up']
-        all_4_star = POOL[self.pool]['随机全4星']
         if self.is_up(self.last_time_4):
             if random.random() < UP_PROBABILITY[self.pool]:
-                return random.choice(ROLE_ARMS_LIST[up_4_star])
+                return random.choice(POOL[self.pool]['4_star_UP'])
             else:
-                return random.choice(ROLE_ARMS_LIST[all_4_star])
+                return random.choice(POOL[self.pool]['4_star_not_UP'])
         else:
-            return random.choice(ROLE_ARMS_LIST[up_4_star])
+            return random.choice(POOL[self.pool]['4_star_UP'])
 
     def get_5_star_probability(self):
         # 获取本次抽5星的概率是多少
@@ -407,7 +271,7 @@ class Gacha(object):
 
         # 以上都不是返回3星
         self.gacha_rarity_statistics["3星"] += 1
-        return random.choice(ROLE_ARMS_LIST["3星武器"])
+        return random.choice(POOL[self.pool]['3_star_not_UP'])
 
 
 
@@ -459,7 +323,7 @@ class Gacha(object):
 
             new_gacha = self.gacha_one()
 
-            if not (new_gacha in ROLE_ARMS_LIST["3星武器"]): # 抽一井时图片上不保留3星的武器
+            if not (new_gacha in POOL[self.pool]['3_star_not_UP']): # 抽一井时图片上不保留3星的武器
                 self.gacha_list.append(new_gacha)
 
             self.add_gacha_all_statistics(new_gacha) # 把所有抽卡结果添加到gacha_all_statistics用于最后统计
@@ -497,22 +361,18 @@ class Gacha(object):
 
 
 def gacha_info(pool = DEFAULT_POOL):
-    # 重载卡池数据，然后返回UP角色信息
-    init_role_arms_list() # 重新载入config.json的卡池数据
+    # UP角色信息
     info_txt = f'当前卡池为 {pool} ，UP信息如下：\n'
-
-    _5_star_up_info = POOL[pool]["5星up"]
-    _4_star_up_info = POOL[pool]["4星up"]
     up_info = ""
 
-    for _5_star in ROLE_ARMS_LIST[_5_star_up_info]:
+    for _5_star in POOL['5_star_UP']:
         im = Image.open(Gacha.get_png_path(_5_star))
         im = Gacha.pic2b64(im)
         up_info += Gacha.ba64_to_cq(im)
         up_info += "\n"
         up_info += f"{_5_star} ★★★★★"
 
-    for _4_star in ROLE_ARMS_LIST[_4_star_up_info]:
+    for _4_star in POOL['4_star_UP']:
         im = Image.open(Gacha.get_png_path(_4_star))
         im = Gacha.pic2b64(im)
         up_info += Gacha.ba64_to_cq(im)
