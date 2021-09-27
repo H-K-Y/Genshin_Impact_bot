@@ -365,14 +365,14 @@ def gacha_info(pool = DEFAULT_POOL):
     info_txt = f'当前卡池为 {pool} ，UP信息如下：\n'
     up_info = ""
 
-    for _5_star in POOL['5_star_UP']:
+    for _5_star in POOL[pool]['5_star_UP']:
         im = Image.open(Gacha.get_png_path(_5_star))
         im = Gacha.pic2b64(im)
         up_info += Gacha.ba64_to_cq(im)
         up_info += "\n"
         up_info += f"{_5_star} ★★★★★"
 
-    for _4_star in POOL['4_star_UP']:
+    for _4_star in POOL[pool]['4_star_UP']:
         im = Image.open(Gacha.get_png_path(_4_star))
         im = Gacha.pic2b64(im)
         up_info += Gacha.ba64_to_cq(im)
