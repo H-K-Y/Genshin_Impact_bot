@@ -242,7 +242,7 @@ async def init_pool_list():
         else:
             pool_name = '常驻池'
 
-        pool_url = f"https://webstatic.mihoyo.com/hk4e/gacha_info/cn_gf01/{data['gacha_id']}/zh-cn.json"
+        pool_url = f"https://webstatic.mihoyo.com/hk4e/gacha_info/cn_gf01/{d['gacha_id']}/zh-cn.json"
         pool_data = await get_url_data(pool_url)
         pool_data = json.loads(pool_data.decode("utf-8"))
 
