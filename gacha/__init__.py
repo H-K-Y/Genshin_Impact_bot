@@ -1,4 +1,4 @@
-from nonebot import on_command,on_startswith
+from nonebot import on_command,on_regex
 from nonebot.rule import to_me
 from nonebot.adapters import Bot, Event
 from nonebot.adapters.cqhttp import GROUP_ADMIN, GROUP_OWNER
@@ -14,7 +14,7 @@ gacha_10 = on_command(("相遇之缘",), rule=to_me())
 gacha_90 = on_command(("纠缠之缘",), rule=to_me())
 gacha_180 = on_command(("原之井",), rule=to_me())
 look_pool = on_command(cmd="查看原神卡池",aliases = {"查看原神up","查看原神UP"})
-set_pool = on_startswith(('原神卡池切换','原神切换卡池'))
+set_pool = on_regex(r"^原神卡池切换|^切换原神卡池")
 up_pool_data = on_command('更新原神卡池')
 
 group_pool = {
