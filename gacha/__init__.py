@@ -87,7 +87,7 @@ async def look_pool_(bot: Bot, event: Event):
     await look_pool.finish(Message(info) , at_sender=True)
 
 @set_pool.handle()
-async def set_pool_(bot: Bot, event: Event):
+async def set_pool_(bot: Bot, event: Event,state:dict):
 
     if not (await GROUP_ADMIN(bot, event) or
             await GROUP_OWNER(bot, event) or
@@ -96,6 +96,7 @@ async def set_pool_(bot: Bot, event: Event):
         return
 
     pool_name = str(event.get_message()).strip()
+    pool_name = pool_name.replace(state["_matched"],"")
     gid = str(event.group_id)
 
     if pool_name in POOL.keys():

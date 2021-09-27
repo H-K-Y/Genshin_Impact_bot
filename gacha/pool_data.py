@@ -166,7 +166,7 @@ async def paste_role_icon(ch_name,star):
     bg.paste(element_icon, (2,3),element_icon)
     bg.paste(txt_bg, (0,163))
     draw = ImageDraw.Draw(bg)
-    draw.text((84, 180), ch_name, fill="#4a5466ff", font=FONT, anchor="mm",align="center")
+    draw.text((80, 180), ch_name, fill="#4a5466ff", font=FONT, anchor="mm",align="center")
     bg1.paste(bg,(0,0),bg_a)
     return bg1
 
@@ -187,7 +187,7 @@ async def paste_arm_icon(ch_name,star):
     bg.paste(arm_icon, (17,3),arm_icon)
     bg.paste(txt_bg, (0,163))
     draw = ImageDraw.Draw(bg)
-    draw.text((84, 180), ch_name, fill="#4a5466ff", font=FONT, anchor="mm",align="center")
+    draw.text((80, 180), ch_name, fill="#4a5466ff", font=FONT, anchor="mm",align="center")
     bg.paste(star_icon,(6,135),star_icon)
     bg1.paste(bg,(0,0),bg_a)
     return bg1
