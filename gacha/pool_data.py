@@ -198,6 +198,8 @@ async def up_role_icon(name, star):
     if os.path.exists(role_name_path):
         return
     logger.info(f"正在更新 {name} 角色图标")
+    if not os.path.exists(os.path.join(ICON_PATH, '角色图鉴')):
+        os.makedirs(os.path.join(ICON_PATH, '角色图鉴'))
 
     role_icon = await paste_role_icon(name,star)
     with open(role_name_path , "wb") as icon_file:
@@ -212,6 +214,8 @@ async def up_arm_icon(name, star):
     if os.path.exists(arm_name_path):
         return
     logger.info(f"正在更新 {name} 武器图标")
+    if not os.path.exists(os.path.join(ICON_PATH, '武器图鉴')):
+        os.makedirs(os.path.join(ICON_PATH, '武器图鉴'))
 
     arm_icon = await paste_arm_icon(name,star)
     with open(arm_name_path , "wb") as icon_file:
