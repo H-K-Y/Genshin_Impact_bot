@@ -116,7 +116,7 @@ async def set_pool_(bot: Bot, event: Event):
 
 
 @up_pool_data.handle()
-async def up_pool_pata_():
+async def up_pool_pata_(bot: Bot):
     await up_pool_data.finish("正在更新卡池")
     await init_pool_list()
     await up_pool_data.finish("更新完成")
