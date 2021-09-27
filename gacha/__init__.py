@@ -96,7 +96,7 @@ async def set_pool_(bot: Bot, event: Event,state:dict):
         return
 
     pool_name = str(event.get_message()).strip()
-    pool_name = pool_name.replace(state["_matched"],"")
+    pool_name = pool_name.replace(state["_matched"],"").strip()
     gid = str(event.group_id)
 
     if pool_name in POOL.keys():
