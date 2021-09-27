@@ -13,7 +13,7 @@ import json
 gacha_10 = on_command(("相遇之缘",), rule=to_me())
 gacha_90 = on_command(("纠缠之缘",), rule=to_me())
 gacha_180 = on_command(("原之井",), rule=to_me())
-look_pool = on_command(cmd="原神卡池",aliases = {"原神up","原神UP"})
+look_pool = on_command(cmd="查看原神卡池",aliases = {"查看原神up","查看原神UP"})
 set_pool = on_startswith(('原神卡池切换','原神切换卡池'))
 up_pool_data = on_command('更新原神卡池')
 
