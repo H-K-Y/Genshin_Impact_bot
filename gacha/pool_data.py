@@ -163,7 +163,7 @@ async def paste_role_icon(ch_name,star):
     x = int(160/256 * avatar_icon.size[0])
     avatar_icon = avatar_icon.resize((x, 160))
     element_icon = element_icon.resize((40, 40))
-    x_pos = int(160/2 - x / 2 + 2)
+    x_pos = int(160/2 - x / 2)
     bg.paste(avatar_icon, (x_pos,3),avatar_icon)
     bg.paste(element_icon, (2,3),element_icon)
     bg.paste(txt_bg, (0,163))
