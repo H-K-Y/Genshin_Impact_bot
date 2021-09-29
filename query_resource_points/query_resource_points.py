@@ -9,8 +9,6 @@ import base64
 import httpx
 import asyncio
 
-
-
 LABEL_URL      = 'https://api-static.mihoyo.com/common/blackboard/ys_obc/v1/map/label/tree?app_sn=ys_obc'
 POINT_LIST_URL = 'https://api-static.mihoyo.com/common/blackboard/ys_obc/v1/map/point/list?map_id=2&app_sn=ys_obc'
 MAP_URL        = "https://api-static.mihoyo.com/common/map_user/ys_obc/v1/map/info?map_id=2&app_sn=ys_obc&lang=zh-cn"
@@ -22,14 +20,13 @@ FILE_PATH = os.path.dirname(__file__)
 MAP_PATH = os.path.join(FILE_PATH,"icon","map_icon.jpg")
 Image.MAX_IMAGE_PIXELS = None
 
-
 CENTER = None
 MAP_ICON = None
 
-
 zoom = 0.5
 resource_icon_offset = (-int(150*0.5*zoom),-int(150*zoom))
-
+EXCLUDE_RES = ["1","12","50","51","95","131"]
+USE_LOCAL = True
 
 data = {
     "all_resource_type":{
@@ -142,71 +139,69 @@ async def up_map():
     # 裁切地图需要最新的资源点位置，所以要先调用 up_label_and_point_list 再更新地图
     global CENTER
     global MAP_ICON
-    logger.info(f"正在更新地图数据")
-    map_info = await download_json(MAP_URL)
-    map_info = map_info["data"]["info"]["detail"]
-    map_info = json.loads(map_info)
+    if USE_LOCAL:
+        MAP_ICON = None
+        CENTER = json.load(open(os.path.join(FILE_PATH, "icon/map_icon.json")))["center"]
+    else:
+        logger.info(f"正在更新地图数据")
+        map_info = await download_json(MAP_URL)
+        map_info = map_info["data"]["info"]["detail"]
+        map_info = json.loads(map_info)
 
-    map_url = map_info['slices'][0][0]["url"]
-    origin = map_info["origin"]
+        map_url = map_info['slices'][0][0]["url"]
+        origin = map_info["origin"]
 
-    map_icon = await download_icon(map_url)
-    map_size = map_icon.size
-    x_start = map_size[0]
-    y_start = map_size[1]
-    x_end = 0
-    y_end = 0
-    for resource_point in data["all_resource_point_list"]:
-        x_pos = resource_point["x_pos"] + origin[0]
-        y_pos = resource_point["y_pos"] + origin[1]
-        x_start = min(x_start,x_pos)
-        y_start = min(y_start,y_pos)
-        x_end = max(x_end,x_pos)
-        y_end = max(y_end,y_pos)
+        map_icon = await download_icon(map_url)
+        map_size = map_icon.size
+        x_start = map_size[0]
+        y_start = map_size[1]
+        x_end = 0
+        y_end = 0
+        for resource_point in data["all_resource_point_list"]:
+            x_pos = resource_point["x_pos"] + origin[0]
+            y_pos = resource_point["y_pos"] + origin[1]
+            x_start = min(x_start,x_pos)
+            y_start = min(y_start,y_pos)
+            x_end = max(x_end,x_pos)
+            y_end = max(y_end,y_pos)
 
-    x_start -= 200
-    y_start -= 200
-    x_end += 200
-    y_end += 200
+        x_start -= 200
+        y_start -= 200
+        x_end += 200
+        y_end += 200
 
-    CENTER = [origin[0] - x_start, origin[1] - y_start]
-    MAP_ICON = map_icon.crop((x_start, y_start, x_end, y_end))
-    # with open(MAP_PATH , "wb") as icon_file:
-    #     map_icon.save(icon_file)
-    logger.info(f"地图数据更新完成")
-
+        CENTER = [origin[0] - x_start, origin[1] - y_start]
+        MAP_ICON = map_icon.crop((x_start, y_start, x_end, y_end))
+        logger.info(f"地图数据更新完成")
 
 async def init_point_list_and_map():
     await up_label_and_point_list()
     await up_map()
-
-
 
 # 初始化
 loop = asyncio.get_event_loop()
 loop.run_until_complete(init_point_list_and_map())
 
 
-
-
 class Resource_map(object):
 
     def __init__(self,resource_name):
         self.resource_id = str(data["can_query_type_list"][resource_name])
-
-        # self.map_image = Image.open(MAP_PATH)
-        self.map_image = MAP_ICON.copy()
-        self.map_size = self.map_image.size
-
-        # 地图要要裁切的左上角和右下角坐标
-        # 这里初始化为地图的大小
-        self.x_start = self.map_size[0]
-        self.y_start = self.map_size[1]
-        self.x_end = 0
-        self.y_end = 0
-
-        self.resource_icon = Image.open(self.get_icon_path())
-        self.resource_icon = self.resource_icon.resize((int(150*zoom),int(150*zoom)))
+        if USE_LOCAL:
+            pass
+            #self.map_image = Image.open(os.path.join(FILE_PATH, f"icon/map_{self.resource_id}.jpg"))
+        else:
+            # self.map_image = Image.open(MAP_PATH)
+            self.map_image = MAP_ICON.copy()
+            self.map_size = self.map_image.size
+            self.resource_icon = Image.open(self.get_icon_path())
+            self.resource_icon = self.resource_icon.resize((int(150*zoom),int(150*zoom)))
+            # 地图要要裁切的左上角和右下角坐标
+            # 这里初始化为地图的大小
+            self.x_start = self.map_size[0]
+            self.y_start = self.map_size[1]
+            self.x_end = 0
+            self.y_end = 0
 
         self.resource_xy_list = self.get_resource_point_list()
 
@@ -228,7 +223,6 @@ class Resource_map(object):
                 y = resource_point["y_pos"] + CENTER[1]
                 temp_list.append((int(x),int(y)))
         return temp_list
-
 
     def paste(self):
         for x,y in self.resource_xy_list:
@@ -271,20 +265,19 @@ class Resource_map(object):
         if not self.resource_xy_list:
             return "没有这个资源的信息"
 
-        self.crop()
-
-        self.paste()
-
-        bio = BytesIO()
-        self.map_image.save(bio, format='JPEG')
-        base64_str = 'base64://' + base64.b64encode(bio.getvalue()).decode()
-
-        return f"[CQ:image,file={base64_str}]"
+        if USE_LOCAL:
+            filename = os.path.join(FILE_PATH, f"icon/map_{self.resource_id}.jpg")
+            return f"[CQ:image,file=file:///{filename}]"
+        else:
+            self.crop()
+            self.paste()
+            bio = BytesIO()
+            self.map_image.save(bio, format='JPEG')
+            base64_str = 'base64://' + base64.b64encode(bio.getvalue()).decode()
+            return f"[CQ:image,file={base64_str}]"
 
     def get_resource_count(self):
         return len(self.resource_xy_list)
-
-
 
 async def get_resource_map_mes(name):
 
@@ -306,8 +299,6 @@ async def get_resource_map_mes(name):
     mes += f"\n\n※ {name} 一共找到 {count} 个位置点\n※ 数据来源于米游社wiki"
 
     return mes
-
-
 
 def get_resource_list_mes():
 
@@ -337,3 +328,26 @@ def get_resource_list_mes():
         mes += "\n"
 
     return mes
+
+async def update_local_map():
+    await init_point_list_and_map()
+    logger.info("保存地图...")
+    t = time.perf_counter()
+    with open(MAP_PATH, "wb") as icon_file:
+        MAP_ICON.save(icon_file)
+    with open("icon/map_icon.json", "w") as f:
+        json.dump({"center": CENTER, "size": MAP_ICON.size}, f)
+    logger.info(f"{time.perf_counter() - t}s")
+    
+    for name in data["can_query_type_list"].keys():
+        t = time.perf_counter()
+        map = Resource_map(name)
+        map.crop()
+        map.paste()
+        with open(f"icon/map_{data['can_query_type_list'][name]}.jpg", "w") as mapf:
+            map.map_image.save(mapf)
+        logger.info(f"{data['can_query_type_list'][name]} - {name} - {time.perf_counter() = t}s")
+
+if __name__ == "__main__":
+    USE_LOCAL = False
+    asyncio.get_event_loop().run_until_complete(update_local_map())
