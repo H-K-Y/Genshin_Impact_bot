@@ -346,7 +346,7 @@ async def update_local_map():
         map.paste()
         with open(f"icon/map_{data['can_query_type_list'][name]}.jpg", "w") as mapf:
             map.map_image.save(mapf)
-        logger.info(f"{data['can_query_type_list'][name]} - {name} - {time.perf_counter() = t}s")
+        logger.info(f"{data['can_query_type_list'][name]} - {name} - {time.perf_counter() - t}s")
 
 if __name__ == "__main__":
     USE_LOCAL = False

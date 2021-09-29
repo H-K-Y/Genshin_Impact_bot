@@ -1,5 +1,6 @@
 from hoshino import Service,priv
 from .gacha import gacha_info , FILE_PATH , Gacha , POOL
+from .pool_data import init_pool_list
 import os
 import json
 from hoshino.util import DailyNumberLimiter
@@ -115,3 +116,11 @@ async def set_pool(bot, ev):
         txt += f"原神卡池切换 {i} \n"
 
     await bot.send(ev, txt)
+
+
+@sv.on_prefix('更新原神卡池')
+async def up_pool_(bot, ev):
+    await bot.send(ev, '正在更新卡池')
+    await init_pool_list()
+    await bot.send(ev,"更新卡池完成")
+
