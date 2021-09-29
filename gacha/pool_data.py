@@ -15,15 +15,16 @@ FILE_PATH = os.path.dirname(__file__)
 ICON_PATH = os.path.join(FILE_PATH,'icon')
 
 
-POOL_API =  "https://webstatic.mihoyo.com/hk4e/gacha_info/cn_gf01/gacha/list.json"
-ROLES_API = 'https://genshin.honeyhunterworld.com/db/char/characters/?lang=CHS'
-ARMS_API = ['https://genshin.honeyhunterworld.com/db/weapon/sword/?lang=CHS',
-            'https://genshin.honeyhunterworld.com/db/weapon/claymore/?lang=CHS',
-            'https://genshin.honeyhunterworld.com/db/weapon/polearm/?lang=CHS',
-            'https://genshin.honeyhunterworld.com/db/weapon/bow/?lang=CHS',
-            'https://genshin.honeyhunterworld.com/db/weapon/catalyst/?lang=CHS']
-ROLES = None
-ARMS = None
+POOL_API =   "https://webstatic.mihoyo.com/hk4e/gacha_info/cn_gf01/gacha/list.json"
+ROLES_API = ['https://genshin.honeyhunterworld.com/db/char/characters/?lang=CHS',
+             'https://genshin.honeyhunterworld.com/db/char/unreleased-and-upcoming-characters/?lang=CHS']
+ARMS_API =  ['https://genshin.honeyhunterworld.com/db/weapon/sword/?lang=CHS',
+             'https://genshin.honeyhunterworld.com/db/weapon/claymore/?lang=CHS',
+             'https://genshin.honeyhunterworld.com/db/weapon/polearm/?lang=CHS',
+             'https://genshin.honeyhunterworld.com/db/weapon/bow/?lang=CHS',
+             'https://genshin.honeyhunterworld.com/db/weapon/catalyst/?lang=CHS']
+ROLES_HTML_LIST = None
+ARMS_HTML_LIST = None
 
 FONT_PATH = os.path.join(os.path.dirname(FILE_PATH),'artifact_collect',"zh-cn.ttf")
 FONT=ImageFont.truetype(FONT_PATH, size=20)
@@ -90,30 +91,36 @@ async def get_url_data(url):
 
 async def get_role_en_name(ch_name):
     # 从 genshin.honeyhunterworld.com 获取角色的英文名
-    global ROLES
-    if ROLES == None:
-        data = await get_url_data(ROLES_API)
-        ROLES = data.decode("utf-8")
+    global ROLES_HTML_LIST
+    if ROLES_HTML_LIST == None:
+        ROLES_HTML_LIST = []
+        for api in ROLES_API:
+            data = await get_url_data(api)
+            ROLES_HTML_LIST.append(data.decode("utf-8"))
 
     pattern = ".{80}" + str(ch_name)
-    en_name = re.search(pattern, ROLES).group()
-    en_name = re.search('"/db/char/.+/\?lang=CHS"',en_name).group()
-    en_name = en_name[10:-11]
-    return en_name
+    for html in ROLES_HTML_LIST:
+        txt = re.search(pattern, html)
+        if txt == None:
+            continue
+        txt = re.search('"/db/char/.+/\?lang=CHS"',txt.group()).group()
+        en_name = txt[10:-11]
+        return en_name
+    raise NameError(f"没有找到角色 {ch_name} 的图标名")
 
 
 
 async def get_arm_id(ch_name):
     # 从 genshin.honeyhunterworld.com 获取武器的ID
-    global ARMS
-    if ARMS == None:
-        ARMS = []
+    global ARMS_HTML_LIST
+    if ARMS_HTML_LIST == None:
+        ARMS_HTML_LIST = []
         for api in ARMS_API:
             data = await get_url_data(api)
-            ARMS.append(data.decode("utf-8"))
+            ARMS_HTML_LIST.append(data.decode("utf-8"))
 
     pattern = '.{40}' + str(ch_name)
-    for html in ARMS:
+    for html in ARMS_HTML_LIST:
         txt = re.search(pattern, html)
         if txt == None:
             continue
@@ -230,11 +237,11 @@ async def up_arm_icon(name, star):
 
 async def init_pool_list():
     # 初始化卡池数据
-    global ROLES
-    global ARMS
+    global ROLES_HTML_LIST
+    global ARMS_HTML_LIST
 
-    ROLES = None
-    ARMS = None
+    ROLES_HTML_LIST = None
+    ARMS_HTML_LIST = None
 
     logger.info(f"正在更新卡池数据")
     data = await get_url_data(POOL_API)
