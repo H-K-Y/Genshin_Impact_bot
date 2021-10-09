@@ -3,6 +3,7 @@ from PIL import Image,ImageFont,ImageDraw,ImageMath
 from loguru import logger
 from io import BytesIO
 
+import collections
 import httpx
 import asyncio
 import re
@@ -43,32 +44,15 @@ UP_PROBABILITY = {
     "武器up池": 0.75
 }
 
-POOL = {
-    # 这个字典记录的是3个不同的卡池，每个卡池的抽取列表
-    '角色up池': {
+# 这个字典记录的是3个不同的卡池，每个卡池的抽取列表
+POOL = collections.defaultdict(
+    lambda: {
         '5_star_UP': [],
-        '5_star_not_UP':[],
+        '5_star_not_UP': [],
         '4_star_UP': [],
-        '4_star_not_UP':[],
-        '3_star_not_UP':[]
-    },
-
-    '武器up池': {
-        '5_star_UP': [],
-        '5_star_not_UP':[],
-        '4_star_UP': [],
-        '4_star_not_UP':[],
-        '3_star_not_UP':[]
-    },
-
-    '常驻池': {
-        '5_star_UP': [],
-        '5_star_not_UP':[],
-        '4_star_UP': [],
-        '4_star_not_UP':[],
-        '3_star_not_UP':[]
-    }
-}
+        '4_star_not_UP': [],
+        '3_star_not_UP': []
+    })
 
 DISTANCE_FREQUENCY = {
     # 3个池子的5星是多少发才保底
@@ -243,6 +227,9 @@ async def init_pool_list():
     ROLES_HTML_LIST = None
     ARMS_HTML_LIST = None
 
+    # fix: #61
+    POOL.clear()
+    
     logger.info(f"正在更新卡池数据")
     data = await get_url_data(POOL_API)
     data = json.loads(data.decode("utf-8"))
