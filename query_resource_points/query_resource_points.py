@@ -147,13 +147,11 @@ async def up_map():
     map_info = map_info["data"]["info"]["detail"]
     map_info = json.loads(map_info)
 
-    map_url = map_info['slices'][0][0]["url"]
+    map_url_list = map_info['slices'][0]
     origin = map_info["origin"]
 
-    map_icon = await download_icon(map_url)
-    map_size = map_icon.size
-    x_start = map_size[0]
-    y_start = map_size[1]
+    x_start = map_info['total_size'][1]
+    y_start = map_info['total_size'][1]
     x_end = 0
     y_end = 0
     for resource_point in data["all_resource_point_list"]:
@@ -170,9 +168,17 @@ async def up_map():
     y_end += 200
 
     CENTER = [origin[0] - x_start, origin[1] - y_start]
-    MAP_ICON = map_icon.crop((x_start, y_start, x_end, y_end))
-    # with open(MAP_PATH , "wb") as icon_file:
-    #     map_icon.save(icon_file)
+    x = int(x_end - x_start)
+    y = int(y_end - y_start)
+    MAP_ICON = Image.new("RGB",(x,y))
+    x_offset = 0
+    for i in map_url_list:
+        map_url = i["url"]
+        map_icon = await download_icon(map_url)
+        MAP_ICON.paste(map_icon,
+                       (int(-x_start) + x_offset, int(-y_start)))
+        x_offset += map_icon.size[0]
+
     logger.info(f"地图数据更新完成")
 
 
