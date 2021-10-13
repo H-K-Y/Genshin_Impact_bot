@@ -18,13 +18,16 @@
 ## 目录
 
 - **部署**
-  - [安装](/doc/%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97.md)
-  - [自定义](/doc/%E8%87%AA%E5%AE%9A%E4%B9%89.md)
+  - [安装(HoshinoBot)](https://github.com/H-K-Y/Genshin_Impact_bot/wiki/%E5%AE%89%E8%A3%85%EF%BC%88Hoshino%EF%BC%89)
+  - [安装(NoneBot2)](https://github.com/H-K-Y/Genshin_Impact_bot/wiki/%E5%AE%89%E8%A3%85%EF%BC%88Nonebot2%EF%BC%89)
 - **使用**
-  - [命令](/doc/%E5%91%BD%E4%BB%A4.md)
-  - [演示](/doc/%E6%BC%94%E7%A4%BA.md)
+  - [命令](https://github.com/H-K-Y/Genshin_Impact_bot/wiki/%E5%91%BD%E4%BB%A4)
+  - [演示](https://github.com/H-K-Y/Genshin_Impact_bot/wiki/%E6%95%88%E6%9E%9C%E6%BC%94%E7%A4%BA)
+  - [常见问题](https://github.com/H-K-Y/Genshin_Impact_bot/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
 
 ## 致谢
+
+特别感谢[刘老板](https://github.com/noahzark)对插件的赞助
 
 **[米游社|观测枢wiki](https://bbs.mihoyo.com/ys/obc/?bbs_presentation_style=no_header)**
 
