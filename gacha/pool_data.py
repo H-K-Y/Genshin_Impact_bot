@@ -176,7 +176,7 @@ async def paste_arm_icon(ch_name,star):
     bg_a = bg.getchannel("A")
     bg1 = Image.new("RGBA",bg.size)
     txt_bg = Image.new("RGBA",(160,35),"#e9e5dc")
-    x = int(arm_icon.size[1]/160 * 155)
+    x = int(160 / arm_icon.size[1] * 155)
     arm_icon = arm_icon.resize((x, 160))
     x_pos = int(155 / 2 - x / 2)
     bg.paste(arm_icon, (x_pos,3),arm_icon)
