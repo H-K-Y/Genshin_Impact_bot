@@ -23,6 +23,7 @@
 - **使用**
   - [命令](/doc/%E5%91%BD%E4%BB%A4.md)
   - [演示](/doc/%E6%BC%94%E7%A4%BA.md)
+  - [常见问题](https://github.com/H-K-Y/Genshin_Impact_bot/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
 
 ## 致谢
 
