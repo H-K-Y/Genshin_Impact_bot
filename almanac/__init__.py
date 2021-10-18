@@ -3,7 +3,6 @@ from nonebot import require
 from nonebot.adapters import Bot, Event
 from nonebot.adapters.cqhttp import GROUP_ADMIN, GROUP_OWNER
 from nonebot.adapters.cqhttp import Message
-from nonebot.permission import SUPERUSER
 from .almanac import get_almanac_base64_str, load_data
 from .tweaks import *
 from .draw_lots import get_pic, draw_info, gen_pic
@@ -51,7 +50,7 @@ async def get_almanac_(bot: Bot, event: Event):
 async def reload_data_(bot: Bot, event: Event):
     if not (await GROUP_ADMIN(bot, event) or
             await GROUP_OWNER(bot, event) or
-            (str(event.user_id) in SUPERUSER) ):
+            (str(event.user_id) in bot.config.superusers) ):
         await reload_data.finish('你没有权限这么做', at_sender=True)
         return
 
@@ -63,7 +62,7 @@ async def reload_data_(bot: Bot, event: Event):
 async def open_remind_(bot: Bot, event: Event):
     if not (await GROUP_ADMIN(bot, event) or
             await GROUP_OWNER(bot, event) or
-            (str(event.user_id) in SUPERUSER)):
+            (str(event.user_id) in bot.config.superusers)):
         await reload_data.finish('你没有权限这么做', at_sender=True)
         return
 
@@ -78,7 +77,7 @@ async def open_remind_(bot: Bot, event: Event):
 async def off_remind_(bot: Bot, event: Event):
     if not (await GROUP_ADMIN(bot, event) or
             await GROUP_OWNER(bot, event) or
-            (str(event.user_id) in SUPERUSER)):
+            (str(event.user_id) in bot.config.superusers)):
         await reload_data.finish('你没有权限这么做', at_sender=True)
         return
 
