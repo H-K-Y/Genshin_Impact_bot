@@ -2,7 +2,6 @@ from nonebot import on_command,on_startswith
 from nonebot import require
 from nonebot.adapters import Bot, Event
 from nonebot.adapters.cqhttp import Message
-from nonebot.permission import SUPERUSER
 
 from .Artifact import artifact_obtain, ARTIFACT_LIST, Artifact, calculate_strengthen_points
 from ..config import STAMINA_RESTORE, MAX_STAMINA
@@ -242,7 +241,7 @@ async def get_user_stamina_(bot: Bot, event: Event):
 
 @recharge.handle()
 async def recharge_(bot: Bot, event: Event):
-    if not (str(event.user_id) in SUPERUSER):
+    if not (str(event.user_id) in bot.config.superusers):
         await recharge.finish(f"这个指令仅限超级管理员使用")
         return
     for m in event.message:

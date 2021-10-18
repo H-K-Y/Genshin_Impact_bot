@@ -3,7 +3,6 @@ from nonebot import require
 from nonebot.adapters import Bot, Event
 from nonebot.adapters.cqhttp import GROUP_ADMIN, GROUP_OWNER
 from nonebot.adapters.cqhttp import Message
-from nonebot.permission import SUPERUSER
 from PIL import Image
 from io import BytesIO
 
@@ -59,7 +58,7 @@ def get_today_material(name:str):
 async def open_remind_(bot: Bot, event: Event):
     if not (await GROUP_ADMIN(bot, event) or
             await GROUP_OWNER(bot, event) or
-            (str(event.user_id) in SUPERUSER)):
+            (str(event.user_id) in bot.config.superusers)):
         await open_remind.finish('你没有权限执行这个指令', at_sender=True)
         return
 
@@ -74,7 +73,7 @@ async def open_remind_(bot: Bot, event: Event):
 async def off_remind_(bot: Bot, event: Event):
     if not (await GROUP_ADMIN(bot, event) or
             await GROUP_OWNER(bot, event) or
-            (str(event.user_id) in SUPERUSER)):
+            (str(event.user_id) in bot.config.superusers)):
         await off_remind.finish('你没有权限执行这个指令', at_sender=True)
         return
 

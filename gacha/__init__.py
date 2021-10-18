@@ -3,7 +3,6 @@ from nonebot.rule import to_me
 from nonebot.adapters import Bot, Event
 from nonebot.adapters.cqhttp import GROUP_ADMIN, GROUP_OWNER
 from nonebot.adapters.cqhttp import Message
-from nonebot.permission import SUPERUSER
 from .gacha import gacha_info , FILE_PATH , Gacha
 from .pool_data import POOL, init_pool_list
 import os
@@ -91,7 +90,7 @@ async def set_pool_(bot: Bot, event: Event,state:dict):
 
     if not (await GROUP_ADMIN(bot, event) or
             await GROUP_OWNER(bot, event) or
-            (str(event.user_id) in SUPERUSER) ):
+            (str(event.user_id) in bot.config.superusers) ):
         await set_pool.finish('只有群管理才能切换卡池', at_sender=True)
         return
 
