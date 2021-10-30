@@ -66,7 +66,7 @@ DISTANCE_FREQUENCY = {
 async def get_url_data(url):
     # 获取url的数据
     async with httpx.AsyncClient() as client:
-        resp = await client.get(url=url)
+        resp = await client.get(url = url,timeout = 10)
         if resp.status_code != 200:
             raise ValueError(f"从 {url} 获取数据失败，错误代码 {resp.status_code}")
         return resp.content
@@ -199,11 +199,12 @@ async def up_role_icon(name, star):
     if not os.path.exists(os.path.join(ICON_PATH, '角色图鉴')):
         os.makedirs(os.path.join(ICON_PATH, '角色图鉴'))
 
-    role_icon = await paste_role_icon(name,star)
-    with open(role_name_path , "wb") as icon_file:
-        role_icon.save(icon_file)
-
-
+    try:
+        role_icon = await paste_role_icon(name,star)
+        with open(role_name_path , "wb") as icon_file:
+            role_icon.save(icon_file)
+    except Exception as e:
+        logger.error(f"更新 {name} 角色图标失败，错误为 {e},建议稍后使用 更新原神卡池 指令重新更新")
 
 
 async def up_arm_icon(name, star):
@@ -215,9 +216,12 @@ async def up_arm_icon(name, star):
     if not os.path.exists(os.path.join(ICON_PATH, '武器图鉴')):
         os.makedirs(os.path.join(ICON_PATH, '武器图鉴'))
 
-    arm_icon = await paste_arm_icon(name,star)
-    with open(arm_name_path , "wb") as icon_file:
-        arm_icon.save(icon_file)
+    try:
+        arm_icon = await paste_arm_icon(name,star)
+        with open(arm_name_path , "wb") as icon_file:
+            arm_icon.save(icon_file)
+    except Exception as e:
+        logger.error(f"更新 {name} 武器图标失败，错误为 {e},建议稍后使用 更新原神卡池 指令重新更新")
 
 
 

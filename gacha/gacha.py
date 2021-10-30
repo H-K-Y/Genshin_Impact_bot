@@ -56,7 +56,7 @@ class Gacha(object):
 
     @staticmethod
     def get_png_path(name):
-        # 获取png文件路径，传入的参数是角色或武器名字，会自动在角色和武器文件夹搜索，找不到抛出异常
+        # 获取png文件路径，传入的参数是角色或武器名字，会自动在角色和武器文件夹搜索，找不到使用默认图标
 
         role_name_path = os.path.join(ICON_PATH, "角色图鉴", str(name) + ".png")
         arms_name_path = os.path.join(ICON_PATH, "武器图鉴", str(name) + ".png")
@@ -67,7 +67,7 @@ class Gacha(object):
         if os.path.exists(arms_name_path):
             return arms_name_path
 
-        raise FileNotFoundError(f"找不到 {name} 的图标，请检查图标是否存在")
+        return os.path.join(ICON_PATH, "default.png")
 
     def is_up(self,name):
         # 检查角色是否在UP里
