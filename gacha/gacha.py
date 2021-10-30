@@ -67,7 +67,7 @@ class Gacha(object):
         if os.path.exists(arms_name_path):
             return arms_name_path
 
-        return os.path.join(ICON_PATH, "default.png.png")
+        return os.path.join(ICON_PATH, "default.png")
 
     def is_up(self,name):
         # 检查角色是否在UP里
