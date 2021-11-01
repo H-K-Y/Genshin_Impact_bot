@@ -9,6 +9,7 @@ import asyncio
 import re
 import os
 import json
+import time
 
 
 
@@ -207,6 +208,8 @@ async def up_role_icon(name, star):
         logger.error(f"更新 {name} 角色图标失败，错误为 {e},建议稍后使用 更新原神卡池 指令重新更新")
 
 
+
+
 async def up_arm_icon(name, star):
     # 更新武器图标
     arm_name_path = os.path.join(ICON_PATH, "武器图鉴", str(name) + ".png")
@@ -217,6 +220,7 @@ async def up_arm_icon(name, star):
         os.makedirs(os.path.join(ICON_PATH, '武器图鉴'))
 
     try:
+
         arm_icon = await paste_arm_icon(name,star)
         with open(arm_name_path , "wb") as icon_file:
             arm_icon.save(icon_file)
@@ -240,6 +244,12 @@ async def init_pool_list():
     data = await get_url_data(POOL_API)
     data = json.loads(data.decode("utf-8"))
     for d in data["data"]["list"]:
+
+        begin_time = time.mktime(time.strptime(d['begin_time'],"%Y-%m-%d %H:%M:%S"))
+        end_time = time.mktime(time.strptime(d['end_time'],"%Y-%m-%d %H:%M:%S"))
+        if not (begin_time < time.time() < end_time):
+            continue
+
         if d['gacha_name'] == "角色":
             pool_name = '角色up池'
         elif d['gacha_name'] == "武器":
