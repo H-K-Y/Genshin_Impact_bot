@@ -9,6 +9,7 @@ import asyncio
 import re
 import os
 import json
+import time
 
 
 
@@ -243,6 +244,12 @@ async def init_pool_list():
     data = await get_url_data(POOL_API)
     data = json.loads(data.decode("utf-8"))
     for d in data["data"]["list"]:
+        
+        begin_time = time.mktime(time.strptime(d['begin_time'],"%Y-%m-%d %H:%M:%S"))
+        end_time = time.mktime(time.strptime(d['end_time'],"%Y-%m-%d %H:%M:%S"))
+        if not (begin_time < time.time() < end_time):
+            continue
+
         if d['gacha_name'] == "角色":
             pool_name = '角色up池'
         elif d['gacha_name'] == "武器":
