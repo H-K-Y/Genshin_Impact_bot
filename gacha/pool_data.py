@@ -250,9 +250,9 @@ async def init_pool_list():
         if not (begin_time < time.time() < end_time):
             continue
 
-        if d['gacha_name'] == "角色":
+        if str(d['gacha_type']) == "301":
             pool_name = '角色up池'
-        elif d['gacha_name'] == "武器":
+        elif str(d['gacha_type']) == "302":
             pool_name = '武器up池'
         else:
             pool_name = '常驻池'
