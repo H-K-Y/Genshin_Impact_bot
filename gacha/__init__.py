@@ -52,7 +52,7 @@ async def gacha_10_(bot: Bot, event: Event):
 
 @gacha_90.handle()
 async def gacha_90_(bot: Bot, event: Event):
-    gid = str(event.group_id)
+    gid = str(event.group_id) if 'group_id' in dir(event) else str(event.guild_id)
 
     if gid in group_pool:
         G = Gacha(group_pool[gid])
@@ -64,7 +64,7 @@ async def gacha_90_(bot: Bot, event: Event):
 
 @gacha_180.handle()
 async def gacha_180_(bot: Bot, event: Event):
-    gid = str(event.group_id)
+    gid = str(event.group_id) if 'group_id' in dir(event) else str(event.guild_id)
 
     if gid in group_pool:
         G = Gacha(group_pool[gid])
@@ -96,7 +96,7 @@ async def set_pool_(bot: Bot, event: Event,state:dict):
 
     pool_name = str(event.get_message()).strip()
     pool_name = pool_name.replace(state["_matched"],"").strip()
-    gid = str(event.group_id)
+    gid = str(event.group_id) if 'group_id' in dir(event) else str(event.guild_id)
 
     if pool_name in POOL.keys():
         if gid in group_pool:
