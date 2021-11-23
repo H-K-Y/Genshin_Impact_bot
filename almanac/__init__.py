@@ -67,6 +67,7 @@ async def open_remind_(bot: Bot, event: Event):
         return
 
     gid = str(event.group_id) if 'group_id' in dir(event) else str(event.guild_id)
+    
     if not (gid in group_list):
         group_list.append(gid)
         save_group_list()
@@ -82,6 +83,7 @@ async def off_remind_(bot: Bot, event: Event):
         return
 
     gid = str(event.group_id) if 'group_id' in dir(event) else str(event.guild_id)
+    
     if gid in group_list:
         group_list.remove(gid)
         save_group_list()
