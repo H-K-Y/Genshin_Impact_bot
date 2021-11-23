@@ -1,6 +1,6 @@
 from PIL import Image
 from io import BytesIO
-from .pool_data import POOL ,UP_PROBABILITY,POOL_PROBABILITY,DISTANCE_FREQUENCY
+from .pool_data import POOL
 
 import os
 import random
@@ -12,7 +12,7 @@ ICON_PATH = os.path.join(FILE_PATH,'icon')
 
 
 
-DEFAULT_POOL = "角色up池" # 默认卡池
+DEFAULT_POOL = "常驻" # 默认卡池
 
 
 
@@ -52,6 +52,11 @@ class Gacha(object):
 
         # 记录抽卡每个角色或装备各抽到多少
         self.gacha_all_statistics = {}
+
+        self.up_probability = self.get_up_probability()
+        self._5_star_basic_probability = self.get_5_star_basic_probability()
+        self._4_star_basic_probability = self.get_4_star_basic_probability()
+        self.distance_frequency = self.get_distance_frequency()
 
 
     @staticmethod
@@ -170,19 +175,53 @@ class Gacha(object):
                 return {"name":key,"most":value}
 
 
+
+    def get_up_probability(self):
+        # 获取上一次抽卡抽到5星 UP 时，再次获取5星概率是多少
+        if self.pool == '武器':
+            return 0.75
+
+        return 0.5
+
+
+    def get_5_star_basic_probability(self):
+        # 获取5星的基础概率
+        if self.pool == '武器':
+            return 0.007
+
+        return 0.006
+
+    def get_4_star_basic_probability(self):
+        # 获取4星的基础概率
+        if self.pool == '武器':
+            return 0.060
+
+        return 0.051
+
+
+    def get_distance_frequency(self):
+        # 获取当前卡池的保底抽卡次数
+        if self.pool == '武器':
+            return 80
+
+        return 90
+
+
+
+
     def get_5_star(self):
         # 先检查上次5星是否是UP，不是UP本次抽取必定是 UP，
         # 如果上次是UP，角色UP池本次有50%的概率还是 UP，50%概率非 UP，
         # 武器UP池本次有75%的概率还是 UP，25%概率非 UP，详情看UP_PROBABILITY
 
         # 先看是不是常驻池
-        if self.pool ==  '常驻池':
+        if self.pool ==  '常驻':
             return random.choice(POOL[self.pool]['5_star_not_UP'])
 
         # 下边是角色或武器的UP
         if self.is_up(self.last_time_5):
 
-            if random.random() < UP_PROBABILITY[self.pool]:
+            if random.random() < self.up_probability:
                 return random.choice(POOL[self.pool]['5_star_UP'])
             else:
                 return random.choice(POOL[self.pool]['5_star_not_UP'])
@@ -197,12 +236,12 @@ class Gacha(object):
         # 武器UP池本次有75%的概率还是UP，25%概率非 UP，详情看UP_PROBABILITY
 
         # 先看是不是常驻池
-        if self.pool ==  '常驻池':
+        if self.pool ==  '常驻':
             return random.choice(POOL[self.pool]['4_star_not_UP'])
 
         # 下边是角色或武器的UP
         if self.is_up(self.last_time_4):
-            if random.random() < UP_PROBABILITY[self.pool]:
+            if random.random() < self.up_probability:
                 return random.choice(POOL[self.pool]['4_star_UP'])
             else:
                 return random.choice(POOL[self.pool]['4_star_not_UP'])
@@ -211,21 +250,20 @@ class Gacha(object):
 
     def get_5_star_probability(self):
         # 获取本次抽5星的概率是多少
-        basic_probability = POOL_PROBABILITY[self.pool]["5"]
 
-        if self.pool == '武器up池':
+        if self.pool == '武器':
             # 这是武器up池5星概率
             if self.distance_5_star <= 62:
-                return basic_probability
+                return self._5_star_basic_probability
             else:
-                return basic_probability + 0.056 * (self.distance_5_star - 62)
+                return self._5_star_basic_probability + 0.056 * (self.distance_5_star - 62)
         else:
             # 下边是常驻池和角色UP池
             # 这两个保底和概率是相同的所以放在一起
             if self.distance_5_star <= 73:
-                return basic_probability
+                return self._5_star_basic_probability
             else:
-                return basic_probability + 0.06 * (self.distance_5_star - 73)
+                return self._5_star_basic_probability + 0.06 * (self.distance_5_star - 73)
 
 
     def gacha_one(self):
@@ -241,7 +279,7 @@ class Gacha(object):
         r = random.random()
 
         # 先检查是不是保底5星
-        if self.distance_5_star % DISTANCE_FREQUENCY[self.pool] == 0:
+        if self.distance_5_star % self.distance_frequency == 0:
             self.gacha_rarity_statistics["5星"] += 1
             self.distance_5_star = 0 # 重置保底计数
             self.last_time_5 = self.get_5_star() # 抽一次卡，把结果赋值留给下一次抽卡判断
@@ -263,7 +301,7 @@ class Gacha(object):
 
         # 检查是不是概率4星
         # 由于是先判断5星的概率出货，所以4星的实际概率是4星原概率加上5星的概率
-        if r < (_5_star_probability + POOL_PROBABILITY[self.pool]["4"]):
+        if r < (self._5_star_basic_probability + self._4_star_basic_probability):
             self.gacha_rarity_statistics["4星"] += 1
             self.distance_4_star = 0
             self.last_time_4 = self.get_4_star()
@@ -278,6 +316,8 @@ class Gacha(object):
 
     def gacha_10(self):
         # 抽10连
+        if not (self.pool in POOL.keys()):
+            return '当前卡池已结束，请使用 原神卡池切换 切换其他卡池'
 
         gacha_txt = ""
 
@@ -317,6 +357,9 @@ class Gacha(object):
 
     def gacha_90(self,frequency=90):
         # 抽一井
+        if not (self.pool in POOL.keys()):
+            return '当前卡池已结束，请使用 原神卡池切换 切换其他卡池'
+
         gacha_txt = ""
 
         for self.current_times in range(frequency):
