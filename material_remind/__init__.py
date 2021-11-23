@@ -47,7 +47,7 @@ def get_today_material(name:str):
 
 @sv.on_fullmatch('开启原神每日素材提醒')
 async def open_remind(bot , ev):
-    gid = str(ev.group_id)
+    gid = str(ev.group_id) if 'group_id' in dir(ev) else str(ev.guild_id)
     if not (gid in group_list):
         group_list.append(gid)
         save_group_list()
@@ -56,7 +56,7 @@ async def open_remind(bot , ev):
 
 @sv.on_fullmatch('关闭原神每日素材提醒')
 async def off_remind(bot , ev):
-    gid = str(ev.group_id)
+    gid = str(ev.group_id) if 'group_id' in dir(ev) else str(ev.guild_id)
     if gid in group_list:
         group_list.remove(gid)
         save_group_list()

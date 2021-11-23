@@ -49,7 +49,7 @@ async def open_remind(bot, ev):
         await bot.send(ev, "你没有权限这么做")
         return
 
-    gid = str(ev.group_id)
+    gid = str(ev.group_id) if 'group_id' in dir(ev) else str(ev.guild_id)
     if not (gid in group_list):
         group_list.append(gid)
         save_group_list()
@@ -62,7 +62,7 @@ async def off_remind(bot, ev):
         await bot.send(ev, "你没有权限这么做")
         return
 
-    gid = str(ev.group_id)
+    gid = str(ev.group_id) if 'group_id' in dir(ev) else str(ev.guild_id)
     if gid in group_list:
         group_list.remove(gid)
         save_group_list()
