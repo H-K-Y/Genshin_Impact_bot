@@ -275,6 +275,7 @@ class Gacha(object):
         self.distance_5_star += 1
 
         _5_star_probability = self.get_5_star_probability()
+        print( f'{self.current_times} {_5_star_probability}')
 
         r = random.random()
 
