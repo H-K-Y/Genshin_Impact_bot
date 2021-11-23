@@ -38,7 +38,7 @@ with open(os.path.join(FILE_PATH,'gid_pool.json'),'r',encoding='UTF-8') as f:
 
 @sv.on_prefix(["相遇之缘"], only_to_me=True)
 async def gacha_(bot, ev):
-    gid = str(ev.group_id)
+    gid = str(ev.group_id) if 'group_id' in dir(ev) else str(ev.guild_id)
     userid = ev['user_id']
     if not daily_limiter_10.check(userid):
         await bot.send(ev, '今天已经抽了很多次啦，明天再来吧~')
@@ -52,7 +52,7 @@ async def gacha_(bot, ev):
 
 @sv.on_prefix(["纠缠之缘"], only_to_me=True)
 async def gacha_(bot, ev):
-    gid = str(ev.group_id)
+    gid = str(ev.group_id) if 'group_id' in dir(ev) else str(ev.guild_id)
     userid = ev['user_id']
     if not daily_limiter_90.check(userid):
         await bot.send(ev, '今天已经抽了很多次啦，明天再来吧~')
@@ -68,7 +68,7 @@ async def gacha_(bot, ev):
 
 @sv.on_prefix(["原之井"], only_to_me=True)
 async def gacha_(bot, ev):
-    gid = str(ev.group_id)
+    gid = str(ev.group_id) if 'group_id' in dir(ev) else str(ev.guild_id)
     userid = ev['user_id']
     if not daily_limiter_180.check(userid):
         await bot.send(ev, '今天已经抽了很多次啦，明天再来吧~')
@@ -84,7 +84,7 @@ async def gacha_(bot, ev):
 
 @sv.on_prefix(["原神卡池","原神up","原神UP"])
 async def gacha_(bot, ev):
-    gid = str(ev.group_id)
+    gid = str(ev.group_id) if 'group_id' in dir(ev) else str(ev.guild_id)
 
     if gid in group_pool:
         info = gacha_info(group_pool[gid])
@@ -100,7 +100,7 @@ async def set_pool(bot, ev):
         await bot.finish(ev, '只有群管理才能切换卡池', at_sender=True)
 
     pool_name = ev.message.extract_plain_text().strip()
-    gid = str(ev.group_id)
+    gid = str(ev.group_id) if 'group_id' in dir(ev) else str(ev.guild_id)
 
     if pool_name in POOL.keys():
         if gid in group_pool:
