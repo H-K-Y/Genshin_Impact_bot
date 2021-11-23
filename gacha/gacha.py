@@ -192,7 +192,7 @@ class Gacha(object):
         return 0.006
 
     def get_4_star_basic_probability(self):
-        # 获取5星的基础概率
+        # 获取4星的基础概率
         if self.pool == '武器':
             return 0.060
 
@@ -316,7 +316,7 @@ class Gacha(object):
 
     def gacha_10(self):
         # 抽10连
-        if not self.pool in POOL.keys():
+        if not (self.pool in POOL.keys()):
             return '当前卡池已结束，请使用 原神卡池切换 切换其他卡池'
 
         gacha_txt = ""
@@ -357,7 +357,7 @@ class Gacha(object):
 
     def gacha_90(self,frequency=90):
         # 抽一井
-        if not self.pool in POOL.keys():
+        if not (self.pool in POOL.keys()):
             return '当前卡池已结束，请使用 原神卡池切换 切换其他卡池'
 
         gacha_txt = ""
