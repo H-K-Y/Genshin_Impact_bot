@@ -9,7 +9,6 @@ import asyncio
 import re
 import os
 import json
-import time
 
 
 
@@ -32,19 +31,6 @@ FONT_PATH = os.path.join(os.path.dirname(FILE_PATH),'artifact_collect',"zh-cn.tt
 FONT=ImageFont.truetype(FONT_PATH, size=20)
 
 
-POOL_PROBABILITY = {
-    # 所有卡池的4星和5星概率,这里直接填写官方给出的概率，程序会自动对4星概率进行累计
-    "角色up池": {"5": 0.006, "4": 0.051},
-    "武器up池": {"5": 0.007, "4": 0.060},
-    "常驻池": {"5": 0.006, "4": 0.051}
-}
-
-UP_PROBABILITY = {
-    # 这里保存的是当UP池第一次抽取到或上次已经抽取过UP时，本次出现UP的概率有多大，常驻池不受影响
-    "角色up池": 0.5,
-    "武器up池": 0.75
-}
-
 # 这个字典记录的是3个不同的卡池，每个卡池的抽取列表
 POOL = collections.defaultdict(
     lambda: {
@@ -55,12 +41,6 @@ POOL = collections.defaultdict(
         '3_star_not_UP': []
     })
 
-DISTANCE_FREQUENCY = {
-    # 3个池子的5星是多少发才保底
-    '角色up池': 90,
-    '武器up池': 80,
-    '常驻池': 90
-}
 
 
 
@@ -236,8 +216,6 @@ async def init_pool_list():
 
     ROLES_HTML_LIST = None
     ARMS_HTML_LIST = None
-
-    # fix: #61
     POOL.clear()
     
     logger.info(f"正在更新卡池数据")
@@ -245,18 +223,7 @@ async def init_pool_list():
     data = json.loads(data.decode("utf-8"))
     for d in data["data"]["list"]:
 
-        begin_time = time.mktime(time.strptime(d['begin_time'],"%Y-%m-%d %H:%M:%S"))
-        end_time = time.mktime(time.strptime(d['end_time'],"%Y-%m-%d %H:%M:%S"))
-        if not (begin_time < time.time() < end_time):
-            continue
-
-        if str(d['gacha_type']) == "301":
-            pool_name = '角色up池'
-        elif str(d['gacha_type']) == "302":
-            pool_name = '武器up池'
-        else:
-            pool_name = '常驻池'
-
+        pool_name = str(d['gacha_name'])
         pool_url = f"https://webstatic.mihoyo.com/hk4e/gacha_info/cn_gf01/{d['gacha_id']}/zh-cn.json"
         pool_data = await get_url_data(pool_url)
         pool_data = json.loads(pool_data.decode("utf-8"))
