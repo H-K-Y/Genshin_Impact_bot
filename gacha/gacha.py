@@ -256,14 +256,14 @@ class Gacha(object):
             if self.distance_5_star <= 62:
                 return self._5_star_basic_probability
             else:
-                return self._5_star_basic_probability + 0.056 * (self._5_star_basic_probability - 62)
+                return self._5_star_basic_probability + 0.056 * (self.distance_5_star - 62)
         else:
             # 下边是常驻池和角色UP池
             # 这两个保底和概率是相同的所以放在一起
             if self.distance_5_star <= 73:
                 return self._5_star_basic_probability
             else:
-                return self._5_star_basic_probability + 0.06 * (self._5_star_basic_probability - 73)
+                return self._5_star_basic_probability + 0.06 * (self.distance_5_star - 73)
 
 
     def gacha_one(self):
@@ -275,7 +275,6 @@ class Gacha(object):
         self.distance_5_star += 1
 
         _5_star_probability = self.get_5_star_probability()
-        print( f'{self.current_times} {_5_star_probability}')
 
         r = random.random()
 
