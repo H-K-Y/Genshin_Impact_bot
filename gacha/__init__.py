@@ -41,8 +41,7 @@ with open(os.path.join(FILE_PATH,'gid_pool.json'),'r',encoding='UTF-8') as f:
 
 @gacha_10.handle()
 async def gacha_10_(bot: Bot, event: Event):
-    gid = str(event.group_id)
-
+    gid = str(event.group_id) if 'group_id' in dir(event) else str(event.guild_id)
     if gid in group_pool:
         G = Gacha(group_pool[gid])
     else:
@@ -76,8 +75,8 @@ async def gacha_180_(bot: Bot, event: Event):
 
 @look_pool.handle()
 async def look_pool_(bot: Bot, event: Event):
-    gid = str(event.group_id)
-
+    gid = str(event.group_id) if 'group_id' in dir(event) else str(event.guild_id)
+    
     if gid in group_pool:
         info = gacha_info(group_pool[gid])
     else:
