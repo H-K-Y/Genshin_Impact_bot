@@ -62,8 +62,7 @@ async def open_remind_(bot: Bot, event: Event):
         await open_remind.finish('你没有权限执行这个指令', at_sender=True)
         return
 
-    gid = str(event.group_id)
-    if not (gid in group_list):
+    gid = str(event.group_id) if 'group_id' in dir(event) else str(event.guild_id)    if not (gid in group_list):
         group_list.append(gid)
         save_group_list()
     await open_remind.finish("每日提醒已开启，每天8点会发送今日素材")
@@ -77,8 +76,7 @@ async def off_remind_(bot: Bot, event: Event):
         await off_remind.finish('你没有权限执行这个指令', at_sender=True)
         return
 
-    gid = str(event.group_id)
-    if gid in group_list:
+    gid = str(event.group_id) if 'group_id' in dir(event) else str(event.guild_id)    if gid in group_list:
         group_list.remove(gid)
         save_group_list()
     await off_remind.finish("每日提醒已关闭")
