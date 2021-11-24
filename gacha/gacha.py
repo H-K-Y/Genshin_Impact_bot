@@ -79,7 +79,7 @@ class Gacha(object):
         # 如果name是一个空字符串表示是第一次抽到4星或5星
         if name == "":
             return True
-        if self.pool == "常驻池":
+        if self.pool == "常驻":
             return False
 
         if (name in POOL[self.pool]['5_star_UP']) or (name in POOL[self.pool]['4_star_UP']):
@@ -148,11 +148,11 @@ class Gacha(object):
                 self.last_5_up = self.current_times + 1
 
         if not self.last_4:
-            if name in POOL[self.pool]['4_star_not_UP']:
+            if (name in POOL[self.pool]['4_star_not_UP']) or (name in POOL[self.pool]['4_star_UP']):
                 self.last_4 = self.current_times + 1
 
         if not self.last_5:
-            if name in POOL[self.pool]['5_star_not_UP']:
+            if (name in POOL[self.pool]['5_star_not_UP']) or (name in POOL[self.pool]['5_star_UP']):
                 self.last_5 = self.current_times + 1
 
     def is_guaranteed(self,frequency):
@@ -178,32 +178,28 @@ class Gacha(object):
 
     def get_up_probability(self):
         # 获取上一次抽卡抽到5星 UP 时，再次获取5星概率是多少
-        if self.pool == '武器':
+        if self.pool.count("武器"):
             return 0.75
-
         return 0.5
 
 
     def get_5_star_basic_probability(self):
         # 获取5星的基础概率
-        if self.pool == '武器':
+        if self.pool.count("武器"):
             return 0.007
-
         return 0.006
 
     def get_4_star_basic_probability(self):
         # 获取4星的基础概率
-        if self.pool == '武器':
+        if self.pool.count("武器"):
             return 0.060
-
         return 0.051
 
 
     def get_distance_frequency(self):
         # 获取当前卡池的保底抽卡次数
-        if self.pool == '武器':
+        if self.pool.count("武器"):
             return 80
-
         return 90
 
 
@@ -251,7 +247,7 @@ class Gacha(object):
     def get_5_star_probability(self):
         # 获取本次抽5星的概率是多少
 
-        if self.pool == '武器':
+        if self.pool.count("武器"):
             # 这是武器up池5星概率
             if self.distance_5_star <= 62:
                 return self._5_star_basic_probability
