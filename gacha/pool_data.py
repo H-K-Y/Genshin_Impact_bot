@@ -221,11 +221,9 @@ async def init_pool_list():
     logger.info(f"正在更新卡池数据")
     data = await get_url_data(POOL_API)
     data = json.loads(data.decode("utf-8"))
-    pool_name_list = []
     for d in reversed((data["data"]["list"])):
-        if str(d['gacha_name']) in pool_name_list:
+        if str(d['gacha_name']) in POOL:
             continue
-        pool_name_list.append(str(d['gacha_name']))
         pool_name = str(d['gacha_name'])
         pool_url = f"https://webstatic.mihoyo.com/hk4e/gacha_info/cn_gf01/{d['gacha_id']}/zh-cn.json"
         pool_data = await get_url_data(pool_url)
