@@ -9,7 +9,7 @@ import asyncio
 import re
 import os
 import json
-
+import time
 
 
 FILE_PATH = os.path.dirname(__file__)
@@ -221,12 +221,10 @@ async def init_pool_list():
     logger.info(f"正在更新卡池数据")
     data = await get_url_data(POOL_API)
     data = json.loads(data.decode("utf-8"))
-    pool_name_list = []
-    for d in reversed((data["data"]["list"])):
-        if str(d['gacha_name']) in pool_name_list:
+
+    for d in data["data"]["list"]:
+        if time.mktime(time.strptime(d['end_time'],'%Y-%m-%d %H:%M:%S'))-time.mktime(time.localtime())<0:
             continue
-        pool_name_list.append(str(d['gacha_name']))
-        pool_name = str(d['gacha_name'])
         pool_url = f"https://webstatic.mihoyo.com/hk4e/gacha_info/cn_gf01/{d['gacha_id']}/zh-cn.json"
         pool_data = await get_url_data(pool_url)
         pool_data = json.loads(pool_data.decode("utf-8"))
