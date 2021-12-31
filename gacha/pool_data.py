@@ -1,12 +1,10 @@
+import time
 
-from PIL import Image,ImageFont,ImageDraw,ImageMath
+from PIL import Image, ImageFont, ImageDraw, ImageMath
+from bs4 import BeautifulSoup as bs
 from loguru import logger
-from io import BytesIO
-
-import collections
 import httpx
-import asyncio
-import re
+
 import os
 import json
 import time
@@ -33,7 +31,7 @@ FONT=ImageFont.truetype(FONT_PATH, size=20)
 
 
 # 这个字典记录的是3个不同的卡池，每个卡池的抽取列表
-POOL = collections.defaultdict(
+pool = collections.defaultdict(
     lambda: {
         '5_star_UP': [],
         '5_star_not_UP': [],
@@ -43,171 +41,94 @@ POOL = collections.defaultdict(
     })
 
 
-
-
-async def get_url_data(url):
+async def fetch_data(url: str, method='text'):
     # 获取url的数据
     async with httpx.AsyncClient() as client:
-        resp = await client.get(url = url,timeout = 10)
+        resp = await client.get(url=url, timeout=10)
         if resp.status_code != 200:
             raise ValueError(f"从 {url} 获取数据失败，错误代码 {resp.status_code}")
-        return resp.content
+        return resp.text if method == 'text' else resp.content
 
 
-
-async def get_role_en_name(ch_name):
-    # 从 genshin.honeyhunterworld.com 获取角色的英文名
-    global ROLES_HTML_LIST
-    if ROLES_HTML_LIST == None:
-        ROLES_HTML_LIST = []
-        for api in ROLES_API:
-            data = await get_url_data(api)
-            ROLES_HTML_LIST.append(data.decode("utf-8"))
-
-    pattern = ".{80}" + str(ch_name)
-    for html in ROLES_HTML_LIST:
-        txt = re.search(pattern, html)
-        if txt == None:
-            continue
-        txt = re.search('"/db/char/.+/\?lang=CHS"',txt.group()).group()
-        en_name = txt[10:-11]
-        return en_name
-    raise NameError(f"没有找到角色 {ch_name} 的图标名")
+async def get_character_icons(url):
+    divs = bs(await fetch_data(url), 'html.parser').find_all('div', {"class": "char_sea_cont"})
+    character_ = {}
+    for div in divs:
+        span_tag = div.find('span', {"class": "sea_charname"})
+        element_img = div.find('img', {"class": "char_portrait_card_sea_element lazy"}).get('data-src')
+        character_.update({
+            span_tag.text: {
+                "url": "https://genshin.honeyhunterworld.com/img/char/"
+                       f"{span_tag.parent.get('href').strip('/').split('/')[2]}_face.png",
+                "rarity": len(div.find_all('div', {"class": "sea_char_stars_wrap"})),
+                "element": element_img[element_img.rfind('/') + 1:].split('_')[0]
+            }
+        })
+    return character_
 
 
-
-async def get_arm_id(ch_name):
-    # 从 genshin.honeyhunterworld.com 获取武器的ID
-    global ARMS_HTML_LIST
-    if ARMS_HTML_LIST == None:
-        ARMS_HTML_LIST = []
-        for api in ARMS_API:
-            data = await get_url_data(api)
-            ARMS_HTML_LIST.append(data.decode("utf-8"))
-
-    pattern = '.{40}' + str(ch_name)
-    for html in ARMS_HTML_LIST:
-        txt = re.search(pattern, html)
-        if txt == None:
-            continue
-        txt = re.search('weapon/.+?/\?lang', txt.group()).group()
-        arm_id = txt[7:-6]
-        return arm_id
-    raise NameError(f"没有找到武器 {ch_name} 的 ID")
+async def get_weapon_icons(url):
+    trs = bs(await fetch_data(url), 'html.parser').find('table', {"class": "art_stat_table"}).find_all('tr')[1:]
+    weapon_ = {}
+    for tr in trs:
+        tds = tr.find_all('td')
+        a_tag = tds[2].next
+        weapon_.update({
+            a_tag.text: {
+                "url": f"https://genshin.honeyhunterworld.com/img/weapon{a_tag.get('href')}_a.png",
+                "rarity": len(tds[3].find_all('div', {"class": "stars_wrap"}))
+            }
+        })
+    return weapon_
 
 
-async def get_icon(url):
+async def get_icon(url: str, width: int = None) -> Image.Image:
     # 获取角色或武器的图标，直接返回 Image
-    icon = await get_url_data(url)
-    icon = Image.open(BytesIO(icon))
-    icon_a = icon.getchannel("A")
-    icon_a = ImageMath.eval("convert(a*b/256, 'L')", a=icon_a, b=icon_a)
-    icon.putalpha(icon_a)
+    icon = Image.open(BytesIO(await fetch_data(url, 'content')))
+    if width:
+        height = icon.size[1] / icon.size[0] * width
+        icon = icon.resize((width, int(height)))
     return icon
 
 
-
-
-async def get_role_element(en_name):
-    # 获取角色属性，直接返回属性图标 Image
-    url = f'https://genshin.honeyhunterworld.com/db/char/{en_name}/?lang=CHS'
-    data = await get_url_data(url)
-    data = data.decode("utf-8")
-    element = re.search('/img/icons/element/.+?_35.png',data).group()
-    element = element[19:-7]
-
-    element_path = os.path.join(FILE_PATH,'icon',f'{element}.png')
-    return Image.open(element_path)
-
-
-
-async def paste_role_icon(ch_name,star):
+async def paste_character_icon(chinese_name: str):
     # 拼接角色图鉴图
-
-    en_name = await get_role_en_name(ch_name)
-    url = f"https://genshin.honeyhunterworld.com/img/char/{en_name}_face.png"
-    avatar_icon = await get_icon(url)
-    element_icon = await get_role_element(en_name)
-
-    bg = Image.open(os.path.join(FILE_PATH,'icon',f'{star}_star_bg.png'))
-    bg_a = bg.getchannel("A")
-    bg1 = Image.new("RGBA",bg.size)
-    txt_bg = Image.new("RGBA",(160,35),"#e9e5dc")
-    x = int(160/256 * avatar_icon.size[0])
-    avatar_icon = avatar_icon.resize((x, 160))
-    element_icon = element_icon.resize((40, 40))
-    x_pos = int(160/2 - x / 2)
-    bg.paste(avatar_icon, (x_pos,3),avatar_icon)
-    bg.paste(element_icon, (2,3),element_icon)
-    bg.paste(txt_bg, (0,163))
-    draw = ImageDraw.Draw(bg)
-    draw.text((80, 180), ch_name, fill="#4a5466ff", font=FONT, anchor="mm",align="center")
-    bg1.paste(bg,(0,0),bg_a)
-    return bg1
+    character_dict = character_icons.get(chinese_name)
+    t1 = time.time()
+    avatar_icon = await get_icon(character_dict.get('url'), 220)
+    t2 = time.time()
+    element_icon = element_icons.get(character_dict['element'])
+    canvas = card_bg.copy()
+    bg = rarity_bg[character_dict.get('rarity') - 1].copy()
+    bg.paste(avatar_icon, (10, 14), mask=avatar_icon.getchannel('A'))
+    bg.paste(rarity_bar_bg, (0, 216), mask=rarity_bar_bg.getchannel('A'))
+    bg.paste(element_icon, (20, 20), mask=element_icon.getchannel('A'))
+    d = ImageDraw.Draw(bg)
+    d.text((120, 282), chinese_name, font=FONT, fill='black', anchor='mm')
+    canvas.paste(bg, mask=card_bg)
+    print('Download avatar icon:', t2 - t1)
+    print('Generating:', time.time() - t2)
+    return canvas.crop((10, 10, 230, 310))
 
 
-
-async def paste_arm_icon(ch_name,star):
+async def paste_weapon_icon(chinese_name: str):
     # 拼接武器图鉴图
-    arm_id = await get_arm_id(ch_name)
-    url = f'https://genshin.honeyhunterworld.com/img/weapon/{arm_id}_a.png'
-    arm_icon = await get_icon(url)
-    star_icon = Image.open(os.path.join(FILE_PATH,'icon',f'{star}_star.png'))
-
-    bg = Image.open(os.path.join(FILE_PATH,'icon',f'{star}_star_bg.png'))
-    bg_a = bg.getchannel("A")
-    bg1 = Image.new("RGBA",bg.size)
-    txt_bg = Image.new("RGBA",(160,35),"#e9e5dc")
-    x = int(160 / arm_icon.size[1] * arm_icon.size[0])
-    arm_icon = arm_icon.resize((x, 160))
-    x_pos = int(155 / 2 - x / 2)
-    bg.paste(arm_icon, (x_pos,3),arm_icon)
-    bg.paste(txt_bg, (0,163))
-    draw = ImageDraw.Draw(bg)
-    draw.text((80, 180), ch_name, fill="#4a5466ff", font=FONT, anchor="mm",align="center")
-    bg.paste(star_icon,(6,135),star_icon)
-    bg1.paste(bg,(0,0),bg_a)
-    return bg1
-
-
-
-
-async def up_role_icon(name, star):
-    # 更新角色图标
-    role_name_path = os.path.join(ICON_PATH, "角色图鉴", str(name) + ".png")
-    if os.path.exists(role_name_path):
-        return
-    logger.info(f"正在更新 {name} 角色图标")
-    if not os.path.exists(os.path.join(ICON_PATH, '角色图鉴')):
-        os.makedirs(os.path.join(ICON_PATH, '角色图鉴'))
-
-    try:
-        role_icon = await paste_role_icon(name,star)
-        with open(role_name_path , "wb") as icon_file:
-            role_icon.save(icon_file)
-    except Exception as e:
-        logger.error(f"更新 {name} 角色图标失败，错误为 {e},建议稍后使用 更新原神卡池 指令重新更新")
-
-
-
-
-async def up_arm_icon(name, star):
-    # 更新武器图标
-    arm_name_path = os.path.join(ICON_PATH, "武器图鉴", str(name) + ".png")
-    if os.path.exists(arm_name_path):
-        return
-    logger.info(f"正在更新 {name} 武器图标")
-    if not os.path.exists(os.path.join(ICON_PATH, '武器图鉴')):
-        os.makedirs(os.path.join(ICON_PATH, '武器图鉴'))
-
-    try:
-
-        arm_icon = await paste_arm_icon(name,star)
-        with open(arm_name_path , "wb") as icon_file:
-            arm_icon.save(icon_file)
-    except Exception as e:
-        logger.error(f"更新 {name} 武器图标失败，错误为 {e},建议稍后使用 更新原神卡池 指令重新更新")
-
+    weapon_dict = weapon_icons.get(chinese_name)
+    t1 = time.time()
+    avatar_icon = await get_icon(weapon_dict.get('url'), 220)
+    t2 = time.time()
+    canvas = card_bg.copy()
+    bg = rarity_bg[weapon_dict.get('rarity') - 1].copy()
+    bg.paste(avatar_icon, (10, 14), mask=avatar_icon.getchannel('A'))
+    bg.paste(rarity_bar_bg, (0, 216), mask=rarity_bar_bg.getchannel('A'))
+    rarity_star = rarity_icons[weapon_dict.get('rarity') - 1]
+    bg.paste(rarity_star, (45, 232), mask=rarity_star.getchannel('A'))
+    d = ImageDraw.Draw(bg)
+    d.text((120, 282), chinese_name, font=FONT, fill='black', anchor='mm')
+    canvas.paste(bg, mask=card_bg)
+    print('Download avatar icon:', t2 - t1)
+    print('Generating:', time.time() - t2)
+    return canvas.crop((10, 10, 230, 310))
 
 
 async def init_pool_list():
@@ -217,10 +138,10 @@ async def init_pool_list():
 
     ROLES_HTML_LIST = None
     ARMS_HTML_LIST = None
-    POOL.clear()
-    
+    pool.clear()
+
     logger.info(f"正在更新卡池数据")
-    data = await get_url_data(POOL_API)
+    data = await fetch_data(BANNER_API)
     data = json.loads(data.decode("utf-8"))
     for d in data["data"]["list"]:
 
@@ -231,10 +152,10 @@ async def init_pool_list():
 
         pool_name = str(d['gacha_name'])
         pool_url = f"https://webstatic.mihoyo.com/hk4e/gacha_info/cn_gf01/{d['gacha_id']}/zh-cn.json"
-        pool_data = await get_url_data(pool_url)
+        pool_data = await fetch_data(pool_url)
         pool_data = json.loads(pool_data.decode("utf-8"))
 
-        for prob_list in ['r3_prob_list','r4_prob_list','r5_prob_list']:
+        for prob_list in ['r3_prob_list', 'r4_prob_list', 'r5_prob_list']:
             for i in pool_data[prob_list]:
                 item_name = i['item_name']
                 item_type = i["item_type"]
@@ -245,16 +166,28 @@ async def init_pool_list():
                     key += "_star_UP"
                 else:
                     key += "_star_not_UP"
-                POOL[pool_name][key].append(item_name)
+                pool[pool_name][key].append(item_name)
 
                 if item_type == '角色':
-                    await up_role_icon(name = item_name,star = item_star)
+                    await up_role_icon(name=item_name, star=item_star)
                 else:
-                    await up_arm_icon(name = item_name,star = item_star)
-
-
+                    await up_arm_icon(name=item_name, star=item_star)
 
 
 # 初始化
-loop = asyncio.get_event_loop()
-loop.run_until_complete(init_pool_list())
+# loop = asyncio.get_event_loop()
+# loop.run_until_complete(init_pool_list())
+
+if __name__ == '__main__':
+    import asyncio
+
+    weapon_icons = {
+        '无锋剑': {
+            'url': 'https://genshin.honeyhunterworld.com/img/weapon/w_1001_a.png',
+            'rarity': 1
+        }
+    }
+    t3 = time.time()
+    im = asyncio.run(paste_weapon_icon('无锋剑'))
+    print('Call back(total):', time.time() - t3)
+    im.show()
