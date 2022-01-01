@@ -1,11 +1,10 @@
-from hoshino import Service,priv
-from .gacha import gacha_info , FILE_PATH , Gacha , pool
+from hoshino import Service, priv
+from .gacha import gacha_info, FILE_PATH, Gacha, pool
 from .pool_data import init_pool_list
 import os
 import json
 from hoshino.util import DailyNumberLimiter
-from ..config import Gacha10Limit,Gacha90Limit,Gacha180Limit
-
+from ..config import Gacha10Limit, Gacha90Limit, Gacha180Limit
 
 daily_limiter_10 = DailyNumberLimiter(Gacha10Limit)
 daily_limiter_90 = DailyNumberLimiter(Gacha90Limit)
@@ -17,23 +16,19 @@ group_pool = {
     # 这个字典保存每个群对应的卡池是哪个，群号字符串为key,卡池名为value，群号不包含在字典key里卡池按默认DEFAULT_POOL
 }
 
-def save_group_pool():
-    with open(os.path.join(FILE_PATH,'gid_pool.json'),'w',encoding='UTF-8') as f:
-        json.dump(group_pool,f,ensure_ascii=False)
 
+def save_group_pool():
+    with open(os.path.join(FILE_PATH, 'gid_pool.json'), 'w', encoding='UTF-8') as f:
+        json.dump(group_pool, f, ensure_ascii=False)
 
 
 # 检查gid_pool.json是否存在，没有创建空的
-if not os.path.exists(os.path.join(FILE_PATH,'gid_pool.json')):
+if not os.path.exists(os.path.join(FILE_PATH, 'gid_pool.json')):
     save_group_pool()
 
-
-
 # 读取gid_pool.json的信息
-with open(os.path.join(FILE_PATH,'gid_pool.json'),'r',encoding='UTF-8') as f:
+with open(os.path.join(FILE_PATH, 'gid_pool.json'), 'r', encoding='UTF-8') as f:
     group_pool = json.load(f)
-
-
 
 
 @sv.on_prefix(["相遇之缘"], only_to_me=True)
@@ -48,7 +43,8 @@ async def gacha_(bot, ev):
     else:
         G = Gacha()
     daily_limiter_10.increase(userid)
-    await bot.send(ev, G.gacha_10() , at_sender=True)
+    await bot.send(ev, G.gacha_10(), at_sender=True)
+
 
 @sv.on_prefix(["纠缠之缘"], only_to_me=True)
 async def gacha_(bot, ev):
@@ -62,8 +58,7 @@ async def gacha_(bot, ev):
     else:
         G = Gacha()
     daily_limiter_90.increase(userid)
-    await bot.send(ev, G.gacha_90(90) , at_sender=True)
-
+    await bot.send(ev, G.gacha_90(90), at_sender=True)
 
 
 @sv.on_prefix(["原之井"], only_to_me=True)
@@ -78,11 +73,10 @@ async def gacha_(bot, ev):
         G = Gacha(group_pool[gid])
     else:
         G = Gacha()
-    await bot.send(ev, G.gacha_90(180) , at_sender=True)
+    await bot.send(ev, G.gacha_90(180), at_sender=True)
 
 
-
-@sv.on_prefix(["原神卡池","原神up","原神UP"])
+@sv.on_prefix(["原神卡池", "原神up", "原神UP"])
 async def gacha_(bot, ev):
     gid = str(ev.group_id) if 'group_id' in dir(ev) else str(ev.guild_id)
 
@@ -91,11 +85,11 @@ async def gacha_(bot, ev):
     else:
         info = gacha_info()
 
-    await bot.send(ev, info , at_sender=True)
+    await bot.send(ev, info, at_sender=True)
 
-@sv.on_prefix(('原神卡池切换','原神切换卡池'))
+
+@sv.on_prefix(('原神卡池切换', '原神切换卡池'))
 async def set_pool(bot, ev):
-
     if not priv.check_priv(ev, priv.ADMIN):
         await bot.finish(ev, '只有群管理才能切换卡池', at_sender=True)
 
@@ -106,7 +100,7 @@ async def set_pool(bot, ev):
         if gid in group_pool:
             group_pool[gid] = pool_name
         else:
-            group_pool.setdefault(gid,pool_name)
+            group_pool.setdefault(gid, pool_name)
         save_group_pool()
         await bot.send(ev, f"卡池已切换为 {pool_name} ")
         return
@@ -122,5 +116,4 @@ async def set_pool(bot, ev):
 async def up_pool_(bot, ev):
     await bot.send(ev, '正在更新卡池')
     await init_pool_list()
-    await bot.send(ev,"更新卡池完成")
-
+    await bot.send(ev, "更新卡池完成")

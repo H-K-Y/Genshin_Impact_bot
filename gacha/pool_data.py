@@ -1,34 +1,36 @@
-import time
-
-from PIL import Image, ImageFont, ImageDraw, ImageMath
+from PIL import Image, ImageFont, ImageDraw
 from bs4 import BeautifulSoup as bs
 from loguru import logger
 import httpx
 
-import os
-import json
 import time
+import threading
+import collections
+from io import BytesIO
+from pathlib import Path
+from asyncio import run
 
+BANNER_API = "https://webstatic.mihoyo.com/hk4e/gacha_info/cn_gf01/gacha/list.json"
+PAGE_CHARACTER = ['https://genshin.honeyhunterworld.com/db/char/characters/?lang=CHS',
+                  'https://genshin.honeyhunterworld.com/db/char/unreleased-and-upcoming-characters/?lang=CHS']
+PAGE_WEAPONS = ['https://genshin.honeyhunterworld.com/db/weapon/sword/?lang=CHS',
+                'https://genshin.honeyhunterworld.com/db/weapon/claymore/?lang=CHS',
+                'https://genshin.honeyhunterworld.com/db/weapon/polearm/?lang=CHS',
+                'https://genshin.honeyhunterworld.com/db/weapon/bow/?lang=CHS',
+                'https://genshin.honeyhunterworld.com/db/weapon/catalyst/?lang=CHS']
 
+lock = threading.Lock()
+FILE_PATH = Path(__file__).parent
+ASSETS_PATH = FILE_PATH / 'assets'
+card_bg = Image.open(ASSETS_PATH / 'card_bg.png')
+rarity_bar_bg = Image.open(ASSETS_PATH / 'rarity_bar_bg.png')
+FONT = ImageFont.truetype(str(FILE_PATH.parent / 'artifact_collect' / 'zh-cn.ttf'), size=24)
+rarity_bg = [Image.open(ASSETS_PATH / f'UI_QualityBg_{i}.png').resize((240, 320)) for i in range(1, 6)]
+rarity_icons = [Image.open(ASSETS_PATH / f'rarity_bar_{i}.png') for i in range(1, 6)]
+element_icons = {i: Image.open(ASSETS_PATH / f'{i}.png') for i in 'cryo/dendro/electro/geo/hydro/pyro/anemo'.split('/')}
 
-FILE_PATH = os.path.dirname(__file__)
-ICON_PATH = os.path.join(FILE_PATH,'icon')
-
-
-POOL_API =   "https://webstatic.mihoyo.com/hk4e/gacha_info/cn_gf01/gacha/list.json"
-ROLES_API = ['https://genshin.honeyhunterworld.com/db/char/characters/?lang=CHS',
-             'https://genshin.honeyhunterworld.com/db/char/unreleased-and-upcoming-characters/?lang=CHS']
-ARMS_API =  ['https://genshin.honeyhunterworld.com/db/weapon/sword/?lang=CHS',
-             'https://genshin.honeyhunterworld.com/db/weapon/claymore/?lang=CHS',
-             'https://genshin.honeyhunterworld.com/db/weapon/polearm/?lang=CHS',
-             'https://genshin.honeyhunterworld.com/db/weapon/bow/?lang=CHS',
-             'https://genshin.honeyhunterworld.com/db/weapon/catalyst/?lang=CHS']
-ROLES_HTML_LIST = None
-ARMS_HTML_LIST = None
-
-FONT_PATH = os.path.join(os.path.dirname(FILE_PATH),'artifact_collect',"zh-cn.ttf")
-FONT=ImageFont.truetype(FONT_PATH, size=20)
-
+character_icons = {}
+weapon_icons = {}
 
 # 这个字典记录的是3个不同的卡池，每个卡池的抽取列表
 pool = collections.defaultdict(
@@ -41,16 +43,23 @@ pool = collections.defaultdict(
     })
 
 
-async def fetch_data(url: str, method='text'):
+async def fetch_data(url: str, data='normal'):
     # 获取url的数据
     async with httpx.AsyncClient() as client:
         resp = await client.get(url=url, timeout=10)
         if resp.status_code != 200:
             raise ValueError(f"从 {url} 获取数据失败，错误代码 {resp.status_code}")
-        return resp.text if method == 'text' else resp.content
+        if data == 'normal':
+            return resp.text
+        if data == 'json':
+            return resp.json()
+        if data == 'obj':
+            return resp
+        return resp.content
 
 
 async def get_character_icons(url):
+    lock.acquire()
     divs = bs(await fetch_data(url), 'html.parser').find_all('div', {"class": "char_sea_cont"})
     character_ = {}
     for div in divs:
@@ -64,10 +73,13 @@ async def get_character_icons(url):
                 "element": element_img[element_img.rfind('/') + 1:].split('_')[0]
             }
         })
-    return character_
+    character_icons.update(character_)
+    lock.release()
+    return
 
 
 async def get_weapon_icons(url):
+    lock.acquire()
     trs = bs(await fetch_data(url), 'html.parser').find('table', {"class": "art_stat_table"}).find_all('tr')[1:]
     weapon_ = {}
     for tr in trs:
@@ -75,28 +87,45 @@ async def get_weapon_icons(url):
         a_tag = tds[2].next
         weapon_.update({
             a_tag.text: {
-                "url": f"https://genshin.honeyhunterworld.com/img/weapon{a_tag.get('href')}_a.png",
+                "url": "https://genshin.honeyhunterworld.com/img/weapon/"
+                       f"{a_tag.get('href').strip('/').split('/')[2]}_a.png",
                 "rarity": len(tds[3].find_all('div', {"class": "stars_wrap"}))
             }
         })
-    return weapon_
+    weapon_icons.update(weapon_)
+    lock.release()
+    return
+
+
+async def init_data():
+    process_queue = []
+    for url in PAGE_CHARACTER:
+        process_queue.append(
+            threading.Thread(target=run, args=(get_character_icons(url),))
+        )
+    for url in PAGE_WEAPONS:
+        process_queue.append(
+            threading.Thread(target=run, args=(get_weapon_icons(url),))
+        )
+    for t in process_queue:
+        t.start()
+    for t in process_queue:
+        t.join()
 
 
 async def get_icon(url: str, width: int = None) -> Image.Image:
     # 获取角色或武器的图标，直接返回 Image
-    icon = Image.open(BytesIO(await fetch_data(url, 'content')))
+    icon = Image.open(BytesIO(await fetch_data(url, data='content')))
     if width:
         height = icon.size[1] / icon.size[0] * width
         icon = icon.resize((width, int(height)))
     return icon
 
 
-async def paste_character_icon(chinese_name: str):
+async def save_character_icon(chinese_name: str):
     # 拼接角色图鉴图
     character_dict = character_icons.get(chinese_name)
-    t1 = time.time()
     avatar_icon = await get_icon(character_dict.get('url'), 220)
-    t2 = time.time()
     element_icon = element_icons.get(character_dict['element'])
     canvas = card_bg.copy()
     bg = rarity_bg[character_dict.get('rarity') - 1].copy()
@@ -106,17 +135,13 @@ async def paste_character_icon(chinese_name: str):
     d = ImageDraw.Draw(bg)
     d.text((120, 282), chinese_name, font=FONT, fill='black', anchor='mm')
     canvas.paste(bg, mask=card_bg)
-    print('Download avatar icon:', t2 - t1)
-    print('Generating:', time.time() - t2)
-    return canvas.crop((10, 10, 230, 310))
+    canvas.crop((10, 10, 230, 310)).save(ASSETS_PATH / '角色图鉴' / f'{chinese_name}.png')
 
 
-async def paste_weapon_icon(chinese_name: str):
+async def save_weapon_icon(chinese_name: str):
     # 拼接武器图鉴图
     weapon_dict = weapon_icons.get(chinese_name)
-    t1 = time.time()
     avatar_icon = await get_icon(weapon_dict.get('url'), 220)
-    t2 = time.time()
     canvas = card_bg.copy()
     bg = rarity_bg[weapon_dict.get('rarity') - 1].copy()
     bg.paste(avatar_icon, (10, 14), mask=avatar_icon.getchannel('A'))
@@ -126,25 +151,36 @@ async def paste_weapon_icon(chinese_name: str):
     d = ImageDraw.Draw(bg)
     d.text((120, 282), chinese_name, font=FONT, fill='black', anchor='mm')
     canvas.paste(bg, mask=card_bg)
-    print('Download avatar icon:', t2 - t1)
-    print('Generating:', time.time() - t2)
-    return canvas.crop((10, 10, 230, 310))
+    canvas.crop((10, 10, 230, 310)).save(ASSETS_PATH / '武器图鉴' / f'{chinese_name}.png')
+
+
+async def mk_icon(name, type_='', cover=False):
+    # 更新角色图标
+    type_ = '角色' if type_ == '角色' else '武器'
+    file_path = ASSETS_PATH / f'{type_}图鉴' / f'{name}.png'
+    if not file_path.parent.exists():
+        file_path.parent.mkdir()
+    if file_path.exists() and not cover:
+        return
+    logger.info(f"正在更新 {name} {type_}图标")
+
+    try:
+        if type_ == '角色':
+            await save_character_icon(name)
+        else:
+            await save_weapon_icon(name)
+    except Exception as e:
+        logger.error(f"更新 {name} {type_}图标失败，错误为 {e},建议稍后使用 更新原神卡池 指令重新更新")
 
 
 async def init_pool_list():
-    # 初始化卡池数据
-    global ROLES_HTML_LIST
-    global ARMS_HTML_LIST
-
-    ROLES_HTML_LIST = None
-    ARMS_HTML_LIST = None
     pool.clear()
 
     logger.info(f"正在更新卡池数据")
-    data = await fetch_data(BANNER_API)
-    data = json.loads(data.decode("utf-8"))
-    for d in data["data"]["list"]:
+    data = await fetch_data(BANNER_API, data='json')
+    await init_data()
 
+    for d in data["data"]["list"]:
         begin_time = time.mktime(time.strptime(d['begin_time'], "%Y-%m-%d %H:%M:%S"))
         end_time = time.mktime(time.strptime(d['end_time'], "%Y-%m-%d %H:%M:%S"))
         if not (begin_time < time.time() < end_time):
@@ -152,26 +188,25 @@ async def init_pool_list():
 
         pool_name = str(d['gacha_name'])
         pool_url = f"https://webstatic.mihoyo.com/hk4e/gacha_info/cn_gf01/{d['gacha_id']}/zh-cn.json"
-        pool_data = await fetch_data(pool_url)
-        pool_data = json.loads(pool_data.decode("utf-8"))
+        pool_data = await fetch_data(pool_url, data='json')
 
         for prob_list in ['r3_prob_list', 'r4_prob_list', 'r5_prob_list']:
+            process_queue = []
             for i in pool_data[prob_list]:
                 item_name = i['item_name']
                 item_type = i["item_type"]
-                item_star = str(i["rank"])
+                item_rarity = str(i["rank"])
                 key = ''
-                key += item_star
-                if str(i["is_up"]) == "1":
-                    key += "_star_UP"
-                else:
-                    key += "_star_not_UP"
+                key += item_rarity
+                key += "_star_UP" if str(i["is_up"]) == "1" else "_star_not_UP"
                 pool[pool_name][key].append(item_name)
-
-                if item_type == '角色':
-                    await up_role_icon(name=item_name, star=item_star)
-                else:
-                    await up_arm_icon(name=item_name, star=item_star)
+                process_queue.append(
+                    threading.Thread(target=run, args=(mk_icon(item_name, item_type),))
+                )
+            for p in process_queue:
+                p.start()
+            for p in process_queue:
+                p.join()
 
 
 # 初始化
@@ -181,13 +216,8 @@ async def init_pool_list():
 if __name__ == '__main__':
     import asyncio
 
-    weapon_icons = {
-        '无锋剑': {
-            'url': 'https://genshin.honeyhunterworld.com/img/weapon/w_1001_a.png',
-            'rarity': 1
-        }
-    }
-    t3 = time.time()
-    im = asyncio.run(paste_weapon_icon('无锋剑'))
-    print('Call back(total):', time.time() - t3)
-    im.show()
+    t2 = time.time()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(init_pool_list())
+    t1 = time.time()
+    print(weapon_icons, character_icons, f'Total: {t1 - t2}', sep='\n\n\n')
