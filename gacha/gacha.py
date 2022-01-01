@@ -1,6 +1,6 @@
 from PIL import Image
 from io import BytesIO
-from .pool_data import pool
+from .pool_data import POOL
 
 import os
 import random
@@ -78,7 +78,7 @@ class Gacha(object):
         if self.pool == "常驻":
             return False
 
-        if (name in pool[self.pool]['5_star_UP']) or (name in pool[self.pool]['4_star_UP']):
+        if (name in POOL[self.pool]['5_star_UP']) or (name in POOL[self.pool]['4_star_UP']):
             return True
 
         return False
@@ -86,9 +86,9 @@ class Gacha(object):
     def is_star(self, name):
         # 检查角色或物品是几星的
         # 返回对应的星星数
-        if (name in pool[self.pool]['5_star_UP']) or (name in pool[self.pool]['5_star_not_UP']):
+        if (name in POOL[self.pool]['5_star_UP']) or (name in POOL[self.pool]['5_star_not_UP']):
             return "★★★★★"
-        if (name in pool[self.pool]['4_star_UP']) or (name in pool[self.pool]['4_star_not_UP']):  # 4星常驻池就包含所有4星角色装备了
+        if (name in POOL[self.pool]['4_star_UP']) or (name in POOL[self.pool]['4_star_not_UP']):  # 4星常驻池就包含所有4星角色装备了
             return "★★★★"
         return "★★★"
 
@@ -135,19 +135,19 @@ class Gacha(object):
     def update_last(self, name):
         # 这个方法用来更新第一次抽到4星或5星或UP的计数
         if not self.last_4_up:
-            if name in pool[self.pool]['4_star_UP']:
+            if name in POOL[self.pool]['4_star_UP']:
                 self.last_4_up = self.current_times + 1
 
         if not self.last_5_up:
-            if name in pool[self.pool]['5_star_UP']:
+            if name in POOL[self.pool]['5_star_UP']:
                 self.last_5_up = self.current_times + 1
 
         if not self.last_4:
-            if (name in pool[self.pool]['4_star_not_UP']) or (name in pool[self.pool]['4_star_UP']):
+            if (name in POOL[self.pool]['4_star_not_UP']) or (name in POOL[self.pool]['4_star_UP']):
                 self.last_4 = self.current_times + 1
 
         if not self.last_5:
-            if (name in pool[self.pool]['5_star_not_UP']) or (name in pool[self.pool]['5_star_UP']):
+            if (name in POOL[self.pool]['5_star_not_UP']) or (name in POOL[self.pool]['5_star_UP']):
                 self.last_5 = self.current_times + 1
 
     def is_guaranteed(self, frequency):
@@ -200,17 +200,17 @@ class Gacha(object):
 
         # 先看是不是常驻池
         if self.pool == '常驻':
-            return random.choice(pool[self.pool]['5_star_not_UP'])
+            return random.choice(POOL[self.pool]['5_star_not_UP'])
 
         # 下边是角色或武器的UP
         if self.is_up(self.last_time_5):
 
             if random.random() < self.up_probability:
-                return random.choice(pool[self.pool]['5_star_UP'])
+                return random.choice(POOL[self.pool]['5_star_UP'])
             else:
-                return random.choice(pool[self.pool]['5_star_not_UP'])
+                return random.choice(POOL[self.pool]['5_star_not_UP'])
         else:
-            return random.choice(pool[self.pool]['5_star_UP'])
+            return random.choice(POOL[self.pool]['5_star_UP'])
 
     def get_4_star(self):
         # 先检查上次4星是否是UP，不是UP本次抽取必定是 UP，
@@ -219,16 +219,16 @@ class Gacha(object):
 
         # 先看是不是常驻池
         if self.pool == '常驻':
-            return random.choice(pool[self.pool]['4_star_not_UP'])
+            return random.choice(POOL[self.pool]['4_star_not_UP'])
 
         # 下边是角色或武器的UP
         if self.is_up(self.last_time_4):
             if random.random() < self.up_probability:
-                return random.choice(pool[self.pool]['4_star_UP'])
+                return random.choice(POOL[self.pool]['4_star_UP'])
             else:
-                return random.choice(pool[self.pool]['4_star_not_UP'])
+                return random.choice(POOL[self.pool]['4_star_not_UP'])
         else:
-            return random.choice(pool[self.pool]['4_star_UP'])
+            return random.choice(POOL[self.pool]['4_star_UP'])
 
     def get_5_star_probability(self):
         # 获取本次抽5星的概率是多少
@@ -290,11 +290,11 @@ class Gacha(object):
 
         # 以上都不是返回3星
         self.gacha_rarity_statistics["3星"] += 1
-        return random.choice(pool[self.pool]['3_star_not_UP'])
+        return random.choice(POOL[self.pool]['3_star_not_UP'])
 
     def gacha_10(self):
         # 抽10连
-        if not (self.pool in pool.keys()):
+        if not (self.pool in POOL.keys()):
             return '当前卡池已结束，请使用 原神卡池切换 切换其他卡池'
 
         gacha_txt = ""
@@ -335,7 +335,7 @@ class Gacha(object):
 
     def gacha_90(self, frequency=90):
         # 抽一井
-        if not (self.pool in pool.keys()):
+        if not (self.pool in POOL.keys()):
             return '当前卡池已结束，请使用 原神卡池切换 切换其他卡池'
 
         gacha_txt = ""
@@ -344,7 +344,7 @@ class Gacha(object):
 
             new_gacha = self.gacha_one()
 
-            if not (new_gacha in pool[self.pool]['3_star_not_UP']):  # 抽一井时图片上不保留3星的武器
+            if not (new_gacha in POOL[self.pool]['3_star_not_UP']):  # 抽一井时图片上不保留3星的武器
                 self.gacha_list.append(new_gacha)
 
             self.add_gacha_all_statistics(new_gacha)  # 把所有抽卡结果添加到gacha_all_statistics用于最后统计
