@@ -33,7 +33,7 @@ character_icons = {}
 weapon_icons = {}
 
 # 这个字典记录的是3个不同的卡池，每个卡池的抽取列表
-pool = collections.defaultdict(
+POOL = collections.defaultdict(
     lambda: {
         '5_star_UP': [],
         '5_star_not_UP': [],
@@ -174,7 +174,7 @@ async def mk_icon(name, type_='', cover=False):
 
 
 async def init_pool_list():
-    pool.clear()
+    POOL.clear()
 
     logger.info(f"正在更新卡池数据")
     data = await fetch_data(BANNER_API, data='json')
@@ -199,7 +199,7 @@ async def init_pool_list():
                 key = ''
                 key += item_rarity
                 key += "_star_UP" if str(i["is_up"]) == "1" else "_star_not_UP"
-                pool[pool_name][key].append(item_name)
+                POOL[pool_name][key].append(item_name)
                 process_queue.append(
                     threading.Thread(target=asyncio.run, args=(mk_icon(item_name, item_type),))
                 )

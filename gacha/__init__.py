@@ -4,7 +4,7 @@ from nonebot.adapters import Bot, Event
 from nonebot.adapters.cqhttp import GROUP_ADMIN, GROUP_OWNER
 from nonebot.adapters.cqhttp import Message
 from .gacha import gacha_info, FILE_PATH, Gacha
-from .pool_data import pool, init_pool_list
+from .pool_data import POOL, init_pool_list
 import os
 import json
 
