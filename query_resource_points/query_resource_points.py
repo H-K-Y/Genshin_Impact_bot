@@ -37,7 +37,7 @@ data = {
         # "1": {
         #         "id": 1,
         #         "name": "传送点",
-        #         "assets": "",
+        #         "icon": "",
         #         "parent_id": 0,
         #         "depth": 1,
         #         "node_type": 1,
@@ -95,7 +95,7 @@ async def up_icon_image(sublist):
 
     if not os.path.exists(icon_path):
         logger.info(f"正在更新资源图标 {id}")
-        icon_url = sublist["assets"]
+        icon_url = sublist["icon"]
         icon = await download_icon(icon_url)
         icon = icon.resize((150, 150))
 
