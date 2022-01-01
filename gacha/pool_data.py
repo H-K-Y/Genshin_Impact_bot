@@ -1,4 +1,5 @@
 from PIL import Image, ImageFont, ImageDraw
+from nonebot import get_driver
 from bs4 import BeautifulSoup as bs
 from loguru import logger
 import httpx
@@ -19,6 +20,7 @@ PAGE_WEAPONS = ['https://genshin.honeyhunterworld.com/db/weapon/sword/?lang=CHS'
                 'https://genshin.honeyhunterworld.com/db/weapon/bow/?lang=CHS',
                 'https://genshin.honeyhunterworld.com/db/weapon/catalyst/?lang=CHS']
 
+driver = get_driver()
 lock = threading.Lock()
 FILE_PATH = Path(__file__).parent
 ASSETS_PATH = FILE_PATH / 'assets'
@@ -173,6 +175,7 @@ async def mk_icon(name, type_='', cover=False):
         logger.error(f"更新 {name} {type_}图标失败，错误为 {e},建议稍后使用 更新原神卡池 指令重新更新")
 
 
+@driver.on_startup
 async def init_pool_list():
     POOL.clear()
 
@@ -207,11 +210,6 @@ async def init_pool_list():
                 p.start()
             for p in process_queue:
                 p.join()
-
-
-# 初始化
-loop = asyncio.get_event_loop()
-loop.run_until_complete(init_pool_list())
 
 if __name__ == '__main__':
     t2 = time.time()
