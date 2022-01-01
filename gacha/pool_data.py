@@ -4,11 +4,11 @@ from loguru import logger
 import httpx
 
 import time
+import asyncio
 import threading
 import collections
 from io import BytesIO
 from pathlib import Path
-from asyncio import run
 
 BANNER_API = "https://webstatic.mihoyo.com/hk4e/gacha_info/cn_gf01/gacha/list.json"
 PAGE_CHARACTER = ['https://genshin.honeyhunterworld.com/db/char/characters/?lang=CHS',
@@ -101,11 +101,11 @@ async def init_data():
     process_queue = []
     for url in PAGE_CHARACTER:
         process_queue.append(
-            threading.Thread(target=run, args=(get_character_icons(url),))
+            threading.Thread(target=asyncio.run, args=(get_character_icons(url),))
         )
     for url in PAGE_WEAPONS:
         process_queue.append(
-            threading.Thread(target=run, args=(get_weapon_icons(url),))
+            threading.Thread(target=asyncio.run, args=(get_weapon_icons(url),))
         )
     for t in process_queue:
         t.start()
@@ -201,7 +201,7 @@ async def init_pool_list():
                 key += "_star_UP" if str(i["is_up"]) == "1" else "_star_not_UP"
                 pool[pool_name][key].append(item_name)
                 process_queue.append(
-                    threading.Thread(target=run, args=(mk_icon(item_name, item_type),))
+                    threading.Thread(target=asyncio.run, args=(mk_icon(item_name, item_type),))
                 )
             for p in process_queue:
                 p.start()
@@ -210,12 +210,10 @@ async def init_pool_list():
 
 
 # 初始化
-# loop = asyncio.get_event_loop()
-# loop.run_until_complete(init_pool_list())
+loop = asyncio.get_event_loop()
+loop.run_until_complete(init_pool_list())
 
 if __name__ == '__main__':
-    import asyncio
-
     t2 = time.time()
     loop = asyncio.get_event_loop()
     loop.run_until_complete(init_pool_list())
