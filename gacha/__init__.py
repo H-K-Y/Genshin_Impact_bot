@@ -1,5 +1,5 @@
 from hoshino import Service, priv
-from .gacha import gacha_info, FILE_PATH, Gacha, pool
+from .gacha import gacha_info, FILE_PATH, Gacha, POOL
 from .pool_data import init_pool_list
 import os
 import json
@@ -96,7 +96,7 @@ async def set_pool(bot, ev):
     pool_name = ev.message.extract_plain_text().strip()
     gid = str(ev.group_id) if 'group_id' in dir(ev) else str(ev.guild_id)
 
-    if pool_name in pool.keys():
+    if pool_name in POOL.keys():
         if gid in group_pool:
             group_pool[gid] = pool_name
         else:
@@ -106,7 +106,7 @@ async def set_pool(bot, ev):
         return
 
     txt = "请使用以下命令来切换卡池\n"
-    for i in pool.keys():
+    for i in POOL.keys():
         txt += f"原神卡池切换 {i} \n"
 
     await bot.send(ev, txt)
