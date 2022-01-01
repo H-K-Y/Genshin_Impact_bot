@@ -8,19 +8,22 @@ import math
 import base64
 
 FILE_PATH = os.path.dirname(__file__)
-ICON_PATH = os.path.join(FILE_PATH, 'icon')
+ICON_PATH = os.path.join(FILE_PATH,'icon')
 
-DEFAULT_POOL = "常驻"  # 默认卡池
+
+
+DEFAULT_POOL = "常驻" # 默认卡池
+
 
 
 class Gacha(object):
 
-    def __init__(self, _pool=DEFAULT_POOL):
+    def __init__(self,_pool = DEFAULT_POOL):
         # 实例化的时候就要传进来字符串表明要抽哪个卡池
         self.pool = _pool
 
-        self.last_time_5 = ""  # 记录上一次抽卡的5星是什么
-        self.last_time_4 = ""  # 记录上一次抽卡的4星是什么
+        self.last_time_5 = "" # 记录上一次抽卡的5星是什么
+        self.last_time_4 = "" # 记录上一次抽卡的4星是什么
 
         # 保底计数,注意这个计数是从0开始的，每一次抽卡（包括第一次）之前都得+1
         self.distance_5_star = 0
@@ -55,6 +58,7 @@ class Gacha(object):
         self._4_star_basic_probability = self.get_4_star_basic_probability()
         self.distance_frequency = self.get_distance_frequency()
 
+
     @staticmethod
     def get_png_path(name):
         # 获取png文件路径，传入的参数是角色或武器名字，会自动在角色和武器文件夹搜索，找不到使用默认图标
@@ -70,7 +74,7 @@ class Gacha(object):
 
         return os.path.join(ICON_PATH, "default.png")
 
-    def is_up(self, name):
+    def is_up(self,name):
         # 检查角色是否在UP里
         # 如果name是一个空字符串表示是第一次抽到4星或5星
         if name == "":
@@ -83,12 +87,13 @@ class Gacha(object):
 
         return False
 
-    def is_star(self, name):
+
+    def is_star(self,name):
         # 检查角色或物品是几星的
         # 返回对应的星星数
         if (name in POOL[self.pool]['5_star_UP']) or (name in POOL[self.pool]['5_star_not_UP']):
             return "★★★★★"
-        if (name in POOL[self.pool]['4_star_UP']) or (name in POOL[self.pool]['4_star_not_UP']):  # 4星常驻池就包含所有4星角色装备了
+        if (name in POOL[self.pool]['4_star_UP']) or (name in POOL[self.pool]['4_star_not_UP']): # 4星常驻池就包含所有4星角色装备了
             return "★★★★"
         return "★★★"
 
@@ -125,14 +130,14 @@ class Gacha(object):
 
         return des
 
-    def add_gacha_all_statistics(self, name):
+    def add_gacha_all_statistics(self,name):
         # 把每一次抽卡结果添加到gacha_all_statistics
         if name in self.gacha_all_statistics.keys():
             self.gacha_all_statistics[name] += 1
         else:
             self.gacha_all_statistics[name] = 1
 
-    def update_last(self, name):
+    def update_last(self,name):
         # 这个方法用来更新第一次抽到4星或5星或UP的计数
         if not self.last_4_up:
             if name in POOL[self.pool]['4_star_UP']:
@@ -150,13 +155,13 @@ class Gacha(object):
             if (name in POOL[self.pool]['5_star_not_UP']) or (name in POOL[self.pool]['5_star_UP']):
                 self.last_5 = self.current_times + 1
 
-    def is_guaranteed(self, frequency):
+    def is_guaranteed(self,frequency):
         # 检查本轮抽卡是不是全保底
-        if frequency == 90:
-            if self.gacha_rarity_statistics['5星'] == 1 and self.gacha_rarity_statistics['4星'] == 8:
+        if frequency == 90 :
+            if self.gacha_rarity_statistics['5星'] == 1  and self.gacha_rarity_statistics['4星'] == 8:
                 return True
-        if frequency == 180:
-            if self.gacha_rarity_statistics['5星'] == 2 and self.gacha_rarity_statistics['4星'] == 16:
+        if frequency == 180 :
+            if self.gacha_rarity_statistics['5星'] == 2  and self.gacha_rarity_statistics['4星'] == 16:
                 return True
         return False
 
@@ -165,15 +170,18 @@ class Gacha(object):
         if not self.gacha_all_statistics:
             raise KeyError(f"字典 self.gacha_all_statistics 是空的")
         most_value = max(self.gacha_all_statistics.values())
-        for key, value in self.gacha_all_statistics.items():
-            if most_value == value:
-                return {"name": key, "most": value}
+        for key,value in self.gacha_all_statistics.items():
+            if most_value == value :
+                return {"name":key,"most":value}
+
+
 
     def get_up_probability(self):
         # 获取上一次抽卡抽到5星 UP 时，再次获取5星概率是多少
         if self.pool.count("武器"):
             return 0.75
         return 0.5
+
 
     def get_5_star_basic_probability(self):
         # 获取5星的基础概率
@@ -187,11 +195,15 @@ class Gacha(object):
             return 0.060
         return 0.051
 
+
     def get_distance_frequency(self):
         # 获取当前卡池的保底抽卡次数
         if self.pool.count("武器"):
             return 80
         return 90
+
+
+
 
     def get_5_star(self):
         # 先检查上次5星是否是UP，不是UP本次抽取必定是 UP，
@@ -199,7 +211,7 @@ class Gacha(object):
         # 武器UP池本次有75%的概率还是 UP，25%概率非 UP，详情看UP_PROBABILITY
 
         # 先看是不是常驻池
-        if self.pool == '常驻':
+        if self.pool ==  '常驻':
             return random.choice(POOL[self.pool]['5_star_not_UP'])
 
         # 下边是角色或武器的UP
@@ -212,13 +224,15 @@ class Gacha(object):
         else:
             return random.choice(POOL[self.pool]['5_star_UP'])
 
+
+
     def get_4_star(self):
         # 先检查上次4星是否是UP，不是UP本次抽取必定是 UP，
         # 如果上次是UP，角色UP池本次有50%的概率还是 UP，50%概率非 UP
         # 武器UP池本次有75%的概率还是UP，25%概率非 UP，详情看UP_PROBABILITY
 
         # 先看是不是常驻池
-        if self.pool == '常驻':
+        if self.pool ==  '常驻':
             return random.choice(POOL[self.pool]['4_star_not_UP'])
 
         # 下边是角色或武器的UP
@@ -247,6 +261,7 @@ class Gacha(object):
             else:
                 return self._5_star_basic_probability + 0.06 * (self.distance_5_star - 73)
 
+
     def gacha_one(self):
         # self.last_time_4表示上一个4星角色
         # self.last_time_5表示上一个5星角色
@@ -262,9 +277,9 @@ class Gacha(object):
         # 先检查是不是保底5星
         if self.distance_5_star % self.distance_frequency == 0:
             self.gacha_rarity_statistics["5星"] += 1
-            self.distance_5_star = 0  # 重置保底计数
-            self.last_time_5 = self.get_5_star()  # 抽一次卡，把结果赋值留给下一次抽卡判断
-            return self.last_time_5  # 返回刚抽出的卡
+            self.distance_5_star = 0 # 重置保底计数
+            self.last_time_5 = self.get_5_star() # 抽一次卡，把结果赋值留给下一次抽卡判断
+            return self.last_time_5 # 返回刚抽出的卡
 
         # 检查是不是概率5星
         if r < _5_star_probability:
@@ -292,6 +307,9 @@ class Gacha(object):
         self.gacha_rarity_statistics["3星"] += 1
         return random.choice(POOL[self.pool]['3_star_not_UP'])
 
+
+
+
     def gacha_10(self):
         # 抽10连
         if not (self.pool in POOL.keys()):
@@ -311,7 +329,7 @@ class Gacha(object):
 
             self.add_gacha_all_statistics(new_gacha)  # 把所有抽卡结果添加到gacha_all_statistics用于最后统计
 
-            self.update_last(new_gacha)  # 更新第一次抽到的计数
+            self.update_last(new_gacha) # 更新第一次抽到的计数
 
         mes = '本次祈愿得到以下角色装备：\n'
         res = self.concat_pic()
@@ -320,7 +338,7 @@ class Gacha(object):
         mes += '\n'
         mes += gacha_txt
 
-        if self.last_4:  # 如果self.last_4为0表示没有抽到，这句话就不写了，下边3个判断标准一样
+        if self.last_4: # 如果self.last_4为0表示没有抽到，这句话就不写了，下边3个判断标准一样
             mes += f'第 {self.last_4} 抽首次出现4★!\n'
         if self.last_4_up:
             mes += f'第 {self.last_4_up} 抽首次出现4★UP!\n'
@@ -333,7 +351,7 @@ class Gacha(object):
 
         return mes
 
-    def gacha_90(self, frequency=90):
+    def gacha_90(self,frequency=90):
         # 抽一井
         if not (self.pool in POOL.keys()):
             return '当前卡池已结束，请使用 原神卡池切换 切换其他卡池'
@@ -344,10 +362,10 @@ class Gacha(object):
 
             new_gacha = self.gacha_one()
 
-            if not (new_gacha in POOL[self.pool]['3_star_not_UP']):  # 抽一井时图片上不保留3星的武器
+            if not (new_gacha in POOL[self.pool]['3_star_not_UP']): # 抽一井时图片上不保留3星的武器
                 self.gacha_list.append(new_gacha)
 
-            self.add_gacha_all_statistics(new_gacha)  # 把所有抽卡结果添加到gacha_all_statistics用于最后统计
+            self.add_gacha_all_statistics(new_gacha) # 把所有抽卡结果添加到gacha_all_statistics用于最后统计
 
             self.update_last(new_gacha)  # 更新第一次抽到的计数
 
@@ -360,7 +378,7 @@ class Gacha(object):
         mes += '\n'
         mes += gacha_txt
 
-        if self.last_4:  # 如果self.last_4为0表示没有抽到，这句话就不写了
+        if self.last_4: # 如果self.last_4为0表示没有抽到，这句话就不写了
             mes += f'第 {self.last_4} 抽首次出现4★!\n'
         if self.last_4_up:
             mes += f'第 {self.last_4_up} 抽首次出现4★UP!\n'
@@ -372,6 +390,7 @@ class Gacha(object):
         most_arms = self.get_most_arms()
         mes += f"本次抽取最多的装备是 {most_arms['name']} {self.is_star(most_arms['name'])} ,共抽取到 {most_arms['most']} 次\n"
 
+
         if self.is_guaranteed(frequency):
             mes += "居然全是保底，你脸也太黑了\n"
 
@@ -379,7 +398,8 @@ class Gacha(object):
         return mes
 
 
-def gacha_info(pool=DEFAULT_POOL):
+
+def gacha_info(pool = DEFAULT_POOL):
     # UP角色信息
     info_txt = f'当前卡池为 {pool} ，UP信息如下：\n'
     up_info = ""
@@ -404,3 +424,5 @@ def gacha_info(pool=DEFAULT_POOL):
 
     info_txt += up_info
     return info_txt
+
+
