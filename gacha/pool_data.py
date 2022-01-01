@@ -210,10 +210,3 @@ async def init_pool_list():
                 p.start()
             for p in process_queue:
                 p.join()
-
-if __name__ == '__main__':
-    t2 = time.time()
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(init_pool_list())
-    t1 = time.time()
-    print(weapon_icons, character_icons, f'Total: {t1 - t2}', sep='\n\n\n')
