@@ -1,35 +1,38 @@
-from PIL import Image, ImageMath
-from nonebot import get_driver
-from loguru import logger
 
+from PIL import Image,ImageMath
+from io import BytesIO
+from loguru import logger
 import json
 import os
 import time
 import base64
 import httpx
 import asyncio
-from io import BytesIO
 
-driver = get_driver()
-LABEL_URL = 'https://api-static.mihoyo.com/common/blackboard/ys_obc/v1/map/label/tree?app_sn=ys_obc'
+
+
+LABEL_URL      = 'https://api-static.mihoyo.com/common/blackboard/ys_obc/v1/map/label/tree?app_sn=ys_obc'
 POINT_LIST_URL = 'https://api-static.mihoyo.com/common/blackboard/ys_obc/v1/map/point/list?map_id=2&app_sn=ys_obc'
-MAP_URL = "https://api-static.mihoyo.com/common/map_user/ys_obc/v1/map/info?map_id=2&app_sn=ys_obc&lang=zh-cn"
+MAP_URL        = "https://api-static.mihoyo.com/common/map_user/ys_obc/v1/map/info?map_id=2&app_sn=ys_obc&lang=zh-cn"
 
 header = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36'
 
 FILE_PATH = os.path.dirname(__file__)
 
-MAP_PATH = os.path.join(FILE_PATH, "icon", "map_icon.jpg")
+MAP_PATH = os.path.join(FILE_PATH,"icon","map_icon.jpg")
 Image.MAX_IMAGE_PIXELS = None
+
 
 CENTER = None
 MAP_ICON = None
 
+
 zoom = 0.5
-resource_icon_offset = (-int(150 * 0.5 * zoom), -int(150 * zoom))
+resource_icon_offset = (-int(150*0.5*zoom),-int(150*zoom))
+
 
 data = {
-    "all_resource_type": {
+    "all_resource_type":{
         # 这个字典保存所有资源类型，
         # "1": {
         #         "id": 1,
@@ -44,26 +47,26 @@ data = {
         #         "children": []
         #     },
     },
-    "can_query_type_list": {
+    "can_query_type_list":{
         # 这个字典保存所有可以查询的资源类型名称和ID，这个字典只有名称和ID
         # 上边字典里"depth": 2的类型才可以查询，"depth": 1的是1级目录，不能查询
         # "七天神像":"2"
         # "风神瞳":"5"
 
     },
-    "all_resource_point_list": [
-        # 这个列表保存所有资源点的数据
-        # {
-        #     "id": 2740,
-        #     "label_id": 68,
-        #     "x_pos": -1789,
-        #     "y_pos": 2628,
-        #     "author_name": "✟紫灵心✟",
-        #     "ctime": "2020-10-29 10:41:21",
-        #     "display_state": 1
-        # },
+    "all_resource_point_list" :[
+            # 这个列表保存所有资源点的数据
+            # {
+            #     "id": 2740,
+            #     "label_id": 68,
+            #     "x_pos": -1789,
+            #     "y_pos": 2628,
+            #     "author_name": "✟紫灵心✟",
+            #     "ctime": "2020-10-29 10:41:21",
+            #     "display_state": 1
+            # },
     ],
-    "date": ""  # 记录上次更新"all_resource_point_list"的日期
+    "date":"" #记录上次更新"all_resource_point_list"的日期
 }
 
 
@@ -75,7 +78,6 @@ async def download_icon(url):
             raise ValueError(f"获取图片数据失败，错误代码 {resp.status_code}")
         icon = resp.content
         return Image.open(BytesIO(icon))
-
 
 async def download_json(url):
     # 获取资源数据，返回 JSON
@@ -89,7 +91,7 @@ async def download_json(url):
 async def up_icon_image(sublist):
     # 检查是否有图标，没有图标下载保存到本地
     id = sublist["id"]
-    icon_path = os.path.join(FILE_PATH, "icon", f"{id}.png")
+    icon_path = os.path.join(FILE_PATH,"icon",f"{id}.png")
 
     if not os.path.exists(icon_path):
         logger.info(f"正在更新资源图标 {id}")
@@ -97,8 +99,8 @@ async def up_icon_image(sublist):
         icon = await download_icon(icon_url)
         icon = icon.resize((150, 150))
 
-        box_alpha = Image.open(os.path.join(FILE_PATH, "icon", "box_alpha.png")).getchannel("A")
-        box = Image.open(os.path.join(FILE_PATH, "icon", "box.png"))
+        box_alpha = Image.open(os.path.join(FILE_PATH,"icon","box_alpha.png")).getchannel("A")
+        box = Image.open(os.path.join(FILE_PATH,"icon","box.png"))
 
         try:
             icon_alpha = icon.getchannel("A")
@@ -116,7 +118,6 @@ async def up_icon_image(sublist):
 
         with open(icon_path, "wb") as icon_file:
             bg.save(icon_file)
-
 
 async def up_label_and_point_list():
     # 更新label列表和资源点列表
@@ -156,10 +157,10 @@ async def up_map():
     for resource_point in data["all_resource_point_list"]:
         x_pos = resource_point["x_pos"] + origin[0]
         y_pos = resource_point["y_pos"] + origin[1]
-        x_start = min(x_start, x_pos)
-        y_start = min(y_start, y_pos)
-        x_end = max(x_end, x_pos)
-        y_end = max(y_end, y_pos)
+        x_start = min(x_start,x_pos)
+        y_start = min(y_start,y_pos)
+        x_end = max(x_end,x_pos)
+        y_end = max(y_end,y_pos)
 
     x_start -= 200
     y_start -= 200
@@ -169,7 +170,7 @@ async def up_map():
     CENTER = [origin[0] - x_start, origin[1] - y_start]
     x = int(x_end - x_start)
     y = int(y_end - y_start)
-    MAP_ICON = Image.new("RGB", (x, y))
+    MAP_ICON = Image.new("RGB",(x,y))
     x_offset = 0
     for i in map_url_list:
         map_url = i["url"]
@@ -181,15 +182,22 @@ async def up_map():
     logger.info(f"地图数据更新完成")
 
 
-@driver.on_startup
 async def init_point_list_and_map():
     await up_label_and_point_list()
     await up_map()
 
 
+
+# 初始化
+loop = asyncio.get_event_loop()
+loop.run_until_complete(init_point_list_and_map())
+
+
+
+
 class Resource_map(object):
 
-    def __init__(self, resource_name):
+    def __init__(self,resource_name):
         self.resource_id = str(data["can_query_type_list"][resource_name])
 
         # self.map_image = Image.open(MAP_PATH)
@@ -204,41 +212,42 @@ class Resource_map(object):
         self.y_end = 0
 
         self.resource_icon = Image.open(self.get_icon_path())
-        self.resource_icon = self.resource_icon.resize((int(150 * zoom), int(150 * zoom)))
+        self.resource_icon = self.resource_icon.resize((int(150*zoom),int(150*zoom)))
 
         self.resource_xy_list = self.get_resource_point_list()
 
     def get_icon_path(self):
         # 检查有没有图标，有返回正确图标，没有返回默认图标
-        icon_path = os.path.join(FILE_PATH, "icon", f"{self.resource_id}.png")
+        icon_path = os.path.join(FILE_PATH,"icon",f"{self.resource_id}.png")
 
         if os.path.exists(icon_path):
             return icon_path
         else:
-            return os.path.join(FILE_PATH, "icon", "0.png")
+            return os.path.join(FILE_PATH,"icon","0.png")
 
     def get_resource_point_list(self):
         temp_list = []
         for resource_point in data["all_resource_point_list"]:
-            if str(resource_point["label_id"]) == self.resource_id:
+            if str(resource_point["label_id"]) == self.resource_id :
                 # 获取xy坐标，然后加上中心点的坐标完成坐标转换
                 x = resource_point["x_pos"] + CENTER[0]
                 y = resource_point["y_pos"] + CENTER[1]
-                temp_list.append((int(x), int(y)))
+                temp_list.append((int(x),int(y)))
         return temp_list
 
+
     def paste(self):
-        for x, y in self.resource_xy_list:
+        for x,y in self.resource_xy_list:
             # 把资源图片贴到地图上
             # 这时地图已经裁切过了，要以裁切后的地图左上角为中心再转换一次坐标
             x -= self.x_start
             y -= self.y_start
-            self.map_image.paste(self.resource_icon, (x + resource_icon_offset[0], y + resource_icon_offset[1]),
-                                 self.resource_icon)
+            self.map_image.paste(self.resource_icon,(x + resource_icon_offset[0] , y + resource_icon_offset[1]),self.resource_icon)
+
 
     def crop(self):
         # 把大地图裁切到只保留资源图标位置
-        for x, y in self.resource_xy_list:
+        for x,y in self.resource_xy_list:
             # 找出4个方向最远的坐标，用于后边裁切
             self.x_start = min(x, self.x_start)
             self.y_start = min(y, self.y_start)
@@ -252,16 +261,16 @@ class Resource_map(object):
         self.y_end += 150
 
         # 如果图片裁切的太小会看不出资源的位置在哪，检查图片裁切的长和宽看够不够1000，不到1000的按1000裁切
-        if (self.x_end - self.x_start) < 1000:
+        if (self.x_end - self.x_start)<1000:
             center = int((self.x_end + self.x_start) / 2)
             self.x_start = center - 500
-            self.x_end = center + 500
-        if (self.y_end - self.y_start) < 1000:
+            self.x_end  = center +500
+        if (self.y_end - self.y_start)<1000:
             center = int((self.y_end + self.y_start) / 2)
             self.y_start = center - 500
-            self.y_end = center + 500
+            self.y_end  = center +500
 
-        self.map_image = self.map_image.crop((self.x_start, self.y_start, self.x_end, self.y_end))
+        self.map_image = self.map_image.crop((self.x_start,self.y_start,self.x_end,self.y_end))
 
     def get_cq_cod(self):
 
@@ -282,8 +291,10 @@ class Resource_map(object):
         return len(self.resource_xy_list)
 
 
+
 async def get_resource_map_mes(name):
-    if data["date"] != time.strftime("%d"):
+
+    if data["date"] !=  time.strftime("%d"):
         await init_point_list_and_map()
 
     if not (name in data["can_query_type_list"]):
@@ -303,7 +314,9 @@ async def get_resource_map_mes(name):
     return mes
 
 
+
 def get_resource_list_mes():
+
     temp = {}
 
     for id in data["all_resource_type"].keys():
@@ -320,7 +333,7 @@ def get_resource_list_mes():
 
     for resource_type_id in temp.keys():
 
-        if resource_type_id in ["1", "12", "50", "51", "95", "131"]:
+        if resource_type_id in ["1","12","50","51","95","131"]:
             # 在游戏里能查到的数据这里就不列举了，不然消息太长了
             continue
 
