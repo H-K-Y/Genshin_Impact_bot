@@ -18,9 +18,9 @@ async def get_obtain(bot, ev):
     await bot.send(ev, mes, at_sender=True)
 
 
-@sv.on_prefix("刷副本")
+@sv.on_rex(r"刷副本(\w+)")
 async def _get_artifact(bot, ev):
-    obtain = ev.message.extract_plain_text().strip()
+    obtain = ev["match"].group(1)
     uid = str(ev['user_id'])
     init_user_info(uid)
 
@@ -122,7 +122,8 @@ async def strengthen(bot, ev):
 
     strengthen_level = int(strengthen_level)
     artifact = Artifact(artifact)
-    strengthen_point = calculate_strengthen_points(artifact.level + 1, artifact.level + strengthen_level)
+    strengthen_point = calculate_strengthen_points(
+        artifact.level + 1, artifact.level + strengthen_level)
 
     if strengthen_point > user_info[uid]["strengthen_points"]:
         await bot.send(ev,
