@@ -1,8 +1,8 @@
-from nonebot import on_command,get_bot
+from nonebot import on_command, get_bot
 from nonebot import require
 from nonebot.adapters import Bot, Event
-from nonebot.adapters.cqhttp import GROUP_ADMIN, GROUP_OWNER
-from nonebot.adapters.cqhttp import Message
+from nonebot.adapters.onebot.v11 import GROUP_ADMIN, GROUP_OWNER
+from nonebot.adapters.onebot.v11 import Message
 from .almanac import get_almanac_base64_str, load_data
 from .tweaks import *
 from .draw_lots import get_pic, draw_info, gen_pic
@@ -91,6 +91,7 @@ async def off_remind_(bot: Bot, event: Event):
 
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler
+
 
 @scheduler.scheduled_job('cron', hour='8')
 async def almanac_remind():

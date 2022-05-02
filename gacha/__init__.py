@@ -1,8 +1,8 @@
 from nonebot import on_command,on_regex
 from nonebot.rule import to_me
-from nonebot.adapters import Bot, Event
-from nonebot.adapters.cqhttp import GROUP_ADMIN, GROUP_OWNER
-from nonebot.adapters.cqhttp import Message
+from nonebot.typing import T_State
+from nonebot.params import State
+from nonebot.adapters.onebot.v11 import Message, Bot, Event, GROUP_ADMIN, GROUP_OWNER
 from .gacha import gacha_info , FILE_PATH , Gacha
 from .pool_data import POOL, init_pool_list
 import os
@@ -85,7 +85,7 @@ async def look_pool_(bot: Bot, event: Event):
     await look_pool.finish(Message(info) , at_sender=True)
 
 @set_pool.handle()
-async def set_pool_(bot: Bot, event: Event,state:dict):
+async def set_pool_(bot: Bot, event: Event,state: T_State=State()):
 
     if not (await GROUP_ADMIN(bot, event) or
             await GROUP_OWNER(bot, event) or

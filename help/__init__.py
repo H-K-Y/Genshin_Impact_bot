@@ -1,5 +1,5 @@
 from nonebot import on_command
-from nonebot.adapters import Bot, Event
+from nonebot.adapters.onebot.v11 import Bot, Event
 
 
 genshin_impact_bot_help = on_command("原神帮助")

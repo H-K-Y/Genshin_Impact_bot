@@ -1,7 +1,8 @@
 
 from nonebot import on_command,on_regex
-from nonebot.adapters.cqhttp import Message
-from nonebot.adapters import Bot, Event
+from nonebot.typing import T_State
+from nonebot.params import State
+from nonebot.adapters.onebot.v11 import Message, Bot, Event
 from .query_resource_points import get_resource_map_mes,get_resource_list_mes,init_point_list_and_map
 
 inquire_resource = on_regex(r"^哪里有|^哪有|在哪里$|在哪$")
@@ -11,7 +12,7 @@ up_map_icon = on_command('更新原神地图')
 
 
 @inquire_resource.handle()
-async def _inquire_resource_(bot: Bot, event: Event,state:dict):
+async def _inquire_resource_(bot: Bot, event: Event, state: T_State = State()):
     resource_name = str(event.get_message()).strip()
     resource_name = resource_name.replace(state["_matched"],"")
     if resource_name == "":
