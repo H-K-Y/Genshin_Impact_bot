@@ -1,24 +1,22 @@
-from nonebot import on_command,on_startswith
+from nonebot import on_command, on_startswith
 from nonebot import require
-from nonebot.adapters import Bot, Event
-from nonebot.adapters.cqhttp import Message
-
+from nonebot.adapters.onebot.v11 import Message, Bot, Event
 from .Artifact import artifact_obtain, ARTIFACT_LIST, Artifact, calculate_strengthen_points
 from ..config import STAMINA_RESTORE, MAX_STAMINA
 from .json_rw import init_user_info, updata_uid_stamina, user_info, save_user_info
 import random
+import re
 
-get_obtain = on_command(cmd = "原神副本",aliases = {"圣遗物副本", "查看原神副本", "查看圣遗物副本"})
+get_obtain = on_command(cmd="原神副本", aliases={"圣遗物副本", "查看原神副本", "查看圣遗物副本"})
 get_artifact = on_startswith("刷副本")
 get_warehouse = on_startswith("查看圣遗物仓库")
 strengthen_artifact = on_startswith("强化圣遗物")
 artifact_info = on_startswith("圣遗物详情")
 artifact_re_init = on_startswith("圣遗物洗点")
-transform = on_startswith(("转换狗粮","转化狗粮"))
-transform_all = on_command(cmd = "转换全部0级圣遗物",aliases = {"转化全部0级圣遗物", })
+transform = on_startswith(("转换狗粮", "转化狗粮"))
+transform_all = on_command(cmd="转换全部0级圣遗物", aliases={"转化全部0级圣遗物", })
 get_user_stamina = on_command("查看体力值")
 recharge = on_command("氪体力")
-
 
 
 @get_obtain.handle()
@@ -32,28 +30,62 @@ async def get_obtain_(bot: Bot):
 
 @get_artifact.handle()
 async def get_artifact_(bot: Bot, event: Event):
-    obtain = str(event.get_message())[3:].strip()
+    msg = str(event.get_message())[3:].strip().split(' ')
+    if not msg:
+        return
+    obtain = msg[0]
+    ns = 2 if len(msg) > 1 and msg[1] in ['浓缩', 'ns'] else 1
     uid = str(event.user_id)
     init_user_info(uid)
 
     if obtain == "":
         return
-
+    if re.match(r'^魔女|渡火(?:本)', obtain):
+        obtain = '火本'
+    if re.match(r'^防御|毒奶(?:本)', obtain):
+        obtain = '华馆'
+    if re.match(r'^绝缘|旗印|追忆|注连(?:本)', obtain):
+        obtain = '充能'
+    if re.match(r'^物理|千岩(?:本)', obtain):
+        obtain = '苍白'
+    if re.match(r'^逆飞|流星|磐岩(?:本)', obtain):
+        obtain = '岩本'
+    if re.match(r'^沉沦|水套|冰套|雪山(?:本)', obtain):
+        obtain = '冰本'
+    if re.match(r'^风套|翠绿|少女(?:本)', obtain):
+        obtain = '风本'
+    if re.match(r'^骑士|染血|宗室(?:本)', obtain):
+        obtain = '宗室本'
+    if re.match(r'^如雷|平雷|(?:本)', obtain):
+        obtain = '雷本'
+    if re.match(r'^乐团|角斗|周(?:本)', obtain):
+        obtain = '龙狼'
+    if re.match(r'^普攻|掉血|流血(?:本)', obtain):
+        obtain = '余响'
     if not (obtain in artifact_obtain.keys()):
         mes = f"没有副本名叫 {obtain} ,发送 原神副本 可查看所有副本"
         await get_artifact.finish(mes, at_sender=True)
         return
 
-    if user_info[uid]["stamina"] < 20:
+    if user_info[uid]["stamina"] < 20 * ns:
         await get_artifact.finish("体力值不足，请等待体力恢复.\n发送 查看体力值 可查看当前体力", at_sender=True)
         return
 
-    user_info[uid]["stamina"] -= 20
+    user_info[uid]["stamina"] -= 20 * ns
     # 随机掉了几个圣遗物
-    r = random.randint(1, 3)
+    if ns == 1:
+        r = 2 if random.randint(0, 100000) > 75000 else 1
+    else:
+        ran = random.randint(0, 100000)
+        if ran <= 60000:
+            r = 2
+        elif 60000 < ran <= 90000:
+            r = 3
+        else:
+            r = 4
     # 随机获得的狗粮点数
     strengthen_points = random.randint(70000, 100000)
-    user_info[uid]["strengthen_points"] += strengthen_points
+    user_info[uid]["strengthen_points"] += strengthen_points * ns
 
     mes = f"本次刷取副本为 {obtain} \n掉落圣遗物 {r} 个\n获得狗粮点数 {strengthen_points}\n\n"
 
@@ -138,8 +170,8 @@ async def strengthen_artifact_(bot: Bot, event: Event):
 
     if strengthen_point > user_info[uid]["strengthen_points"]:
         await strengthen_artifact.finish(
-                       "狗粮点数不足\n你可以发送 刷副本 副本名称 获取狗粮点数\n或者发送 转换狗粮 圣遗物编号 销毁仓库里不需要的圣遗物获取狗粮点数\n发送 转换全部0级圣遗物 可将全部0级圣遗物销毁",
-                       at_sender=True)
+            "狗粮点数不足\n你可以发送 刷副本 副本名称 获取狗粮点数\n或者发送 转换狗粮 圣遗物编号 销毁仓库里不需要的圣遗物获取狗粮点数\n发送 转换全部0级圣遗物 可将全部0级圣遗物销毁",
+            at_sender=True)
         return
 
     user_info[uid]["strengthen_points"] -= strengthen_point
@@ -206,27 +238,34 @@ async def artifact_re_init_(bot: Bot, event: Event):
 
 @transform.handle()
 async def transform_(bot: Bot, event: Event):
-    number = str(event.get_message())[4:].strip()
+    number = str(event.get_message())[4:].strip().split(' ')
+    number = [int(i) for i in number]
     uid = str(event.user_id)
     init_user_info(uid)
+    strengthen_points_sum = 0
+    ln = 0
+    number = sorted(set(number))
+    for n in number:
+        try:
+            artifact = user_info[uid]["warehouse"][n - 1 - ln]
+        except IndexError:
+            await transform.finish("编号错误", at_sender=True)
+            return
+        artifact = Artifact(artifact)
 
-    try:
-        artifact = user_info[uid]["warehouse"][int(number) - 1]
-    except IndexError:
-        await transform.finish("编号错误", at_sender=True)
-        return
-    artifact = Artifact(artifact)
+        strengthen_points = calculate_strengthen_points(0, artifact.level)
+        strengthen_points = int(strengthen_points * 0.8)
 
-    strengthen_points = calculate_strengthen_points(0, artifact.level)
-    strengthen_points = int(strengthen_points * 0.8)
+        del user_info[uid]["warehouse"][n - 1 - ln]
 
-    del user_info[uid]["warehouse"][int(number) - 1]
-
-    user_info[uid]["strengthen_points"] += strengthen_points
+        user_info[uid]["strengthen_points"] += strengthen_points
+        strengthen_points_sum += strengthen_points
+        if ln < len(number):
+            ln += 1
 
     save_user_info()
 
-    mes = f"转化完成，圣遗物已转化为 {int(strengthen_points)} 狗粮点数\n你当前狗粮点数为 {int(user_info[uid]['strengthen_points'])} "
+    mes = f"转化完成，圣遗物已转化为 {int(strengthen_points_sum)} 狗粮点数\n你当前狗粮点数为 {int(user_info[uid]['strengthen_points'])} "
     await transform.finish(Message(mes), at_sender=True)
 
 
@@ -276,8 +315,8 @@ async def transform_all_(bot: Bot, event: Event):
     await transform_all.finish(f"0级圣遗物已全部转化为狗粮，共转化 {_0_level_artifact} 个圣遗物，获得狗粮点数 {strengthen_points}")
 
 
-
 updata_stamina = require("nonebot_plugin_apscheduler").scheduler
+
 
 @updata_stamina.scheduled_job('interval', minutes=STAMINA_RESTORE)
 async def _call():

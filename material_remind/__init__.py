@@ -1,8 +1,6 @@
 from nonebot import on_command,get_bot
 from nonebot import require
-from nonebot.adapters import Bot, Event
-from nonebot.adapters.cqhttp import GROUP_ADMIN, GROUP_OWNER
-from nonebot.adapters.cqhttp import Message
+from nonebot.adapters.onebot.v11 import Message, Bot, Event, GROUP_ADMIN, GROUP_OWNER
 from PIL import Image
 from io import BytesIO
 

@@ -1,7 +1,6 @@
 from .artifact_eval import *
 from nonebot import on_command
-from nonebot.adapters import Bot, Event
-from nonebot.adapters.cqhttp import Message
+from nonebot.adapters.onebot.v11 import Message, Bot, Event
 import requests
 
 from base64 import b64encode
@@ -22,11 +21,11 @@ async def artifact_rate_(bot: Bot, event: Event):
     if '[CQ:image' not in event.raw_message:
         await artifact_rate.finish("图呢？\n*请将指令与截图一起发送", at_sender=True)
         return
-    if len(event.message) > 1:
+    if len(event.message) > 2:
         await artifact_rate.finish("只能上传一张截图哦", at_sender=True)
         return
     for i in event.message:
-        if i["type"] == 'image':
+        if i.type == 'image':
             image_url = i.data["url"]
             break
         continue

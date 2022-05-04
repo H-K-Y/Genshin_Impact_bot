@@ -1,5 +1,5 @@
 from nonebot import on_command
-from nonebot.adapters import Bot, Event
+from nonebot.adapters.onebot.v11 import Bot, Event
 from .qiu_qiu_translation import qiu_qiu_word_translation,qiu_qiu_phrase_translation
 
 qiu_qiu = on_command("丘丘一下")
