@@ -18,13 +18,13 @@ ICON_PATH = os.path.join(FILE_PATH,'icon')
 
 
 POOL_API =   "https://webstatic.mihoyo.com/hk4e/gacha_info/cn_gf01/gacha/list.json"
-ROLES_API = ['https://genshin.honeyhunterworld.com/db/char/characters/?lang=CHS',
+ROLES_API = ['https://genshin.honeyhunterworld.com/fam_chars/?lang=CHS',
              'https://genshin.honeyhunterworld.com/db/char/unreleased-and-upcoming-characters/?lang=CHS']
-ARMS_API =  ['https://genshin.honeyhunterworld.com/db/weapon/sword/?lang=CHS',
-             'https://genshin.honeyhunterworld.com/db/weapon/claymore/?lang=CHS',
-             'https://genshin.honeyhunterworld.com/db/weapon/polearm/?lang=CHS',
-             'https://genshin.honeyhunterworld.com/db/weapon/bow/?lang=CHS',
-             'https://genshin.honeyhunterworld.com/db/weapon/catalyst/?lang=CHS']
+ARMS_API =  ['https://genshin.honeyhunterworld.com/fam_sword/?lang=CHS',
+             'https://genshin.honeyhunterworld.com/fam_claymore/?lang=CHS',
+             'https://genshin.honeyhunterworld.com/fam_polearm/?lang=CHS',
+             'https://genshin.honeyhunterworld.com/fam_bow/?lang=CHS',
+             'https://genshin.honeyhunterworld.com/fam_catalyst/?lang=CHS']
 ROLES_HTML_LIST = None
 ARMS_HTML_LIST = None
 
@@ -62,15 +62,15 @@ async def get_role_en_name(ch_name):
         ROLES_HTML_LIST = []
         for api in ROLES_API:
             data = await get_url_data(api)
-            ROLES_HTML_LIST.append(data.decode("utf-8"))
+            ROLES_HTML_LIST.append(data.decode("unicode_escape"))
 
-    pattern = ".{80}" + str(ch_name)
+    pattern = ".{95}" + str(ch_name)
     for html in ROLES_HTML_LIST:
-        txt = re.search(pattern, html)
-        if txt == None:
+        txt = re.findall(pattern, html)
+        if not txt:
             continue
-        txt = re.search('"/db/char/.+/\?lang=CHS"',txt.group()).group()
-        en_name = txt[10:-11]
+        txt = re.search('href="\\\\/.+\\\\/\?lang=CHS">',txt[0]).group()
+        en_name = txt[8:-13]
         return en_name
     raise NameError(f"没有找到角色 {ch_name} 的图标名")
 
@@ -83,15 +83,15 @@ async def get_arm_id(ch_name):
         ARMS_HTML_LIST = []
         for api in ARMS_API:
             data = await get_url_data(api)
-            ARMS_HTML_LIST.append(data.decode("utf-8"))
+            ARMS_HTML_LIST.append(data.decode("unicode_escape"))
 
-    pattern = '.{40}' + str(ch_name)
+    pattern = '.{100}' + str(ch_name)
     for html in ARMS_HTML_LIST:
-        txt = re.search(pattern, html)
-        if txt == None:
+        txt = re.findall(pattern, html)
+        if not txt:
             continue
-        txt = re.search('weapon/.+?/\?lang', txt.group()).group()
-        arm_id = txt[7:-6]
+        txt = re.search('href="\\\\/.+\\\\/\?lang=CHS">', txt[0]).group()
+        arm_id = txt[8:-13]
         return arm_id
     raise NameError(f"没有找到武器 {ch_name} 的 ID")
 
@@ -110,11 +110,11 @@ async def get_icon(url):
 
 async def get_role_element(en_name):
     # 获取角色属性，直接返回属性图标 Image
-    url = f'https://genshin.honeyhunterworld.com/db/char/{en_name}/?lang=CHS'
+    url = f'https://genshin.honeyhunterworld.com/{en_name}/?lang=CHS'
     data = await get_url_data(url)
-    data = data.decode("utf-8")
-    element = re.search('/img/icons/element/.+?_35.png',data).group()
-    element = element[19:-7]
+    data = data.decode("unicode_escape")
+    element = re.search('/img/icons/element/.+?_35.webp',data).group()
+    element = element[19:-8]
 
     element_path = os.path.join(FILE_PATH,'icon',f'{element}.png')
     return Image.open(element_path)
@@ -125,7 +125,7 @@ async def paste_role_icon(ch_name,star):
     # 拼接角色图鉴图
 
     en_name = await get_role_en_name(ch_name)
-    url = f"https://genshin.honeyhunterworld.com/img/char/{en_name}_face.png"
+    url = f'https://genshin.honeyhunterworld.com/img/{en_name}.webp'
     avatar_icon = await get_icon(url)
     element_icon = await get_role_element(en_name)
 
@@ -150,7 +150,7 @@ async def paste_role_icon(ch_name,star):
 async def paste_arm_icon(ch_name,star):
     # 拼接武器图鉴图
     arm_id = await get_arm_id(ch_name)
-    url = f'https://genshin.honeyhunterworld.com/img/weapon/{arm_id}_a.png'
+    url = f'https://genshin.honeyhunterworld.com/img/{arm_id}.webp'
     arm_icon = await get_icon(url)
     star_icon = Image.open(os.path.join(FILE_PATH,'icon',f'{star}_star.png'))
 
