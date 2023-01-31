@@ -1,7 +1,19 @@
-# Genshin_Impact_bot
+<div align="center">
 
-<img src="https://img.shields.io/github/license/H-K-Y/Genshin_Impact_bot.svg"/> <img src="https://img.shields.io/github/repo-size/H-K-Y/Genshin_Impact_bot.svg"/> <img src="https://img.shields.io/github/last-commit/H-K-Y/Genshin_Impact_bot.svg"/> <img src="https://img.shields.io/badge/language-python-3572A5.svg"/>
+# Genshin Impact bot
 
+![Genshin_Impact_bot](https://socialify.git.ci/H-K-Y/Genshin_Impact_bot/image?description=1&descriptionEditable=%E4%B8%80%E4%B8%AA%E5%9F%BA%E4%BA%8E%E5%8E%9F%E7%A5%9E%E5%A8%B1%E4%B9%90%E5%8F%8A%E4%BF%A1%E6%81%AF%E6%9F%A5%E8%AF%A2%E6%8F%92%E4%BB%B6%EF%BC%8C%E5%8C%85%E5%90%AB%E5%8E%9F%E7%A5%9E%E6%8A%BD%E5%8D%A1%EF%BC%8C%E4%B8%98%E4%B8%98%E8%AF%AD%E7%BF%BB%E8%AF%91%EF%BC%8C%E6%89%BE%E8%B5%84%E6%BA%90%E7%82%B9%E7%AD%89%E5%8A%9F%E8%83%BD&font=Jost&forks=1&language=1&name=1&owner=1&pattern=Plus&pulls=1&stargazers=1&theme=Auto)
+
+![LICENSE](https://img.shields.io/github/license/H-K-Y/Genshin_Impact_bot?style=flat-square)
+![REPO_SIZE](https://img.shields.io/github/repo-size/H-K-Y/Genshin_Impact_bot?style=flat-square)
+![COMMIT](https://img.shields.io/github/last-commit/H-K-Y/Genshin_Impact_bot?style=flat-square)
+![LANG](https://img.shields.io/badge/language-python-3572A5?style=flat-square)
+
+![Hoshino](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-Hoshino-ff8a80?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyBkYXRhLXYtMTEyNDFiYTI9IiIgYXJpYS1oaWRkZW49InRydWUiIGZvY3VzYWJsZT0iZmFsc2UiIGRhdGEtcHJlZml4PSJmYXMiIGRhdGEtaWNvbj0iY29kZS1icmFuY2giIHJvbGU9ImltZyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMzg0IDUxMiIgY2xhc3M9InN2Zy1pbmxpbmUtLWZhIGZhLWNvZGUtYnJhbmNoIGZhLXctMTIiIGNvbG9yPSIjZmZmZmZmIj48cGF0aCBkYXRhLXYtMTEyNDFiYTI9IiIgZmlsbD0iY3VycmVudENvbG9yIiBkPSJNMzg0IDE0NGMwLTQ0LjItMzUuOC04MC04MC04MHMtODAgMzUuOC04MCA4MGMwIDM2LjQgMjQuMyA2Ny4xIDU3LjUgNzYuOC0uNiAxNi4xLTQuMiAyOC41LTExIDM2LjktMTUuNCAxOS4yLTQ5LjMgMjIuNC04NS4yIDI1LjctMjguMiAyLjYtNTcuNCA1LjQtODEuMyAxNi45di0xNDRjMzIuNS0xMC4yIDU2LTQwLjUgNTYtNzYuMyAwLTQ0LjItMzUuOC04MC04MC04MFMwIDM1LjggMCA4MGMwIDM1LjggMjMuNSA2Ni4xIDU2IDc2LjN2MTk5LjNDMjMuNSAzNjUuOSAwIDM5Ni4yIDAgNDMyYzAgNDQuMiAzNS44IDgwIDgwIDgwczgwLTM1LjggODAtODBjMC0zNC0yMS4yLTYzLjEtNTEuMi03NC42IDMuMS01LjIgNy44LTkuOCAxNC45LTEzLjQgMTYuMi04LjIgNDAuNC0xMC40IDY2LjEtMTIuOCA0Mi4yLTMuOSA5MC04LjQgMTE4LjItNDMuNCAxNC0xNy40IDIxLjEtMzkuOCAyMS42LTY3LjkgMzEuNi0xMC44IDU0LjQtNDAuNyA1NC40LTc1Ljl6TTgwIDY0YzguOCAwIDE2IDcuMiAxNiAxNnMtNy4yIDE2LTE2IDE2LTE2LTcuMi0xNi0xNiA3LjItMTYgMTYtMTZ6bTAgMzg0Yy04LjggMC0xNi03LjItMTYtMTZzNy4yLTE2IDE2LTE2IDE2IDcuMiAxNiAxNi03LjIgMTYtMTYgMTZ6bTIyNC0zMjBjOC44IDAgMTYgNy4yIDE2IDE2cy03LjIgMTYtMTYgMTYtMTYtNy4yLTE2LTE2IDcuMi0xNiAxNi0xNnoiIGNsYXNzPSIiPjwvcGF0aD48L3N2Zz4=)
+![Nonebot2](https://img.shields.io/badge/%E7%89%88%E6%9C%AC-Nonebot2-a7ffeb?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyBkYXRhLXYtMTEyNDFiYTI9IiIgYXJpYS1oaWRkZW49InRydWUiIGZvY3VzYWJsZT0iZmFsc2UiIGRhdGEtcHJlZml4PSJmYXMiIGRhdGEtaWNvbj0iY29kZS1icmFuY2giIHJvbGU9ImltZyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMzg0IDUxMiIgY2xhc3M9InN2Zy1pbmxpbmUtLWZhIGZhLWNvZGUtYnJhbmNoIGZhLXctMTIiIGNvbG9yPSIjZmZmZmZmIj48cGF0aCBkYXRhLXYtMTEyNDFiYTI9IiIgZmlsbD0iY3VycmVudENvbG9yIiBkPSJNMzg0IDE0NGMwLTQ0LjItMzUuOC04MC04MC04MHMtODAgMzUuOC04MCA4MGMwIDM2LjQgMjQuMyA2Ny4xIDU3LjUgNzYuOC0uNiAxNi4xLTQuMiAyOC41LTExIDM2LjktMTUuNCAxOS4yLTQ5LjMgMjIuNC04NS4yIDI1LjctMjguMiAyLjYtNTcuNCA1LjQtODEuMyAxNi45di0xNDRjMzIuNS0xMC4yIDU2LTQwLjUgNTYtNzYuMyAwLTQ0LjItMzUuOC04MC04MC04MFMwIDM1LjggMCA4MGMwIDM1LjggMjMuNSA2Ni4xIDU2IDc2LjN2MTk5LjNDMjMuNSAzNjUuOSAwIDM5Ni4yIDAgNDMyYzAgNDQuMiAzNS44IDgwIDgwIDgwczgwLTM1LjggODAtODBjMC0zNC0yMS4yLTYzLjEtNTEuMi03NC42IDMuMS01LjIgNy44LTkuOCAxNC45LTEzLjQgMTYuMi04LjIgNDAuNC0xMC40IDY2LjEtMTIuOCA0Mi4yLTMuOSA5MC04LjQgMTE4LjItNDMuNCAxNC0xNy40IDIxLjEtMzkuOCAyMS42LTY3LjkgMzEuNi0xMC44IDU0LjQtNDAuNyA1NC40LTc1Ljl6TTgwIDY0YzguOCAwIDE2IDcuMiAxNiAxNnMtNy4yIDE2LTE2IDE2LTE2LTcuMi0xNi0xNiA3LjItMTYgMTYtMTZ6bTAgMzg0Yy04LjggMC0xNi03LjItMTYtMTZzNy4yLTE2IDE2LTE2IDE2IDcuMiAxNiAxNi03LjIgMTYtMTYgMTZ6bTIyNC0zMjBjOC44IDAgMTYgNy4yIDE2IDE2cy03LjIgMTYtMTYgMTYtMTYtNy4yLTE2LTE2IDcuMi0xNiAxNi0xNnoiIGNsYXNzPSIiPjwvcGF0aD48L3N2Zz4=) 
+![QQ](https://img.shields.io/badge/QQ-GI%20Bot%20Group-9cf?logo=Tencent%20QQ&style=for-the-badge) 
+
+</div>
 
 >This is a Genshin Impact plugin for [HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)
 >
@@ -10,6 +22,8 @@
 ~~这个项目目前正在扩展，加入更多原神相关娱乐和信息查询功能，敬请期待~~
 
 #### 因原作者弃坑/nonebot进入beta时代/米游社API变动/多维度地图等诸多原因导致难以在原有版本上进行修改，将于不久后**停止对该版本功能的增加**并完全转向下一个版本；加群了解更多 [GI Bot Group](https://jq.qq.com/?_wv=1027&k=1faV2txy)
+
+讨论群[GI Bot Group](https://jq.qq.com/?_wv=1027&k=1faV2txy)
 
 ## 简介
 
@@ -27,6 +41,10 @@
   - [演示](https://github.com/H-K-Y/Genshin_Impact_bot/wiki/%E6%95%88%E6%9E%9C%E6%BC%94%E7%A4%BA)
   - [常见问题](https://github.com/H-K-Y/Genshin_Impact_bot/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
 
+## 更新记录
+
+[CHANGELOG.md](CHANGELOG.md)
+
 ## 致谢
 
 特别感谢[刘老板](https://github.com/noahzark)对插件的赞助
@@ -38,85 +56,3 @@
 ## 许可
 
 [GPL-3.0](https://github.com/H-K-Y/Genshin_Impact_bot/blob/main/LICENSE) © H-K-Y
-
-
-## 更新记录
-
-### 2021-9-27
-
-* 抽卡现在可以自动更新了
-* 加入新指令 更新原神卡池
-
-### 2021-8-16
-
-* 项目移植到nonebot 2 
-
-### 2021-8-14
-
-* 加入 [圣遗物评分](https://github.com/H-K-Y/Genshin_Impact_bot/issues/31)
-* 更新卡池
-
-### 2021-7-27
-
-* 对资源查询的代码逻辑进行调整，防止资源查询时出现killed
-* 加入新命令 更新原神地图 用于爬取大地图文件
-
-### 2021-6-2
-* 加入抽签功能
-* 更新README.md
-* 部分代码依照PEP标准进行格式化
-
-
-### 2021-3-28
-* 圣遗物收集修改冰本的圣遗物名称，增加岩本
-* 加入每日素材提醒
-
-### 2021-3-24
-* 加入了原神黄历，黄历的数据来源于 [可莉特调](https://genshin.pub/)
-
-### 2021-3-11
-* 对抽卡的概率进行调整现在更接近游戏里的效果
-* 对抽卡逻辑优化防止在非武器UP池抽出限定4星武器
-* 修正千岩系列武器图标星级错误的问题
-
-### 2020-12-13
-* 资源列表查询现在改为直接抓取米游社地图的数据，每天自动更新
-* 修复查询资源列表消息过长导致发送失败的问题
-
-### 2020-11-26
-* 修复模拟抽卡武器UP池保底次数错误的问题
-
-### 2020-11-20
-* 加入圣遗物收集功能
-
-### 2020-11-3
-* 修复了找神瞳可以添加相同名称的编号导致报错的问题
-
-### 2020-10-31
-* 加入了查询资源位置的功能
-
-### 2020-10-29
-* 加入了找神瞳的功能
-
-### 2020-10-26
-* 加入了丘丘语翻译功能
-
-### 2020-10-22
-* 修复了4星概率写错了导致4星只能保底抽出的问题.............
-* 加入了更多抽卡的统计结果，比如抽出最多的武器是啥，第一个4星和5星事多少抽出的
-
-### 2020-10-21
-* 在config.py加入了抽卡限制功能，限制每个人一天最多抽多少次，感谢[corvo007](https://github.com/corvo007)提出的粪pr (粪pr是他自己说的
-* 修复了第一次切换卡池后不能再切换卡池的问题
-* 修复了查看UP信息时报错的问题
-
-### 2020-10-20
-* 重构了项目代码，~~第二天就重写？~~，~~过几天怕是忘了写的啥了........~~
-* 加入的武器UP池和常驻池
-* 加入了切换卡池的功能
-
-### 2020-10-19
-* 加入10连抽，90连抽和180连抽
-* 加入抽卡发送图片功能
-* 修复了Windows系统发送图片时可能出现的路径问题，图片全部改为base64发送
-
