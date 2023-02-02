@@ -24,7 +24,6 @@
 * 修复卡池问题 @ [89f162b](https://github.com/H-K-Y/Genshin_Impact_bot/commit/89f162b)
 * 修复了抽卡、材料获取、黄历在频道中报错的问题 @ [fd28f9e](https://github.com/H-K-Y/Genshin_Impact_bot/commit/fd28f9e)
 
-
 ### 2021-10-30
 
 * 解决超时导致的图鉴图标更新失败问题 @ [542f48e](https://github.com/H-K-Y/Genshin_Impact_bot/commit/542f48e)
@@ -42,11 +41,12 @@
 
 ### 2021-8-16
 
-* 项目移植到nonebot 2  @ [6c1f73b](https://github.com/H-K-Y/Genshin_Impact_bot/commit/6c1f73b)
+* 项目移植到nonebot 2 @ [6c1f73b](https://github.com/H-K-Y/Genshin_Impact_bot/commit/6c1f73b)
 
 ### 2021-8-14
 
-* 加入 [圣遗物评分](https://github.com/H-K-Y/Genshin_Impact_bot/issues/31) @ [9e5eabf](https://github.com/H-K-Y/Genshin_Impact_bot/commit/9e5eabf)
+* 加入 [圣遗物评分](https://github.com/H-K-Y/Genshin_Impact_bot/issues/31)
+  @ [9e5eabf](https://github.com/H-K-Y/Genshin_Impact_bot/commit/9e5eabf)
 * 更新卡池 @ [8b68ef6](https://github.com/H-K-Y/Genshin_Impact_bot/commit/8b68ef6)
 
 ### 2021-7-27
@@ -59,7 +59,6 @@
 * 加入抽签功能 @ [33a4712](https://github.com/H-K-Y/Genshin_Impact_bot/commit/33a4712)
 * 更新README.md @ [33a4712](https://github.com/H-K-Y/Genshin_Impact_bot/commit/33a4712)
 * 部分代码依照PEP标准进行格式化 @ [33a4712](https://github.com/H-K-Y/Genshin_Impact_bot/commit/33a4712)
-
 
 ### 2021-3-28
 
@@ -113,14 +112,14 @@
 ### 2020-10-21
 
 * 在config.py加入了抽卡限制功能，限制每个人一天最多抽多少次 @ [bcdcba0](https://github.com/H-K-Y/Genshin_Impact_bot/commit/bcdcba0)
-    感谢[corvo007](https://github.com/corvo007)提出的粪pr (粪pr是他自己说的
+  感谢[corvo007](https://github.com/corvo007)提出的粪pr (粪pr是他自己说的
 * 修复了第一次切换卡池后不能再切换卡池的问题 @ [2ea0ea2](https://github.com/H-K-Y/Genshin_Impact_bot/commit/2ea0ea2)
 * 修复了查看UP信息时报错的问题 @ [2ea0ea2](https://github.com/H-K-Y/Genshin_Impact_bot/commit/2ea0ea2)
 
 ### 2020-10-20
 
 * 重构了项目代码 @ [d446ce6](https://github.com/H-K-Y/Genshin_Impact_bot/commit/d446ce6)
-    ~~第二天就重写？，过几天怕是忘了写的啥了........~~
+  ~~第二天就重写？，过几天怕是忘了写的啥了........~~
 * 加入的武器UP池和常驻池 @ [d446ce6](https://github.com/H-K-Y/Genshin_Impact_bot/commit/d446ce6)
 * 加入了切换卡池的功能 @ [d446ce6](https://github.com/H-K-Y/Genshin_Impact_bot/commit/d446ce6)
 

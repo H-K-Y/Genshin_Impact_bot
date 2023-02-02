@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "GIBotCore"
+version = "0.1.0"
+description = "Core of Genshin_Impact_Bot."
+authors = ["HKY", "Wansn"]
+license = "GNU General Public License v3.0"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+loguru = "^0.6.0"
+Pillow = "^9.4.0"
+httpx = "^0.23.3"
+aiofiles = "^22.1.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
