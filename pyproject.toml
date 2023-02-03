@@ -7,7 +7,6 @@ license = "GNU General Public License v3.0"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-loguru = "^0.6.0"
 Pillow = "^9.4.0"
 httpx = "^0.23.3"
 aiofiles = "^22.1.0"
