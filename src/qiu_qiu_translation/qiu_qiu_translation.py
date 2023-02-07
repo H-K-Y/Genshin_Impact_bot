@@ -1,10 +1,9 @@
 import json
 from pathlib import Path
-from typing import Union, Tuple, List
+from typing import List, Tuple, Union
 
 FILE_PATH = Path(__file__)
 DEFAULT_DICT = FILE_PATH / 'qiu_qiu_dictionary.json'
-
 
 __all__ = ['DEFAULT_DICT', 'HilichurlDict', 'qiu_qiu_phrase_translation', 'qiu_qiu_word_translation']
 

@@ -1,10 +1,10 @@
 import random
 
-from config import STAMINA_RESTORE, MAX_STAMINA
+from config import MAX_STAMINA, STAMINA_RESTORE
 from hoshino import Service
 
-from .Artifact import artifact_obtain, ARTIFACT_LIST, Artifact, calculate_strengthen_points
-from .json_rw import init_user_info, updata_uid_stamina, user_info, save_user_info
+from .Artifact import Artifact, ARTIFACT_LIST, artifact_obtain, calculate_strengthen_points
+from .json_rw import init_user_info, save_user_info, updata_uid_stamina, user_info
 
 sv = Service("原神圣遗物收集")
 
@@ -261,7 +261,8 @@ async def _transform_all_strengthen(bot, ev):
     user_info[uid]["strengthen_points"] += strengthen_points
     save_user_info()
 
-    await bot.send(ev, f"0级圣遗物已全部转化为狗粮，共转化 {_0_level_artifact} 个圣遗物，获得狗粮点数 {strengthen_points}")
+    await bot.send(ev,
+                   f"0级圣遗物已全部转化为狗粮，共转化 {_0_level_artifact} 个圣遗物，获得狗粮点数 {strengthen_points}")
 
 
 @sv.scheduled_job('interval', minutes=STAMINA_RESTORE)

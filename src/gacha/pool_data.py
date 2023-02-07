@@ -7,8 +7,8 @@ import time
 from io import BytesIO
 
 import httpx
-from PIL import Image, ImageFont, ImageDraw, ImageMath
 from loguru import logger
+from PIL import Image, ImageDraw, ImageFont, ImageMath
 
 FILE_PATH = os.path.dirname(__file__)
 ICON_PATH = os.path.join(FILE_PATH, 'icon')

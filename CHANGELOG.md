@@ -51,7 +51,10 @@
 
 ### 2021-7-27
 
-* 对资源查询的代码逻辑进行调整，防止资源查询时出现killed @ [928e983](https://github.com/H-K-Y/Genshin_Impact_bot/commit/928e983)
+*
+
+对资源查询的代码逻辑进行调整，防止资源查询时出现killed @ [928e983](https://github.com/H-K-Y/Genshin_Impact_bot/commit/928e983)
+
 * 加入新命令 更新原神地图 用于爬取大地图文件 @ [91f5422](https://github.com/H-K-Y/Genshin_Impact_bot/commit/91f5422)
 
 ### 2021-6-2
@@ -67,7 +70,9 @@
 
 ### 2021-3-24
 
-* 加入了原神黄历，黄历的数据来源于 [可莉特调](https://genshin.pub/) @ [3c85818](https://github.com/H-K-Y/Genshin_Impact_bot/commit/3c85818)
+*
+
+加入了原神黄历，黄历的数据来源于 [可莉特调](https://genshin.pub/) @ [3c85818](https://github.com/H-K-Y/Genshin_Impact_bot/commit/3c85818)
 
 ### 2021-3-11
 
@@ -77,7 +82,10 @@
 
 ### 2020-12-13
 
-* 资源列表查询现在改为直接抓取米游社地图的数据，每天自动更新 @ [24374bb](https://github.com/H-K-Y/Genshin_Impact_bot/commit/24374bb)
+*
+
+资源列表查询现在改为直接抓取米游社地图的数据，每天自动更新 @ [24374bb](https://github.com/H-K-Y/Genshin_Impact_bot/commit/24374bb)
+
 * 修复查询资源列表消息过长导致发送失败的问题 @ [88c219b](https://github.com/H-K-Y/Genshin_Impact_bot/commit/88c219b)
 
 ### 2020-11-26
@@ -90,7 +98,9 @@
 
 ### 2020-11-3
 
-* 修复了找神瞳可以添加相同名称的编号导致报错的问题 @ [e38bb44](https://github.com/H-K-Y/Genshin_Impact_bot/commit/e38bb44)
+*
+
+修复了找神瞳可以添加相同名称的编号导致报错的问题 @ [e38bb44](https://github.com/H-K-Y/Genshin_Impact_bot/commit/e38bb44)
 
 ### 2020-10-31
 
@@ -107,12 +117,17 @@
 ### 2020-10-22
 
 * 修复了4星概率写错了导致4星只能保底抽出的问题 @ [4476bed](https://github.com/H-K-Y/Genshin_Impact_bot/commit/4476bed)
-* 加入了更多抽卡的统计结果，比如抽出最多的武器是啥，第一个4星和5星事多少抽出的 @ [f6d5cc6](https://github.com/H-K-Y/Genshin_Impact_bot/commit/f6d5cc6)
+*
+
+加入了更多抽卡的统计结果，比如抽出最多的武器是啥，第一个4星和5星事多少抽出的 @ [f6d5cc6](https://github.com/H-K-Y/Genshin_Impact_bot/commit/f6d5cc6)
 
 ### 2020-10-21
 
-* 在config.py加入了抽卡限制功能，限制每个人一天最多抽多少次 @ [bcdcba0](https://github.com/H-K-Y/Genshin_Impact_bot/commit/bcdcba0)
-  感谢[corvo007](https://github.com/corvo007)提出的粪pr (粪pr是他自己说的
+*
+
+在config.py加入了抽卡限制功能，限制每个人一天最多抽多少次 @ [bcdcba0](https://github.com/H-K-Y/Genshin_Impact_bot/commit/bcdcba0)
+感谢[corvo007](https://github.com/corvo007)提出的粪pr (粪pr是他自己说的
+
 * 修复了第一次切换卡池后不能再切换卡池的问题 @ [2ea0ea2](https://github.com/H-K-Y/Genshin_Impact_bot/commit/2ea0ea2)
 * 修复了查看UP信息时报错的问题 @ [2ea0ea2](https://github.com/H-K-Y/Genshin_Impact_bot/commit/2ea0ea2)
 
@@ -127,4 +142,6 @@
 
 * 加入10连抽，90连抽和180连抽 @ [c2f43b4](https://github.com/H-K-Y/Genshin_Impact_bot/commit/c2f43b4)
 * 加入抽卡发送图片功能 @ [02b4592](https://github.com/H-K-Y/Genshin_Impact_bot/commit/02b4592)
-* 修复了Windows系统发送图片时可能出现的路径问题，图片全部改为base64发送 @ [000122c](https://github.com/H-K-Y/Genshin_Impact_bot/commit/000122c)
+*
+
+修复了Windows系统发送图片时可能出现的路径问题，图片全部改为base64发送 @ [000122c](https://github.com/H-K-Y/Genshin_Impact_bot/commit/000122c)

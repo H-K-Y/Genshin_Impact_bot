@@ -1,7 +1,7 @@
-from hoshino import Service, priv, get_bot
+from hoshino import get_bot, priv, Service
 
 from .almanac import get_almanac_base64_str, load_data
-from .draw_lots import get_pic, draw_info, gen_pic
+from .draw_lots import draw_info, gen_pic, get_pic
 from .tweaks import *
 
 FILE_PATH = os.path.dirname(__file__)

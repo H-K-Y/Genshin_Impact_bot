@@ -6,8 +6,8 @@ import time
 from io import BytesIO
 
 import httpx
-from PIL import Image, ImageMath
 from loguru import logger
+from PIL import Image, ImageMath
 
 LABEL_URL = 'https://api-static.mihoyo.com/common/blackboard/ys_obc/v1/map/label/tree?app_sn=ys_obc'
 POINT_LIST_URL = 'https://api-static.mihoyo.com/common/blackboard/ys_obc/v1/map/point/list?map_id=2&app_sn=ys_obc'

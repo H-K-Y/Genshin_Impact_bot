@@ -68,7 +68,7 @@ python-versions = ">=3.7"
 [package.dependencies]
 certifi = "*"
 httpcore = ">=0.15.0,<0.17.0"
-rfc3986 = {version = ">=1.3,<2", extras = ["idna2008"]}
+rfc3986 = { version = ">=1.3,<2", extras = ["idna2008"] }
 sniffio = "*"
 
 [package.extras]
@@ -106,7 +106,7 @@ optional = false
 python-versions = "*"
 
 [package.dependencies]
-idna = {version = "*", optional = true, markers = "extra == \"idna2008\""}
+idna = { version = "*", optional = true, markers = "extra == \"idna2008\"" }
 
 [package.extras]
 idna2008 = ["idna"]

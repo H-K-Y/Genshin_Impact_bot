@@ -1,6 +1,6 @@
 from hoshino import Service
 
-from .query_resource_points import get_resource_map_mes, get_resource_list_mes, init_point_list_and_map
+from .query_resource_points import get_resource_list_mes, get_resource_map_mes, init_point_list_and_map
 
 sv = Service("原神资源查询")
 

@@ -4,8 +4,8 @@ import os
 import time
 from io import BytesIO
 
+from hoshino import get_bot, Service
 from PIL import Image
-from hoshino import Service, get_bot
 
 sv = Service("原神每日素材提醒")
 

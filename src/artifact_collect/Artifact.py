@@ -4,8 +4,8 @@ import os
 import random
 from io import BytesIO
 
-from PIL import Image, ImageFont, ImageDraw, ImageMath
-from config import SECONDARY_LEVEL_PROBABILITY, CONSUME_STRENGTHEN_POINTS
+from config import CONSUME_STRENGTHEN_POINTS, SECONDARY_LEVEL_PROBABILITY
+from PIL import Image, ImageDraw, ImageFont, ImageMath
 
 FILE_PATH = os.path.dirname(__file__)
 

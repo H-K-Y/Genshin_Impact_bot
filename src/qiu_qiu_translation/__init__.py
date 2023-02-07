@@ -1,1 +1,1 @@
-from .qiu_qiu_translation import qiu_qiu_word_translation, qiu_qiu_phrase_translation
+from .qiu_qiu_translation import qiu_qiu_phrase_translation, qiu_qiu_word_translation
