@@ -10,8 +10,13 @@ python = "^3.8"
 Pillow = "^9.4.0"
 httpx = "^0.23.3"
 aiofiles = "^22.1.0"
+pydantic = "^1.10.5"
+tomlkit = "^0.11.6"
 
 [tool.poetry.dev-dependencies]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
