@@ -1,10 +1,11 @@
 import base64
 import json
-import os
+import uuid
 import time
+from pathlib import Path
 from io import BytesIO
 
-jsondb_template = {
+TEMPLATE = {
     "10001": {
         "time": "2021-06-04",
         "pos": "二八"
@@ -19,15 +20,30 @@ def text_r90(t):
     return tmp
 
 
-class jsondb:
-    def __init__(self, filepath):
-        if not os.path.exists(filepath):
-            with open(filepath, 'w', encoding="UTF-8") as f:
-                json.dump(jsondb_template, f, ensure_ascii=False, sort_keys=True, indent=4)
-        dbfile = open(filepath, "r", encoding="UTF-8")
-        self.db = json.loads(dbfile.read())
-        self.path = filepath
-        dbfile.close()
+class SimpleJsonDB:
+    def _load(self):
+        with open(self.path, 'r', encoding='utf8') as json_file:
+            self._database = json.load(json_file)
+
+    def find(self, filters: dict):
+        for k, v in filters.items():
+            for _ in self._database:
+
+
+    def __init__(self, db_path: Path):
+        if not isinstance(db_path, Path):
+            db_path = Path(db_path)
+        if not db_path.exists():
+            with open(db_path, 'w', encoding="UTF-8") as f:
+                json.dump(TEMPLATE, f, ensure_ascii=False, sort_keys=True, indent=4)
+        self.path = db_path
+        self._database = [
+            {
+                "_id": "uuid4-uuid4-uuid4-uuid4",
+                "uid": 10001,
+                "time": "2023-02-10"
+            }
+        ]
 
     def add_user(self, uid):
         uid = str(uid)
@@ -50,13 +66,13 @@ class jsondb:
     def user(self, uid):
         uid = str(uid)
         try:
-            return user_info(self.db[uid])
+            return UserInfo(self.db[uid])
         except KeyError:
             self.add_user(uid)
-            return user_info(self.db[uid])
+            return UserInfo(self.db[uid])
 
 
-class user_info:
+class UserInfo:
     def __init__(self, db):
         self.db = db
         self.time = db["time"]
@@ -80,6 +96,6 @@ def get_time():
 
 
 if __name__ == "__main__":
-    jdb = jsondb("t.json")
+    jdb = SimpleJsonDB("t.json")
     user = jdb.user(2632324507)
     print(user.db["time"] == get_time())
