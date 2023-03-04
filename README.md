@@ -19,14 +19,6 @@
 >
 >这是一个[HoshinoBot](https://github.com/Ice-Cirno/HoshinoBot)和[nonebot2](https://github.com/nonebot/nonebot2)的原神相关插件
 
-~~这个项目目前正在扩展，加入更多原神相关娱乐和信息查询功能，敬请期待~~
-
-#### 因原作者弃坑/nonebot进入beta时代/米游社API变动/多维度地图等诸多原因导致难以在原有版本上进行修改，将于不久后*
-
-*停止对该版本功能的增加**并完全转向下一个版本；加群了解更多 [GI Bot Group](https://jq.qq.com/?_wv=1027&k=1faV2txy)
-
-讨论群[GI Bot Group](https://jq.qq.com/?_wv=1027&k=1faV2txy)
-
 ## 简介
 
 这个插件帮助群员在QQ群内进行诸如查询资源点位等功能。
