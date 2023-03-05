@@ -24,7 +24,6 @@
 * 修复卡池问题 @ [89f162b](https://github.com/H-K-Y/Genshin_Impact_bot/commit/89f162b)
 * 修复了抽卡、材料获取、黄历在频道中报错的问题 @ [fd28f9e](https://github.com/H-K-Y/Genshin_Impact_bot/commit/fd28f9e)
 
-
 ### 2021-10-30
 
 * 解决超时导致的图鉴图标更新失败问题 @ [542f48e](https://github.com/H-K-Y/Genshin_Impact_bot/commit/542f48e)
@@ -42,16 +41,20 @@
 
 ### 2021-8-16
 
-* 项目移植到nonebot 2  @ [6c1f73b](https://github.com/H-K-Y/Genshin_Impact_bot/commit/6c1f73b)
+* 项目移植到nonebot 2 @ [6c1f73b](https://github.com/H-K-Y/Genshin_Impact_bot/commit/6c1f73b)
 
 ### 2021-8-14
 
-* 加入 [圣遗物评分](https://github.com/H-K-Y/Genshin_Impact_bot/issues/31) @ [9e5eabf](https://github.com/H-K-Y/Genshin_Impact_bot/commit/9e5eabf)
+* 加入 [圣遗物评分](https://github.com/H-K-Y/Genshin_Impact_bot/issues/31)
+  @ [9e5eabf](https://github.com/H-K-Y/Genshin_Impact_bot/commit/9e5eabf)
 * 更新卡池 @ [8b68ef6](https://github.com/H-K-Y/Genshin_Impact_bot/commit/8b68ef6)
 
 ### 2021-7-27
 
-* 对资源查询的代码逻辑进行调整，防止资源查询时出现killed @ [928e983](https://github.com/H-K-Y/Genshin_Impact_bot/commit/928e983)
+*
+
+对资源查询的代码逻辑进行调整，防止资源查询时出现killed @ [928e983](https://github.com/H-K-Y/Genshin_Impact_bot/commit/928e983)
+
 * 加入新命令 更新原神地图 用于爬取大地图文件 @ [91f5422](https://github.com/H-K-Y/Genshin_Impact_bot/commit/91f5422)
 
 ### 2021-6-2
@@ -60,7 +63,6 @@
 * 更新README.md @ [33a4712](https://github.com/H-K-Y/Genshin_Impact_bot/commit/33a4712)
 * 部分代码依照PEP标准进行格式化 @ [33a4712](https://github.com/H-K-Y/Genshin_Impact_bot/commit/33a4712)
 
-
 ### 2021-3-28
 
 * 圣遗物收集修改冰本的圣遗物名称，增加岩本 @ [c949f00](https://github.com/H-K-Y/Genshin_Impact_bot/commit/c949f00)
@@ -68,7 +70,9 @@
 
 ### 2021-3-24
 
-* 加入了原神黄历，黄历的数据来源于 [可莉特调](https://genshin.pub/) @ [3c85818](https://github.com/H-K-Y/Genshin_Impact_bot/commit/3c85818)
+*
+
+加入了原神黄历，黄历的数据来源于 [可莉特调](https://genshin.pub/) @ [3c85818](https://github.com/H-K-Y/Genshin_Impact_bot/commit/3c85818)
 
 ### 2021-3-11
 
@@ -78,7 +82,10 @@
 
 ### 2020-12-13
 
-* 资源列表查询现在改为直接抓取米游社地图的数据，每天自动更新 @ [24374bb](https://github.com/H-K-Y/Genshin_Impact_bot/commit/24374bb)
+*
+
+资源列表查询现在改为直接抓取米游社地图的数据，每天自动更新 @ [24374bb](https://github.com/H-K-Y/Genshin_Impact_bot/commit/24374bb)
+
 * 修复查询资源列表消息过长导致发送失败的问题 @ [88c219b](https://github.com/H-K-Y/Genshin_Impact_bot/commit/88c219b)
 
 ### 2020-11-26
@@ -91,7 +98,9 @@
 
 ### 2020-11-3
 
-* 修复了找神瞳可以添加相同名称的编号导致报错的问题 @ [e38bb44](https://github.com/H-K-Y/Genshin_Impact_bot/commit/e38bb44)
+*
+
+修复了找神瞳可以添加相同名称的编号导致报错的问题 @ [e38bb44](https://github.com/H-K-Y/Genshin_Impact_bot/commit/e38bb44)
 
 ### 2020-10-31
 
@@ -108,19 +117,24 @@
 ### 2020-10-22
 
 * 修复了4星概率写错了导致4星只能保底抽出的问题 @ [4476bed](https://github.com/H-K-Y/Genshin_Impact_bot/commit/4476bed)
-* 加入了更多抽卡的统计结果，比如抽出最多的武器是啥，第一个4星和5星事多少抽出的 @ [f6d5cc6](https://github.com/H-K-Y/Genshin_Impact_bot/commit/f6d5cc6)
+*
+
+加入了更多抽卡的统计结果，比如抽出最多的武器是啥，第一个4星和5星事多少抽出的 @ [f6d5cc6](https://github.com/H-K-Y/Genshin_Impact_bot/commit/f6d5cc6)
 
 ### 2020-10-21
 
-* 在config.py加入了抽卡限制功能，限制每个人一天最多抽多少次 @ [bcdcba0](https://github.com/H-K-Y/Genshin_Impact_bot/commit/bcdcba0)
-    感谢[corvo007](https://github.com/corvo007)提出的粪pr (粪pr是他自己说的
+*
+
+在config.py加入了抽卡限制功能，限制每个人一天最多抽多少次 @ [bcdcba0](https://github.com/H-K-Y/Genshin_Impact_bot/commit/bcdcba0)
+感谢[corvo007](https://github.com/corvo007)提出的粪pr (粪pr是他自己说的
+
 * 修复了第一次切换卡池后不能再切换卡池的问题 @ [2ea0ea2](https://github.com/H-K-Y/Genshin_Impact_bot/commit/2ea0ea2)
 * 修复了查看UP信息时报错的问题 @ [2ea0ea2](https://github.com/H-K-Y/Genshin_Impact_bot/commit/2ea0ea2)
 
 ### 2020-10-20
 
 * 重构了项目代码 @ [d446ce6](https://github.com/H-K-Y/Genshin_Impact_bot/commit/d446ce6)
-    ~~第二天就重写？，过几天怕是忘了写的啥了........~~
+  ~~第二天就重写？，过几天怕是忘了写的啥了........~~
 * 加入的武器UP池和常驻池 @ [d446ce6](https://github.com/H-K-Y/Genshin_Impact_bot/commit/d446ce6)
 * 加入了切换卡池的功能 @ [d446ce6](https://github.com/H-K-Y/Genshin_Impact_bot/commit/d446ce6)
 
@@ -128,4 +142,6 @@
 
 * 加入10连抽，90连抽和180连抽 @ [c2f43b4](https://github.com/H-K-Y/Genshin_Impact_bot/commit/c2f43b4)
 * 加入抽卡发送图片功能 @ [02b4592](https://github.com/H-K-Y/Genshin_Impact_bot/commit/02b4592)
-* 修复了Windows系统发送图片时可能出现的路径问题，图片全部改为base64发送 @ [000122c](https://github.com/H-K-Y/Genshin_Impact_bot/commit/000122c)
+*
+
+修复了Windows系统发送图片时可能出现的路径问题，图片全部改为base64发送 @ [000122c](https://github.com/H-K-Y/Genshin_Impact_bot/commit/000122c)

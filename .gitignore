@@ -1,2 +1,5 @@
 .idea
 .idea/*
+
+# poetry
+poetry.lock
