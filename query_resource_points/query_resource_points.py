@@ -11,9 +11,12 @@ import asyncio
 
 
 
-LABEL_URL      = 'https://api-static.mihoyo.com/common/map_user/ys_obc/v1/map/label/tree?map_id=2&app_sn=ys_obc'
-POINT_LIST_URL = 'https://api-static.mihoyo.com/common/map_user/ys_obc/v1/map/point/list?map_id=2&app_sn=ys_obc'
-MAP_URL        = "https://api-static.mihoyo.com/common/map_user/ys_obc/v1/map/info?map_id=2&app_sn=ys_obc&lang=zh-cn"
+LABEL_URL      = 'https://api-static.mihoyo.com/common/map_user/ys_obc/v1/map/label/tree?map_id='
+POINT_LIST_URL = 'https://api-static.mihoyo.com/common/map_user/ys_obc/v1/map/point/list?map_id='
+MAP_URL        = "https://api-static.mihoyo.com/common/map_user/ys_obc/v1/map/info?map_id="
+MAPLIST_URL   = "https://api-static.mihoyo.com/common/map_user/ys_obc/v1/map/get_area_pageLabel?map_id=1&app_sn=ys_obc&lang=zh-cn"
+APP_LABEL       = 'app_sn=ys_obc&lang=zh-cn' #请求标签，必须附加在url结尾
+
 
 header = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36'
 
@@ -26,6 +29,7 @@ Image.MAX_IMAGE_PIXELS = None
 CENTER = None
 MAP_ICON = None
 
+map_list = []
 
 zoom = 0.5
 resource_icon_offset = (-int(150*0.5*zoom),-int(150*zoom))
@@ -54,7 +58,7 @@ data = {
         # "风神瞳":"5"
 
     },
-    "all_resource_point_list" :[
+    "all_resource_point_list": [
             # 这个列表保存所有资源点的数据
             # {
             #     "id": 2740,
@@ -68,7 +72,6 @@ data = {
     ],
     "date":"" #记录上次更新"all_resource_point_list"的日期
 }
-
 
 async def download_icon(url):
     # 下载图片，返回Image对象
@@ -119,10 +122,10 @@ async def up_icon_image(sublist):
         with open(icon_path, "wb") as icon_file:
             bg.save(icon_file)
 
-async def up_label_and_point_list():
+async def up_label_and_point_list(map_id):
     # 更新label列表和资源点列表
     logger.info(f"正在更新资源点数据")
-    label_data = await download_json(LABEL_URL)
+    label_data = await download_json(LABEL_URL + str(map_id) + "&" + APP_LABEL)
     for label in label_data["data"]["tree"]:
         data["all_resource_type"][str(label["id"])] = label
         for sublist in label["children"]:
@@ -130,37 +133,43 @@ async def up_label_and_point_list():
             data["can_query_type_list"][sublist["name"]] = str(sublist["id"])
             await up_icon_image(sublist)
         label["children"] = []
-
-    test = await download_json(POINT_LIST_URL)
-    data["all_resource_point_list"] = test["data"]["point_list"]
+        
+    resource_json = await download_json(POINT_LIST_URL + str(map_id) + "&" + APP_LABEL)
+    data["all_resource_point_list"] += [resource_json["data"]["point_list"]]
     data["date"] = time.strftime("%d")
     logger.info(f"资源点数据更新完成")
 
-
-async def up_map():
+async def download_map(map_id):
+    # 下载地图文件
+    if not os.path.exists(os.path.join(FILE_PATH,"maps")):
+        os.mkdir(os.path.join(FILE_PATH, "maps"))
+    map_path = os.path.join(FILE_PATH,"maps",f"map_{map_id}.png")
+    logger.info(f"正在下载地图{map_id}图片")
     # 更新地图文件 并按照资源点的范围自动裁切掉不需要的地方
     # 裁切地图需要最新的资源点位置，所以要先调用 up_label_and_point_list 再更新地图
-    global CENTER
-    global MAP_ICON
-    logger.info(f"正在更新地图数据")
-    map_info = await download_json(MAP_URL)
+    map_info = await download_json(MAP_URL + str(map_id) + "&" + APP_LABEL)
     map_info = map_info["data"]["info"]["detail"]
+    if(map_info == ""):
+            return
     map_info = json.loads(map_info)
-
     map_url_list = map_info['slices']
     origin = map_info["origin"]
+    global CENTER
+    global MAP_ICON
 
     x_start = map_info['total_size'][1]
     y_start = map_info['total_size'][1]
     x_end = 0
     y_end = 0
-    for resource_point in data["all_resource_point_list"]:
-        x_pos = resource_point["x_pos"] + origin[0]
-        y_pos = resource_point["y_pos"] + origin[1]
-        x_start = min(x_start,x_pos)
-        y_start = min(y_start,y_pos)
-        x_end = max(x_end,x_pos)
-        y_end = max(y_end,y_pos)
+    for index, map in enumerate(map_list):
+        if(map["id"] == map_id):
+            for resource_point in data["all_resource_point_list"][index]:
+                x_pos = resource_point["x_pos"] + origin[0]
+                y_pos = resource_point["y_pos"] + origin[1]
+                x_start = min(x_start,x_pos)
+                y_start = min(y_start,y_pos)
+                x_end = max(x_end,x_pos)
+                y_end = max(y_end,y_pos)
 
     x_start -= 200
     y_start -= 200
@@ -171,21 +180,46 @@ async def up_map():
     x = int(x_end - x_start)
     y = int(y_end - y_start)
     MAP_ICON = Image.new("RGB",(x,y))
-    y_offset = 0
-    for x_map_url_list in map_url_list:
-        x_offset = 0
-        for y_map_url in x_map_url_list:
-            map_url = y_map_url["url"]
-            map_icon = await download_icon(map_url)
-            MAP_ICON.paste(map_icon,(int(-x_start) + x_offset, int(-y_start) + y_offset))
-            x_offset += map_icon.size[0]
-        y_offset += map_icon.size[1]
+    if map_id == 2:
+        y_offset = 0
+        for x_map_url_list in map_url_list:
+            x_offset = 0
+            for y_map_url in x_map_url_list:
+                map_url = y_map_url["url"]
+                map_icon = await download_icon(map_url)
+                MAP_ICON.paste(map_icon,(int(-x_start) + x_offset, int(-y_start) + y_offset))
+                x_offset += map_icon.size[0]
+            y_offset += map_icon.size[1]
+    else:
+        map_url = map_url_list[0][0]["url"]
+        map_icon = await download_icon(map_url)
+        MAP_ICON.paste(map_icon,(int(-x_start) , int(-y_start)))
+        
+    with open(map_path, "wb") as icon_file:
+        MAP_ICON.save(icon_file)
 
+
+def check_map_id(id):
+    for map in map_list:
+        if id == map["id"]:
+            return True
+    return False    
+    
+async def up_map():
+    logger.info(f"正在更新地图数据")
+    global map_list
+    map_list_info = await download_json(MAPLIST_URL)
+    for map_info in map_list_info["data"]["list"]:
+        if not check_map_id(map_info["map_id"]):
+            map_json = await download_json(MAP_URL + str(map_info["map_id"]) + "&" + APP_LABEL)
+            map_json = map_json["data"]["info"]
+            map_list += [{"id": map_json["id"],  "name":map_json["name"]}]
+            await up_label_and_point_list(map_info["map_id"])
+            await download_map(map_info["map_id"])
     logger.info(f"地图数据更新完成")
 
 
 async def init_point_list_and_map():
-    await up_label_and_point_list()
     await up_map()
 
 
