@@ -241,9 +241,9 @@ class Resource_map(object):
     def __init__(self, resource_name, map_id):
         self.map_id = map_id
         self.resource_id = str(data["can_query_type_list"][resource_name])
-        map_path = os.path.join(FILE_PATH, "maps", f"map_{map_id}.png")
-        self.map_image = Image.open(map_path)
-        # self.map_image = MAP_ICON.copy()
+        # map_path = os.path.join(FILE_PATH, "maps", f"map_{map_id}.png")
+        # self.map_image = Image.open(map_path)
+        self.map_image = MAP_ICON[get_map_index(self.map_id)].copy()
         self.map_size = self.map_image.size
 
         # 地图要要裁切的左上角和右下角坐标
