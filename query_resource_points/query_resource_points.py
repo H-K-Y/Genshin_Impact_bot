@@ -26,8 +26,8 @@ MAP_PATH = os.path.join(FILE_PATH,"icon","map_icon.jpg")
 Image.MAX_IMAGE_PIXELS = None
 
 
-CENTER = None
-MAP_ICON = None
+CENTER = []
+MAP_ICON = []
 
 map_list = []
 
@@ -73,6 +73,12 @@ data = {
     "date":"" #记录上次更新"all_resource_point_list"的日期
 }
 
+def get_map_index(map_id):
+    for index, map in enumerate(map_list):
+        if map["map_id"] == map_id:
+            return index
+    return 255
+    
 async def download_icon(url):
     # 下载图片，返回Image对象
     async with httpx.AsyncClient() as client:
@@ -133,7 +139,6 @@ async def up_label_and_point_list(map_id):
             data["can_query_type_list"][sublist["name"]] = str(sublist["id"])
             await up_icon_image(sublist)
         label["children"] = []
-        
     resource_json = await download_json(POINT_LIST_URL + str(map_id) + "&" + APP_LABEL)
     data["all_resource_point_list"] += [resource_json["data"]["point_list"]]
     data["date"] = time.strftime("%d")
@@ -143,7 +148,6 @@ async def download_map(map_id):
     # 下载地图文件
     if not os.path.exists(os.path.join(FILE_PATH,"maps")):
         os.mkdir(os.path.join(FILE_PATH, "maps"))
-    map_path = os.path.join(FILE_PATH,"maps",f"map_{map_id}.png")
     logger.info(f"正在下载地图{map_id}图片")
     # 更新地图文件 并按照资源点的范围自动裁切掉不需要的地方
     # 裁切地图需要最新的资源点位置，所以要先调用 up_label_and_point_list 再更新地图
@@ -162,7 +166,7 @@ async def download_map(map_id):
     x_end = 0
     y_end = 0
     for index, map in enumerate(map_list):
-        if(map["id"] == map_id):
+        if(map["map_id"] == map_id):
             for resource_point in data["all_resource_point_list"][index]:
                 x_pos = resource_point["x_pos"] + origin[0]
                 y_pos = resource_point["y_pos"] + origin[1]
@@ -176,10 +180,11 @@ async def download_map(map_id):
     x_end += 200
     y_end += 200
 
-    CENTER = [origin[0] - x_start, origin[1] - y_start]
+    CENTER.append([origin[0] - x_start, origin[1] - y_start])
     x = int(x_end - x_start)
     y = int(y_end - y_start)
-    MAP_ICON = Image.new("RGB",(x,y))
+    map_img = Image.new("RGB",(x,y))
+    # MAP_ICON = Image.new("RGB",(x,y))
     if map_id == 2:
         y_offset = 0
         for x_map_url_list in map_url_list:
@@ -187,21 +192,20 @@ async def download_map(map_id):
             for y_map_url in x_map_url_list:
                 map_url = y_map_url["url"]
                 map_icon = await download_icon(map_url)
-                MAP_ICON.paste(map_icon,(int(-x_start) + x_offset, int(-y_start) + y_offset))
+                map_img.paste(map_icon,(int(-x_start) + x_offset, int(-y_start) + y_offset))
                 x_offset += map_icon.size[0]
             y_offset += map_icon.size[1]
     else:
         map_url = map_url_list[0][0]["url"]
         map_icon = await download_icon(map_url)
-        MAP_ICON.paste(map_icon,(int(-x_start) , int(-y_start)))
-        
-    with open(map_path, "wb") as icon_file:
-        MAP_ICON.save(icon_file)
+        map_img.paste(map_icon,(int(-x_start) , int(-y_start)))
+    
+    MAP_ICON.append(map_img)    
 
 
 def check_map_id(id):
     for map in map_list:
-        if id == map["id"]:
+        if id == map["map_id"]:
             return True
     return False    
     
@@ -213,14 +217,15 @@ async def up_map():
         if not check_map_id(map_info["map_id"]):
             map_json = await download_json(MAP_URL + str(map_info["map_id"]) + "&" + APP_LABEL)
             map_json = map_json["data"]["info"]
-            map_list += [{"id": map_json["id"],  "name":map_json["name"]}]
+            map_list += [{"map_id": map_json["id"],  "name":map_json["name"]}]
             await up_label_and_point_list(map_info["map_id"])
             await download_map(map_info["map_id"])
     logger.info(f"地图数据更新完成")
 
 
 async def init_point_list_and_map():
-    await up_map()
+    if data["date"] !=  time.strftime("%d"):
+        await up_map()
 
 
 
@@ -233,11 +238,12 @@ loop.run_until_complete(init_point_list_and_map())
 
 class Resource_map(object):
 
-    def __init__(self,resource_name):
+    def __init__(self, resource_name, map_id):
+        self.map_id = map_id
         self.resource_id = str(data["can_query_type_list"][resource_name])
-
-        # self.map_image = Image.open(MAP_PATH)
-        self.map_image = MAP_ICON.copy()
+        map_path = os.path.join(FILE_PATH, "maps", f"map_{map_id}.png")
+        self.map_image = Image.open(map_path)
+        # self.map_image = MAP_ICON.copy()
         self.map_size = self.map_image.size
 
         # 地图要要裁切的左上角和右下角坐标
@@ -263,11 +269,11 @@ class Resource_map(object):
 
     def get_resource_point_list(self):
         temp_list = []
-        for resource_point in data["all_resource_point_list"]:
+        for resource_point in data["all_resource_point_list"][get_map_index(self.map_id)]:
             if str(resource_point["label_id"]) == self.resource_id :
                 # 获取xy坐标，然后加上中心点的坐标完成坐标转换
-                x = resource_point["x_pos"] + CENTER[0]
-                y = resource_point["y_pos"] + CENTER[1]
+                x = resource_point["x_pos"] + CENTER[get_map_index(self.map_id)][0]
+                y = resource_point["y_pos"] + CENTER[get_map_index(self.map_id)][1]
                 temp_list.append((int(x),int(y)))
         return temp_list
 
@@ -311,7 +317,7 @@ class Resource_map(object):
     def get_cq_cod(self):
 
         if not self.resource_xy_list:
-            return "没有这个资源的信息"
+            return 
 
         self.crop()
 
@@ -320,34 +326,47 @@ class Resource_map(object):
         bio = BytesIO()
         self.map_image.save(bio, format='JPEG')
         base64_str = 'base64://' + base64.b64encode(bio.getvalue()).decode()
-
-        return f"[CQ:image,file={base64_str}]"
+        return base64_str
+        # return f"[CQ:image,file={base64_str}]"
 
     def get_resource_count(self):
         return len(self.resource_xy_list)
 
+    def get_BIO(self):
+        self.paste()
+        bio = BytesIO()
+        self.map_image = self.map_image.convert('RGB')
+        self.map_image.save(bio, format='JPEG')
+        return bio
 
 
 async def get_resource_map_mes(name):
-
-    if data["date"] !=  time.strftime("%d"):
+    count = 0
+    mes = None
+    img_list = []
+    if data["date"] != time.strftime("%d"):
         await init_point_list_and_map()
 
     if not (name in data["can_query_type_list"]):
-        return f"没有 {name} 这种资源。\n发送 原神资源列表 查看所有资源名称"
+        mes = f"没有 {name} 这种资源。\n发送 原神资源列表 查看所有资源名称"
+        return mes, img_list
 
-    map = Resource_map(name)
-    count = map.get_resource_count()
+    resource_id = int(data["can_query_type_list"][name])
+    for map_index, map_resource in enumerate(data["all_resource_point_list"]):
+        map_id = map_list[map_index]["map_id"]
+        map_obj = Resource_map(name, map_id)
+        map_b64 = map_obj.get_cq_cod()
+        if not map_b64:
+            continue
+        img_list += [{"name": map_list[map_index]["name"], "count":map_obj.get_resource_count(), "b64":map_b64}]
+        count += map_obj.get_resource_count()
+    mes = f"※ {name} 一共找到 {count} 个位置点\n※ 数据来源于米游社wiki"
 
     if not count:
-        return f"没有找到 {name} 资源的位置，可能米游社wiki还没更新。"
+        mes = f"没有找到 {name} 资源的位置，可能米游社wiki还没更新。"
+        return mes, img_list
 
-    mes = f"资源 {name} 的位置如下\n"
-    mes += map.get_cq_cod()
-
-    mes += f"\n\n※ {name} 一共找到 {count} 个位置点\n※ 数据来源于米游社wiki"
-
-    return mes
+    return mes,img_list
 
 
 
