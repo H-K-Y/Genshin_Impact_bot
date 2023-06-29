@@ -9,21 +9,51 @@ sv = Service("原神资源查询")
 
 @sv.on_rex(r"(\S+)(?:在哪|在哪里|哪有|哪里有)")
 async def inquire_resource_points(bot, ev):
-    # resource_name = ev['match'].group(1)
     resource_name = ev['plain_text']
     resource_name = re.search("(\S+)(?=在哪)|(\S+)(?=哪有)|(\S+)(?=哪里有)", resource_name)[0]
     if resource_name == "":
         return
-    await bot.send(ev, await get_resource_map_mes(resource_name), at_sender=True)
+    mes_list = []
+    mes,msg = await get_resource_map_mes(resource_name)
+    if len(msg) :
+        for res in msg:
+            msg_data = f"{res['name']} {res['count']}个 \n [CQ:image,file={res['b64']}]"
+            data = {
+                "type": "node",
+                "data": {
+                    "name": "派蒙",
+                    "uin": "2854196310",
+                    "content": msg_data
+                }
+            }
+            mes_list.append(data)
+    await bot.send(ev, mes, at_sender=True)
+    if mes_list :
+        await bot.send_group_forward_msg(group_id=ev['group_id'], messages=mes_list)
 
 @sv.on_rex(r"(?:哪有|哪里有)(\S+)")
 async def inquire_resource_points(bot, ev):
-    # resource_name = ev['match'].group(1)
     resource_name = ev['plain_text']
     resource_name = re.search("(?<=哪有)(\S+)|(?<=哪里有)(\S+)", resource_name)[0]
     if resource_name == "":
         return
-    await bot.send(ev, await get_resource_map_mes(resource_name), at_sender=True)
+    mes_list = []
+    mes,msg = await get_resource_map_mes(resource_name)
+    if len(msg) :
+        for res in msg:
+            msg_data = f"{res['name']} {res['count']}个 \n [CQ:image,file={res['b64']}]"
+            data = {
+                "type": "node",
+                "data": {
+                    "name": "派蒙",
+                    "uin": "2854196310",
+                    "content": msg_data
+                }
+            }
+            mes_list.append(data)
+    await bot.send(ev, mes, at_sender=True)
+    if mes_list :
+        await bot.send_group_forward_msg(group_id=ev['group_id'], messages=mes_list)
 
 
 @sv.on_fullmatch('原神资源列表')
@@ -41,7 +71,6 @@ async def inquire_resource_list(bot, ev):
             }
         }
         mes_list.append(data)
-    # await bot.send(ev, get_resource_list_mes(), at_sender=True)
     await bot.send_group_forward_msg(group_id=ev['group_id'], messages=mes_list)
 
 
