@@ -185,7 +185,7 @@ async def download_map(map_id):
     y = int(y_end - y_start)
     map_img = Image.new("RGB",(x,y))
     # MAP_ICON = Image.new("RGB",(x,y))
-    if map_id == 2:
+    if (map_id == 2) or (map_id == 33):
         y_offset = 0
         for x_map_url_list in map_url_list:
             x_offset = 0
