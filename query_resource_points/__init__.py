@@ -9,7 +9,7 @@ sv = Service("原神资源查询")
 
 @sv.on_rex(r"(\S+)(?:在哪|在哪里|哪有|哪里有)")
 async def inquire_resource_points(bot, ev):
-    resource_name = ev['plain_text']
+    resource_name = ev['raw_message']
     resource_name = re.search("(\S+)(?=在哪)|(\S+)(?=哪有)|(\S+)(?=哪里有)", resource_name)[0]
     if resource_name == "":
         return
@@ -33,7 +33,7 @@ async def inquire_resource_points(bot, ev):
 
 @sv.on_rex(r"(?:哪有|哪里有)(\S+)")
 async def inquire_resource_points(bot, ev):
-    resource_name = ev['plain_text']
+    resource_name = ev['raw_message']
     resource_name = re.search("(?<=哪有)(\S+)|(?<=哪里有)(\S+)", resource_name)[0]
     if resource_name == "":
         return
