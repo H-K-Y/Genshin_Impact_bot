@@ -8,6 +8,7 @@ import time
 import base64
 import httpx
 import asyncio
+import threading
 
 
 
@@ -24,7 +25,7 @@ FILE_PATH = os.path.dirname(__file__)
 
 MAP_PATH = os.path.join(FILE_PATH,"icon","map_icon.jpg")
 Image.MAX_IMAGE_PIXELS = None
-
+semaphore = threading.Semaphore(os.cpu_count()*2) # 最大并发数量为核心*2
 
 CENTER = []
 MAP_ICON = []
@@ -278,12 +279,14 @@ class Resource_map(object):
         return temp_list
 
 
-    def paste(self):
-        for x,y in self.resource_xy_list:
-            # 把资源图片贴到地图上
-            # 这时地图已经裁切过了，要以裁切后的地图左上角为中心再转换一次坐标
-            x -= self.x_start
-            y -= self.y_start
+    def paste(self,x,y):
+        with semaphore:
+            # for x,y in self.resource_xy_list:
+                # 把资源图片贴到地图上
+                # 这时地图已经裁切过了，要以裁切后的地图左上角为中心再转换一次坐标
+            # x -= self.x_start
+            # y -= self.y_start
+            # logger.info(f'{threading.current_thread().name} pasting')
             self.map_image.paste(self.resource_icon,(x + resource_icon_offset[0] , y + resource_icon_offset[1]),self.resource_icon)
 
 
@@ -321,8 +324,19 @@ class Resource_map(object):
 
         self.crop()
 
-        self.paste()
-
+        # self.paste()
+        #paste with multithread
+        threads = []
+        for x,y in self.resource_xy_list:
+            x -= self.x_start
+            y -= self.y_start
+            thread = threading.Thread(target=self.paste,args=(x,y))
+            threads.append(thread)
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+              
         bio = BytesIO()
         self.map_image.save(bio, format='JPEG')
         base64_str = 'base64://' + base64.b64encode(bio.getvalue()).decode()
